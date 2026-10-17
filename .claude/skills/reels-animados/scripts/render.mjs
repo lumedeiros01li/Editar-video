@@ -110,14 +110,21 @@ async function folha() {
     if (![...marcos.keys()].some(k => Math.abs(k - t) < 0.6)) marcos.set(t, 'ritmo');
   }
   marcos.set(Math.max(plano.duracao - 0.2, 0), 'final');
-  const tempos = [...marcos.keys()].sort((a, b) => a - b).slice(0, 36);
-  const imgs = [];
-  for (const t of tempos) imgs.push({ buf: await quadro(pagina, t, 'jpeg'), rotulo: `${fmt(t)}  ${marcos.get(t)}` });
-  const saida = opt('saida', path.join(pastaPlano, 'folha_contato.png'));
-  await grade(navegador, imgs, 6, 270, saida,
-    `Folha de contato · ${fmt(plano.duracao)} · ${imgs.length} quadros${plano.guias ? ' · guias de zona segura' : ''}`);
+  // até 36 quadros por imagem; vídeo longo sai em páginas (folha.png, folha_2.png, ...)
+  const tempos = [...marcos.keys()].sort((a, b) => a - b);
+  const base = opt('saida', path.join(pastaPlano, 'folha_contato.png'));
+  const paginas = Math.ceil(tempos.length / 36);
+  for (let pg = 0; pg < paginas; pg++) {
+    const parte = tempos.slice(pg * 36, (pg + 1) * 36);
+    const imgs = [];
+    for (const t of parte) imgs.push({ buf: await quadro(pagina, t, 'jpeg'), rotulo: `${fmt(t)}  ${marcos.get(t)}` });
+    const saida = pg === 0 ? base : base.replace(/(\.png)?$/, `_${pg + 1}.png`);
+    await grade(navegador, imgs, 6, 270, saida,
+      `Folha de contato · ${fmt(plano.duracao)} · página ${pg + 1}/${paginas} · ${imgs.length} quadros` +
+      `${plano.guias ? ' · guias de zona segura' : ''}`);
+    console.log(`Folha de contato: ${saida}`);
+  }
   await navegador.close();
-  console.log(`Folha de contato: ${saida}`);
 }
 
 async function quadros() {

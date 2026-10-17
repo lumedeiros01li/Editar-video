@@ -1,0 +1,1070 @@
+{
+ "idioma": "pt",
+ "modelo": "parakeet-tdt-0.6b-v3",
+ "palavras": [
+  {
+   "i": 0,
+   "texto": "Dizem",
+   "ini": 0.0,
+   "fim": 0.32,
+   "prob": 1.0
+  },
+  {
+   "i": 1,
+   "texto": "que",
+   "ini": 0.32,
+   "fim": 0.48,
+   "prob": 1.0
+  },
+  {
+   "i": 2,
+   "texto": "seguro",
+   "ini": 0.48,
+   "fim": 0.8,
+   "prob": 1.0
+  },
+  {
+   "i": 3,
+   "texto": "de",
+   "ini": 0.8,
+   "fim": 0.88,
+   "prob": 1.0
+  },
+  {
+   "i": 4,
+   "texto": "vida",
+   "ini": 0.88,
+   "fim": 1.12,
+   "prob": 1.0
+  },
+  {
+   "i": 5,
+   "texto": "é",
+   "ini": 1.12,
+   "fim": 1.2,
+   "prob": 1.0
+  },
+  {
+   "i": 6,
+   "texto": "caro.",
+   "ini": 1.2,
+   "fim": 1.52,
+   "prob": 1.0
+  },
+  {
+   "i": 7,
+   "texto": "Olha",
+   "ini": 1.52,
+   "fim": 1.76,
+   "prob": 1.0
+  },
+  {
+   "i": 8,
+   "texto": "o",
+   "ini": 1.76,
+   "fim": 1.915,
+   "prob": 1.0
+  },
+  {
+   "i": 9,
+   "texto": "que",
+   "ini": 1.92,
+   "fim": 2.08,
+   "prob": 1.0
+  },
+  {
+   "i": 10,
+   "texto": "custa",
+   "ini": 2.08,
+   "fim": 2.4,
+   "prob": 1.0
+  },
+  {
+   "i": 11,
+   "texto": "caro",
+   "ini": 2.4,
+   "fim": 2.64,
+   "prob": 1.0
+  },
+  {
+   "i": 12,
+   "texto": "de",
+   "ini": 2.64,
+   "fim": 2.8,
+   "prob": 1.0
+  },
+  {
+   "i": 13,
+   "texto": "verdade.",
+   "ini": 2.8,
+   "fim": 3.28,
+   "prob": 1.0
+  },
+  {
+   "i": 14,
+   "texto": "Inventário:",
+   "ini": 3.28,
+   "fim": 4.0,
+   "prob": 1.0
+  },
+  {
+   "i": 15,
+   "texto": "tem",
+   "ini": 4.0,
+   "fim": 4.24,
+   "prob": 1.0
+  },
+  {
+   "i": 16,
+   "texto": "advogado,",
+   "ini": 4.24,
+   "fim": 4.88,
+   "prob": 1.0
+  },
+  {
+   "i": 17,
+   "texto": "cartório,",
+   "ini": 4.88,
+   "fim": 5.6,
+   "prob": 1.0
+  },
+  {
+   "i": 18,
+   "texto": "documentos,",
+   "ini": 5.6,
+   "fim": 6.24,
+   "prob": 1.0
+  },
+  {
+   "i": 19,
+   "texto": "imposto.",
+   "ini": 6.24,
+   "fim": 6.72,
+   "prob": 1.0
+  },
+  {
+   "i": 20,
+   "texto": "O",
+   "ini": 6.72,
+   "fim": 6.875,
+   "prob": 1.0
+  },
+  {
+   "i": 21,
+   "texto": "imposto",
+   "ini": 6.88,
+   "fim": 7.28,
+   "prob": 1.0
+  },
+  {
+   "i": 22,
+   "texto": "sobre",
+   "ini": 7.28,
+   "fim": 7.6,
+   "prob": 1.0
+  },
+  {
+   "i": 23,
+   "texto": "herança",
+   "ini": 7.6,
+   "fim": 8.16,
+   "prob": 1.0
+  },
+  {
+   "i": 24,
+   "texto": "é",
+   "ini": 8.16,
+   "fim": 8.315,
+   "prob": 1.0
+  },
+  {
+   "i": 25,
+   "texto": "estadual",
+   "ini": 8.32,
+   "fim": 8.8,
+   "prob": 1.0
+  },
+  {
+   "i": 26,
+   "texto": "e",
+   "ini": 8.8,
+   "fim": 8.955,
+   "prob": 1.0
+  },
+  {
+   "i": 27,
+   "texto": "pode",
+   "ini": 8.96,
+   "fim": 9.2,
+   "prob": 1.0
+  },
+  {
+   "i": 28,
+   "texto": "chegar",
+   "ini": 9.2,
+   "fim": 9.44,
+   "prob": 1.0
+  },
+  {
+   "i": 29,
+   "texto": "até",
+   "ini": 9.44,
+   "fim": 9.745,
+   "prob": 1.0
+  },
+  {
+   "i": 30,
+   "texto": "8%.",
+   "ini": 9.76,
+   "fim": 10.065,
+   "prob": 1.0
+  },
+  {
+   "i": 31,
+   "texto": "E",
+   "ini": 10.4,
+   "fim": 10.555,
+   "prob": 1.0
+  },
+  {
+   "i": 32,
+   "texto": "a",
+   "ini": 10.56,
+   "fim": 10.715,
+   "prob": 1.0
+  },
+  {
+   "i": 33,
+   "texto": "herança",
+   "ini": 10.72,
+   "fim": 11.28,
+   "prob": 1.0
+  },
+  {
+   "i": 34,
+   "texto": "só",
+   "ini": 11.28,
+   "fim": 11.44,
+   "prob": 1.0
+  },
+  {
+   "i": 35,
+   "texto": "é",
+   "ini": 11.44,
+   "fim": 11.595,
+   "prob": 1.0
+  },
+  {
+   "i": 36,
+   "texto": "dividida",
+   "ini": 11.6,
+   "fim": 12.28,
+   "prob": 1.0
+  },
+  {
+   "i": 37,
+   "texto": "no",
+   "ini": 12.32,
+   "fim": 12.48,
+   "prob": 1.0
+  },
+  {
+   "i": 38,
+   "texto": "fim",
+   "ini": 12.48,
+   "fim": 12.72,
+   "prob": 1.0
+  },
+  {
+   "i": 39,
+   "texto": "do",
+   "ini": 12.72,
+   "fim": 12.8,
+   "prob": 1.0
+  },
+  {
+   "i": 40,
+   "texto": "processo.",
+   "ini": 12.8,
+   "fim": 13.36,
+   "prob": 1.0
+  },
+  {
+   "i": 41,
+   "texto": "Doença",
+   "ini": 13.36,
+   "fim": 13.84,
+   "prob": 1.0
+  },
+  {
+   "i": 42,
+   "texto": "grave,",
+   "ini": 13.84,
+   "fim": 14.32,
+   "prob": 1.0
+  },
+  {
+   "i": 43,
+   "texto": "um",
+   "ini": 14.32,
+   "fim": 14.48,
+   "prob": 1.0
+  },
+  {
+   "i": 44,
+   "texto": "remédio",
+   "ini": 14.48,
+   "fim": 14.96,
+   "prob": 1.0
+  },
+  {
+   "i": 45,
+   "texto": "de",
+   "ini": 14.96,
+   "fim": 15.12,
+   "prob": 1.0
+  },
+  {
+   "i": 46,
+   "texto": "custo",
+   "ini": 15.12,
+   "fim": 15.52,
+   "prob": 1.0
+  },
+  {
+   "i": 47,
+   "texto": "alto,",
+   "ini": 15.52,
+   "fim": 15.92,
+   "prob": 1.0
+  },
+  {
+   "i": 48,
+   "texto": "exames,",
+   "ini": 15.92,
+   "fim": 16.525,
+   "prob": 1.0
+  },
+  {
+   "i": 49,
+   "texto": "tratamentos,",
+   "ini": 16.56,
+   "fim": 17.44,
+   "prob": 1.0
+  },
+  {
+   "i": 50,
+   "texto": "além,",
+   "ini": 17.44,
+   "fim": 17.84,
+   "prob": 1.0
+  },
+  {
+   "i": 51,
+   "texto": "é",
+   "ini": 17.84,
+   "fim": 17.995,
+   "prob": 1.0
+  },
+  {
+   "i": 52,
+   "texto": "claro,",
+   "ini": 18.0,
+   "fim": 18.32,
+   "prob": 1.0
+  },
+  {
+   "i": 53,
+   "texto": "da",
+   "ini": 18.32,
+   "fim": 18.55,
+   "prob": 1.0
+  },
+  {
+   "i": 54,
+   "texto": "renda",
+   "ini": 18.56,
+   "fim": 18.96,
+   "prob": 1.0
+  },
+  {
+   "i": 55,
+   "texto": "poder",
+   "ini": 18.96,
+   "fim": 19.2,
+   "prob": 1.0
+  },
+  {
+   "i": 56,
+   "texto": "cair.",
+   "ini": 19.2,
+   "fim": 19.655,
+   "prob": 1.0
+  },
+  {
+   "i": 57,
+   "texto": "No",
+   "ini": 19.671,
+   "fim": 19.901,
+   "prob": 1.0
+  },
+  {
+   "i": 58,
+   "texto": "período",
+   "ini": 19.911,
+   "fim": 20.231,
+   "prob": 1.0
+  },
+  {
+   "i": 59,
+   "texto": "que",
+   "ini": 20.231,
+   "fim": 20.391,
+   "prob": 1.0
+  },
+  {
+   "i": 60,
+   "texto": "você",
+   "ini": 20.391,
+   "fim": 20.551,
+   "prob": 1.0
+  },
+  {
+   "i": 61,
+   "texto": "está",
+   "ini": 20.551,
+   "fim": 20.791,
+   "prob": 1.0
+  },
+  {
+   "i": 62,
+   "texto": "acamado.",
+   "ini": 20.791,
+   "fim": 21.431,
+   "prob": 1.0
+  },
+  {
+   "i": 63,
+   "texto": "Invalidez,",
+   "ini": 21.431,
+   "fim": 22.151,
+   "prob": 1.0
+  },
+  {
+   "i": 64,
+   "texto": "a",
+   "ini": 22.151,
+   "fim": 22.231,
+   "prob": 1.0
+  },
+  {
+   "i": 65,
+   "texto": "renda",
+   "ini": 22.231,
+   "fim": 22.551,
+   "prob": 1.0
+  },
+  {
+   "i": 66,
+   "texto": "diminui,",
+   "ini": 22.551,
+   "fim": 23.111,
+   "prob": 1.0
+  },
+  {
+   "i": 67,
+   "texto": "mas",
+   "ini": 23.111,
+   "fim": 23.271,
+   "prob": 1.0
+  },
+  {
+   "i": 68,
+   "texto": "as",
+   "ini": 23.271,
+   "fim": 23.431,
+   "prob": 1.0
+  },
+  {
+   "i": 69,
+   "texto": "contas",
+   "ini": 23.431,
+   "fim": 23.911,
+   "prob": 1.0
+  },
+  {
+   "i": 70,
+   "texto": "continuam.",
+   "ini": 23.911,
+   "fim": 24.551,
+   "prob": 1.0
+  },
+  {
+   "i": 71,
+   "texto": "Você",
+   "ini": 24.551,
+   "fim": 24.871,
+   "prob": 1.0
+  },
+  {
+   "i": 72,
+   "texto": "ficar",
+   "ini": 24.871,
+   "fim": 25.191,
+   "prob": 1.0
+  },
+  {
+   "i": 73,
+   "texto": "inválido,",
+   "ini": 25.191,
+   "fim": 25.946,
+   "prob": 1.0
+  },
+  {
+   "i": 74,
+   "texto": "não",
+   "ini": 26.071,
+   "fim": 26.311,
+   "prob": 1.0
+  },
+  {
+   "i": 75,
+   "texto": "isenta",
+   "ini": 26.311,
+   "fim": 26.841,
+   "prob": 1.0
+  },
+  {
+   "i": 76,
+   "texto": "de",
+   "ini": 27.031,
+   "fim": 27.261,
+   "prob": 1.0
+  },
+  {
+   "i": 77,
+   "texto": "você",
+   "ini": 27.271,
+   "fim": 27.431,
+   "prob": 1.0
+  },
+  {
+   "i": 78,
+   "texto": "pagar",
+   "ini": 27.431,
+   "fim": 27.751,
+   "prob": 1.0
+  },
+  {
+   "i": 79,
+   "texto": "as",
+   "ini": 27.751,
+   "fim": 27.831,
+   "prob": 1.0
+  },
+  {
+   "i": 80,
+   "texto": "contas",
+   "ini": 27.831,
+   "fim": 28.231,
+   "prob": 1.0
+  },
+  {
+   "i": 81,
+   "texto": "o",
+   "ini": 28.231,
+   "fim": 28.311,
+   "prob": 1.0
+  },
+  {
+   "i": 82,
+   "texto": "próximo",
+   "ini": 28.311,
+   "fim": 28.551,
+   "prob": 1.0
+  },
+  {
+   "i": 83,
+   "texto": "mês.",
+   "ini": 28.551,
+   "fim": 28.871,
+   "prob": 1.0
+  },
+  {
+   "i": 84,
+   "texto": "O",
+   "ini": 28.871,
+   "fim": 29.026,
+   "prob": 1.0
+  },
+  {
+   "i": 85,
+   "texto": "seguro",
+   "ini": 29.031,
+   "fim": 29.351,
+   "prob": 1.0
+  },
+  {
+   "i": 86,
+   "texto": "de",
+   "ini": 29.351,
+   "fim": 29.431,
+   "prob": 1.0
+  },
+  {
+   "i": 87,
+   "texto": "vida",
+   "ini": 29.431,
+   "fim": 29.751,
+   "prob": 1.0
+  },
+  {
+   "i": 88,
+   "texto": "existe",
+   "ini": 29.751,
+   "fim": 30.151,
+   "prob": 1.0
+  },
+  {
+   "i": 89,
+   "texto": "para",
+   "ini": 30.151,
+   "fim": 30.311,
+   "prob": 1.0
+  },
+  {
+   "i": 90,
+   "texto": "ajudar",
+   "ini": 30.311,
+   "fim": 30.711,
+   "prob": 1.0
+  },
+  {
+   "i": 91,
+   "texto": "nessas",
+   "ini": 30.711,
+   "fim": 31.031,
+   "prob": 1.0
+  },
+  {
+   "i": 92,
+   "texto": "despesas,",
+   "ini": 31.031,
+   "fim": 31.751,
+   "prob": 1.0
+  },
+  {
+   "i": 93,
+   "texto": "conforme",
+   "ini": 31.751,
+   "fim": 32.231,
+   "prob": 1.0
+  },
+  {
+   "i": 94,
+   "texto": "as",
+   "ini": 32.231,
+   "fim": 32.391,
+   "prob": 1.0
+  },
+  {
+   "i": 95,
+   "texto": "coberturas",
+   "ini": 32.391,
+   "fim": 32.951,
+   "prob": 1.0
+  },
+  {
+   "i": 96,
+   "texto": "que",
+   "ini": 32.951,
+   "fim": 33.031,
+   "prob": 1.0
+  },
+  {
+   "i": 97,
+   "texto": "você",
+   "ini": 33.031,
+   "fim": 33.271,
+   "prob": 1.0
+  },
+  {
+   "i": 98,
+   "texto": "contratar.",
+   "ini": 33.271,
+   "fim": 33.911,
+   "prob": 1.0
+  },
+  {
+   "i": 99,
+   "texto": "Existem",
+   "ini": 33.911,
+   "fim": 34.311,
+   "prob": 1.0
+  },
+  {
+   "i": 100,
+   "texto": "coberturas",
+   "ini": 34.311,
+   "fim": 34.871,
+   "prob": 1.0
+  },
+  {
+   "i": 101,
+   "texto": "para",
+   "ini": 34.871,
+   "fim": 35.031,
+   "prob": 1.0
+  },
+  {
+   "i": 102,
+   "texto": "morte,",
+   "ini": 35.031,
+   "fim": 35.431,
+   "prob": 1.0
+  },
+  {
+   "i": 103,
+   "texto": "invalidez",
+   "ini": 35.431,
+   "fim": 35.991,
+   "prob": 1.0
+  },
+  {
+   "i": 104,
+   "texto": "e",
+   "ini": 35.991,
+   "fim": 36.146,
+   "prob": 1.0
+  },
+  {
+   "i": 105,
+   "texto": "doenças",
+   "ini": 36.151,
+   "fim": 36.631,
+   "prob": 1.0
+  },
+  {
+   "i": 106,
+   "texto": "graves.",
+   "ini": 36.631,
+   "fim": 37.191,
+   "prob": 1.0
+  },
+  {
+   "i": 107,
+   "texto": "Cada",
+   "ini": 37.191,
+   "fim": 37.511,
+   "prob": 1.0
+  },
+  {
+   "i": 108,
+   "texto": "uma",
+   "ini": 37.511,
+   "fim": 37.816,
+   "prob": 1.0
+  },
+  {
+   "i": 109,
+   "texto": "com",
+   "ini": 37.831,
+   "fim": 37.991,
+   "prob": 1.0
+  },
+  {
+   "i": 110,
+   "texto": "suas",
+   "ini": 37.991,
+   "fim": 38.231,
+   "prob": 1.0
+  },
+  {
+   "i": 111,
+   "texto": "regras.",
+   "ini": 38.231,
+   "fim": 38.711,
+   "prob": 1.0
+  },
+  {
+   "i": 112,
+   "texto": "Pelo",
+   "ini": 38.711,
+   "fim": 38.951,
+   "prob": 1.0
+  },
+  {
+   "i": 113,
+   "texto": "Código",
+   "ini": 38.951,
+   "fim": 39.351,
+   "prob": 1.0
+  },
+  {
+   "i": 114,
+   "texto": "Civil.",
+   "ini": 39.351,
+   "fim": 39.881,
+   "prob": 1.0
+  },
+  {
+   "i": 115,
+   "texto": "O",
+   "ini": 39.946,
+   "fim": 40.101,
+   "prob": 1.0
+  },
+  {
+   "i": 116,
+   "texto": "capital",
+   "ini": 40.186,
+   "fim": 40.506,
+   "prob": 1.0
+  },
+  {
+   "i": 117,
+   "texto": "do",
+   "ini": 40.506,
+   "fim": 40.666,
+   "prob": 1.0
+  },
+  {
+   "i": 118,
+   "texto": "seguro",
+   "ini": 40.666,
+   "fim": 41.066,
+   "prob": 1.0
+  },
+  {
+   "i": 119,
+   "texto": "por",
+   "ini": 41.066,
+   "fim": 41.226,
+   "prob": 1.0
+  },
+  {
+   "i": 120,
+   "texto": "morte",
+   "ini": 41.226,
+   "fim": 41.626,
+   "prob": 1.0
+  },
+  {
+   "i": 121,
+   "texto": "não",
+   "ini": 41.626,
+   "fim": 41.706,
+   "prob": 1.0
+  },
+  {
+   "i": 122,
+   "texto": "é",
+   "ini": 41.706,
+   "fim": 41.861,
+   "prob": 1.0
+  },
+  {
+   "i": 123,
+   "texto": "considerada",
+   "ini": 41.866,
+   "fim": 42.346,
+   "prob": 1.0
+  },
+  {
+   "i": 124,
+   "texto": "herança.",
+   "ini": 42.346,
+   "fim": 42.906,
+   "prob": 1.0
+  },
+  {
+   "i": 125,
+   "texto": "Quer",
+   "ini": 42.906,
+   "fim": 43.146,
+   "prob": 1.0
+  },
+  {
+   "i": 126,
+   "texto": "ver",
+   "ini": 43.146,
+   "fim": 43.306,
+   "prob": 1.0
+  },
+  {
+   "i": 127,
+   "texto": "o",
+   "ini": 43.306,
+   "fim": 43.386,
+   "prob": 1.0
+  },
+  {
+   "i": 128,
+   "texto": "que",
+   "ini": 43.386,
+   "fim": 43.546,
+   "prob": 1.0
+  },
+  {
+   "i": 129,
+   "texto": "faz",
+   "ini": 43.546,
+   "fim": 43.706,
+   "prob": 1.0
+  },
+  {
+   "i": 130,
+   "texto": "sentido",
+   "ini": 43.706,
+   "fim": 44.026,
+   "prob": 1.0
+  },
+  {
+   "i": 131,
+   "texto": "para",
+   "ini": 44.026,
+   "fim": 44.106,
+   "prob": 1.0
+  },
+  {
+   "i": 132,
+   "texto": "o",
+   "ini": 44.106,
+   "fim": 44.261,
+   "prob": 1.0
+  },
+  {
+   "i": 133,
+   "texto": "seu",
+   "ini": 44.266,
+   "fim": 44.426,
+   "prob": 1.0
+  },
+  {
+   "i": 134,
+   "texto": "caso?",
+   "ini": 44.426,
+   "fim": 44.881,
+   "prob": 1.0
+  },
+  {
+   "i": 135,
+   "texto": "Comenta",
+   "ini": 44.906,
+   "fim": 45.511,
+   "prob": 1.0
+  },
+  {
+   "i": 136,
+   "texto": "seguro",
+   "ini": 45.546,
+   "fim": 46.076,
+   "prob": 1.0
+  },
+  {
+   "i": 137,
+   "texto": "e",
+   "ini": 46.106,
+   "fim": 46.261,
+   "prob": 1.0
+  },
+  {
+   "i": 138,
+   "texto": "eu",
+   "ini": 46.346,
+   "fim": 46.506,
+   "prob": 1.0
+  },
+  {
+   "i": 139,
+   "texto": "mesmo",
+   "ini": 46.506,
+   "fim": 46.826,
+   "prob": 1.0
+  },
+  {
+   "i": 140,
+   "texto": "vou",
+   "ini": 46.826,
+   "fim": 46.986,
+   "prob": 1.0
+  },
+  {
+   "i": 141,
+   "texto": "fazer",
+   "ini": 46.986,
+   "fim": 47.226,
+   "prob": 1.0
+  },
+  {
+   "i": 142,
+   "texto": "uma",
+   "ini": 47.226,
+   "fim": 47.386,
+   "prob": 1.0
+  },
+  {
+   "i": 143,
+   "texto": "análise",
+   "ini": 47.386,
+   "fim": 47.866,
+   "prob": 1.0
+  },
+  {
+   "i": 144,
+   "texto": "contigo",
+   "ini": 47.866,
+   "fim": 48.471,
+   "prob": 1.0
+  },
+  {
+   "i": 145,
+   "texto": "do",
+   "ini": 48.506,
+   "fim": 48.736,
+   "prob": 1.0
+  },
+  {
+   "i": 146,
+   "texto": "que",
+   "ini": 48.746,
+   "fim": 48.906,
+   "prob": 1.0
+  },
+  {
+   "i": 147,
+   "texto": "faz",
+   "ini": 48.906,
+   "fim": 49.211,
+   "prob": 1.0
+  },
+  {
+   "i": 148,
+   "texto": "mais",
+   "ini": 49.226,
+   "fim": 49.386,
+   "prob": 1.0
+  },
+  {
+   "i": 149,
+   "texto": "sentido",
+   "ini": 49.386,
+   "fim": 49.706,
+   "prob": 1.0
+  },
+  {
+   "i": 150,
+   "texto": "para",
+   "ini": 49.706,
+   "fim": 49.866,
+   "prob": 1.0
+  },
+  {
+   "i": 151,
+   "texto": "ti.",
+   "ini": 49.866,
+   "fim": 50.112,
+   "prob": 1.0
+  }
+ ]
+}

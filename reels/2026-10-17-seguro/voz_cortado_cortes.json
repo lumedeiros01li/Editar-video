@@ -1,0 +1,278 @@
+{
+  "entrada": "/home/user/Editar-video/reels/2026-10-17-seguro/voz.m4a",
+  "saida": "/home/user/Editar-video/reels/2026-10-17-seguro/voz_cortado.m4a",
+  "duracao_original_s": 107.93,
+  "duracao_final_s": 66.08,
+  "reducao_pct": 38.8,
+  "trechos_mantidos": 24,
+  "cortes": 25,
+  "respiracoes_detectadas": 1,
+  "niveis_db": {
+    "piso_ruido": -68.2,
+    "fala": -15.1,
+    "limiar_usado": -47.1
+  },
+  "parametros": {
+    "min_silencio": 0.3,
+    "margem": 0.05,
+    "min_fala": 0.15,
+    "respiracoes": "cortar",
+    "faixa_db": 32.0,
+    "limiar_db": null,
+    "fade": 0.01,
+    "lufs": -14.0,
+    "formato": "reels",
+    "fps": 30.0
+  },
+  "avisos": [],
+  "lista_cortes": [
+    {
+      "inicio": 0.0,
+      "fim": 2.96,
+      "duracao": 2.96,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 4.37,
+      "fim": 9.97,
+      "duracao": 5.6,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 11.66,
+      "fim": 12.26,
+      "duracao": 0.6,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 12.84,
+      "fim": 14.11,
+      "duracao": 1.27,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 17.35,
+      "fim": 17.6,
+      "duracao": 0.25,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 21.13,
+      "fim": 21.91,
+      "duracao": 0.78,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 23.16,
+      "fim": 23.39,
+      "duracao": 0.23,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 23.98,
+      "fim": 25.58,
+      "duracao": 1.6,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 29.51,
+      "fim": 29.99,
+      "duracao": 0.48,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 32.89,
+      "fim": 34.98,
+      "duracao": 2.09,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 39.01,
+      "fim": 39.33,
+      "duracao": 0.32,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 43.23,
+      "fim": 45.84,
+      "duracao": 2.61,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 49.05,
+      "fim": 50.04,
+      "duracao": 0.99,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 52.61,
+      "fim": 52.82,
+      "duracao": 0.21,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 54.59,
+      "fim": 56.9,
+      "duracao": 2.31,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 61.89,
+      "fim": 63.95,
+      "duracao": 2.06,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 68.85,
+      "fim": 69.98,
+      "duracao": 1.13,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 74.14,
+      "fim": 76.28,
+      "duracao": 2.14,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 76.54,
+      "fim": 77.51,
+      "duracao": 0.97,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 78.29,
+      "fim": 79.39,
+      "duracao": 1.1,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 81.5,
+      "fim": 81.96,
+      "duracao": 0.46,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 82.38,
+      "fim": 82.81,
+      "duracao": 0.43,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 89.33,
+      "fim": 93.81,
+      "duracao": 4.48,
+      "tipo": "respiração"
+    },
+    {
+      "inicio": 99.32,
+      "fim": 99.55,
+      "duracao": 0.23,
+      "tipo": "silêncio"
+    },
+    {
+      "inicio": 101.35,
+      "fim": 107.926,
+      "duracao": 6.576,
+      "tipo": "silêncio"
+    }
+  ],
+  "trechos_mantidos_s": [
+    [
+      2.96,
+      4.37
+    ],
+    [
+      9.96,
+      11.66
+    ],
+    [
+      12.26,
+      12.84
+    ],
+    [
+      14.11,
+      17.36
+    ],
+    [
+      17.59,
+      21.13
+    ],
+    [
+      21.91,
+      23.16
+    ],
+    [
+      23.39,
+      23.98
+    ],
+    [
+      25.58,
+      29.51
+    ],
+    [
+      29.99,
+      32.89
+    ],
+    [
+      34.98,
+      39.01
+    ],
+    [
+      39.33,
+      43.23
+    ],
+    [
+      45.84,
+      49.05
+    ],
+    [
+      50.04,
+      52.61
+    ],
+    [
+      52.82,
+      54.59
+    ],
+    [
+      56.9,
+      61.89
+    ],
+    [
+      63.95,
+      68.85
+    ],
+    [
+      69.98,
+      74.14
+    ],
+    [
+      76.28,
+      76.54
+    ],
+    [
+      77.51,
+      78.29
+    ],
+    [
+      79.39,
+      81.5
+    ],
+    [
+      81.96,
+      82.38
+    ],
+    [
+      82.81,
+      89.33
+    ],
+    [
+      93.81,
+      99.32
+    ],
+    [
+      99.55,
+      101.35
+    ]
+  ]
+}

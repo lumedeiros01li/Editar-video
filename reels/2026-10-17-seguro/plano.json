@@ -1,0 +1,345 @@
+{
+  "audio": "voz_final.m4a",
+  "transcricao": "transcricao.json",
+  "fps": 30,
+  "cauda": 1.2,
+  "musica": {
+    "ativa": true,
+    "bpm": 90,
+    "estilo": "pulso",
+    "volume": -28
+  },
+  "legenda": {
+    "max_palavras": 4
+  },
+  "sfx": true,
+  "volume_sfx": 0,
+  "cenas": [
+    {
+      "id": "c1",
+      "fundo": "branco",
+      "elementos": [
+        {
+          "tipo": "frase",
+          "inicio": 0,
+          "tamanho": "g",
+          "pos": "alto",
+          "texto": "Seguro de vida\né **caro**?"
+        },
+        {
+          "tipo": "frase",
+          "tamanho": "m",
+          "pos": "baixo",
+          "ancora": "Olha o que custa",
+          "sincronizar": true,
+          "texto": "Olha o que custa\n**caro** de verdade"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "ancora": "Inventário: tem",
+      "fundo": "preto",
+      "transicao": "cortina",
+      "elementos": [
+        {
+          "tipo": "frase",
+          "tamanho": "g",
+          "pos": "alto",
+          "ancora": "Inventário",
+          "sincronizar": true,
+          "texto": "**Inventário**"
+        },
+        {
+          "tipo": "lista",
+          "pos": "centro",
+          "itens": [
+            {
+              "texto": "Advogado",
+              "ancora": "advogado"
+            },
+            {
+              "texto": "Cartório",
+              "ancora": "cartório"
+            },
+            {
+              "texto": "Documentos",
+              "ancora": "documentos"
+            },
+            {
+              "texto": "Imposto",
+              "ancora": "imposto"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "ancora": "O imposto sobre herança",
+      "fundo": "roxo",
+      "transicao": "circulo",
+      "origem": [
+        540,
+        800
+      ],
+      "elementos": [
+        {
+          "tipo": "frase",
+          "tamanho": "m",
+          "pos": "alto",
+          "ancora": "O imposto sobre herança",
+          "sincronizar": true,
+          "texto": "Imposto sobre herança\né **estadual**",
+          "fim": 9.25
+        },
+        {
+          "tipo": "numero",
+          "pos": "alto",
+          "ancora": "até 8%",
+          "topo": "Teto nacional do ITCMD",
+          "valor": "até 8%",
+          "fonte": "Resolução do Senado nº 9/1992. A alíquota varia por estado."
+        },
+        {
+          "tipo": "frase",
+          "tamanho": "p",
+          "ancora": "E a herança só",
+          "sincronizar": true,
+          "texto": "A herança só é dividida\nno **fim do processo**",
+          "y": 880
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "ancora": "Doença grave",
+      "fundo": "branco",
+      "transicao": "lateral",
+      "elementos": [
+        {
+          "tipo": "frase",
+          "tamanho": "g",
+          "pos": "alto",
+          "ancora": "Doença grave",
+          "sincronizar": true,
+          "texto": "**Doença grave**"
+        },
+        {
+          "tipo": "lista",
+          "pos": "centro",
+          "itens": [
+            {
+              "texto": "Remédio de alto custo",
+              "ancora": "remédio de custo"
+            },
+            {
+              "texto": "Exames",
+              "ancora": "exames"
+            },
+            {
+              "texto": "Tratamento",
+              "ancora": "tratamentos"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c4b",
+      "ancora": "além, é claro",
+      "fundo": "preto",
+      "transicao": "corte",
+      "elementos": [
+        {
+          "tipo": "frase",
+          "tamanho": "m",
+          "pos": "alto",
+          "ancora": "além, é claro",
+          "texto": "E a **renda**\npode cair"
+        },
+        {
+          "tipo": "personagem",
+          "pos": "baixo",
+          "humor": "preocupado",
+          "balao": "Sem poder trabalhar",
+          "balao_ancora": "No período"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "ancora": "Invalidez, a renda",
+      "fundo": "lilas",
+      "transicao": "empurra",
+      "elementos": [
+        {
+          "tipo": "frase",
+          "tamanho": "g",
+          "pos": "alto",
+          "ancora": "Invalidez",
+          "sincronizar": true,
+          "texto": "**Invalidez**"
+        },
+        {
+          "tipo": "icones",
+          "pos": "centro",
+          "itens": [
+            {
+              "icone": "grafico_desce",
+              "rotulo": "Renda diminui",
+              "ancora": "renda diminui"
+            },
+            {
+              "icone": "casa",
+              "rotulo": "Contas continuam",
+              "ancora": "contas continuam"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c5b",
+      "ancora": "Você ficar inválido",
+      "fundo": "branco",
+      "transicao": "corte",
+      "elementos": [
+        {
+          "tipo": "frase",
+          "tamanho": "m",
+          "pos": "alto",
+          "ancora": "Você ficar inválido",
+          "texto": "Inválido, mas as contas\n**não param**"
+        },
+        {
+          "tipo": "icone",
+          "pos": "baixo",
+          "icone": "calendario",
+          "ancora": "pagar as contas",
+          "rotulo": "Todo **mês**"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "ancora": "O seguro de vida existe",
+      "fundo": "preto",
+      "transicao": "cortina",
+      "elementos": [
+        {
+          "tipo": "frase",
+          "tamanho": "m",
+          "pos": "alto",
+          "ancora": "O seguro de vida existe",
+          "sincronizar": true,
+          "texto": "O seguro de vida\n**ajuda** nessas despesas"
+        },
+        {
+          "tipo": "icone",
+          "icone": "escudo",
+          "ancora": "nessas despesas",
+          "pos": "baixo"
+        },
+        {
+          "tipo": "aviso",
+          "ancora": "conforme as coberturas",
+          "texto": "Conforme as coberturas contratadas, sujeito a carências e exclusões."
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "ancora": "Existem coberturas",
+      "fundo": "branco",
+      "transicao": "lateral",
+      "elementos": [
+        {
+          "tipo": "frase",
+          "tamanho": "g",
+          "pos": "alto",
+          "ancora": "Existem coberturas",
+          "texto": "**Coberturas**"
+        },
+        {
+          "tipo": "icones",
+          "itens": [
+            {
+              "icone": "familia",
+              "rotulo": "Morte",
+              "ancora": "morte"
+            },
+            {
+              "icone": "pessoa",
+              "rotulo": "Invalidez",
+              "ancora": "invalidez"
+            },
+            {
+              "icone": "saude",
+              "rotulo": "Doença grave",
+              "ancora": "doenças graves"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "ancora": "Pelo Código Civil",
+      "fundo": "lilas",
+      "transicao": "circulo",
+      "origem": [
+        540,
+        600
+      ],
+      "elementos": [
+        {
+          "tipo": "numero",
+          "pos": "alto",
+          "ancora": "Pelo Código Civil",
+          "topo": "Código Civil",
+          "valor": "Art. 794",
+          "contar": false,
+          "fonte": "Código Civil (Lei nº 10.406/2002), art. 794."
+        },
+        {
+          "tipo": "frase",
+          "tamanho": "m",
+          "pos": "baixo",
+          "ancora": "O capital do seguro",
+          "sincronizar": true,
+          "texto": "Capital do seguro por morte\n**não é herança**"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "ancora": "Quer ver o que",
+      "fundo": "roxo",
+      "transicao": "corte",
+      "elementos": [
+        {
+          "tipo": "frase",
+          "tamanho": "m",
+          "pos": "alto",
+          "ancora": "Quer ver o que",
+          "sincronizar": true,
+          "texto": "O que faz sentido\n**para o seu caso**?",
+          "ate_ancora": "eu mesmo"
+        },
+        {
+          "tipo": "frase",
+          "tamanho": "m",
+          "pos": "alto",
+          "ancora": "uma análise contigo",
+          "texto": "Uma análise\n**com você**"
+        },
+        {
+          "tipo": "cta",
+          "ancora": "Comenta seguro",
+          "texto": "Comenta [[SEGURO]]"
+        }
+      ]
+    }
+  ]
+}

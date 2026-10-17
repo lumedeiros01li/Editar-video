@@ -1,0 +1,1304 @@
+{
+  "audio": "/home/user/Editar-video/reels/2026-10-17-seguro/voz_final.m4a",
+  "fps": 30.0,
+  "duracao": 51.312,
+  "duracao_voz": 50.112,
+  "legenda": {
+    "max_palavras": 4
+  },
+  "musica": {
+    "ativa": true,
+    "bpm": 90,
+    "estilo": "pulso",
+    "volume": -28
+  },
+  "sfx": true,
+  "volume_sfx": 0,
+  "palavras": [
+    {
+      "texto": "Dizem",
+      "ini": 0.0,
+      "fim": 0.32
+    },
+    {
+      "texto": "que",
+      "ini": 0.32,
+      "fim": 0.48
+    },
+    {
+      "texto": "seguro",
+      "ini": 0.48,
+      "fim": 0.8
+    },
+    {
+      "texto": "de",
+      "ini": 0.8,
+      "fim": 0.88
+    },
+    {
+      "texto": "vida",
+      "ini": 0.88,
+      "fim": 1.12
+    },
+    {
+      "texto": "é",
+      "ini": 1.12,
+      "fim": 1.2
+    },
+    {
+      "texto": "caro.",
+      "ini": 1.2,
+      "fim": 1.52
+    },
+    {
+      "texto": "Olha",
+      "ini": 1.52,
+      "fim": 1.76
+    },
+    {
+      "texto": "o",
+      "ini": 1.76,
+      "fim": 1.915
+    },
+    {
+      "texto": "que",
+      "ini": 1.92,
+      "fim": 2.08
+    },
+    {
+      "texto": "custa",
+      "ini": 2.08,
+      "fim": 2.4
+    },
+    {
+      "texto": "caro",
+      "ini": 2.4,
+      "fim": 2.64
+    },
+    {
+      "texto": "de",
+      "ini": 2.64,
+      "fim": 2.8
+    },
+    {
+      "texto": "verdade.",
+      "ini": 2.8,
+      "fim": 3.28
+    },
+    {
+      "texto": "Inventário:",
+      "ini": 3.28,
+      "fim": 4.0
+    },
+    {
+      "texto": "tem",
+      "ini": 4.0,
+      "fim": 4.24
+    },
+    {
+      "texto": "advogado,",
+      "ini": 4.24,
+      "fim": 4.88
+    },
+    {
+      "texto": "cartório,",
+      "ini": 4.88,
+      "fim": 5.6
+    },
+    {
+      "texto": "documentos,",
+      "ini": 5.6,
+      "fim": 6.24
+    },
+    {
+      "texto": "imposto.",
+      "ini": 6.24,
+      "fim": 6.72
+    },
+    {
+      "texto": "O",
+      "ini": 6.72,
+      "fim": 6.875
+    },
+    {
+      "texto": "imposto",
+      "ini": 6.88,
+      "fim": 7.28
+    },
+    {
+      "texto": "sobre",
+      "ini": 7.28,
+      "fim": 7.6
+    },
+    {
+      "texto": "herança",
+      "ini": 7.6,
+      "fim": 8.16
+    },
+    {
+      "texto": "é",
+      "ini": 8.16,
+      "fim": 8.315
+    },
+    {
+      "texto": "estadual",
+      "ini": 8.32,
+      "fim": 8.8
+    },
+    {
+      "texto": "e",
+      "ini": 8.8,
+      "fim": 8.955
+    },
+    {
+      "texto": "pode",
+      "ini": 8.96,
+      "fim": 9.2
+    },
+    {
+      "texto": "chegar",
+      "ini": 9.2,
+      "fim": 9.44
+    },
+    {
+      "texto": "até",
+      "ini": 9.44,
+      "fim": 9.745
+    },
+    {
+      "texto": "8%.",
+      "ini": 9.76,
+      "fim": 10.065
+    },
+    {
+      "texto": "E",
+      "ini": 10.4,
+      "fim": 10.555
+    },
+    {
+      "texto": "a",
+      "ini": 10.56,
+      "fim": 10.715
+    },
+    {
+      "texto": "herança",
+      "ini": 10.72,
+      "fim": 11.28
+    },
+    {
+      "texto": "só",
+      "ini": 11.28,
+      "fim": 11.44
+    },
+    {
+      "texto": "é",
+      "ini": 11.44,
+      "fim": 11.595
+    },
+    {
+      "texto": "dividida",
+      "ini": 11.6,
+      "fim": 12.28
+    },
+    {
+      "texto": "no",
+      "ini": 12.32,
+      "fim": 12.48
+    },
+    {
+      "texto": "fim",
+      "ini": 12.48,
+      "fim": 12.72
+    },
+    {
+      "texto": "do",
+      "ini": 12.72,
+      "fim": 12.8
+    },
+    {
+      "texto": "processo.",
+      "ini": 12.8,
+      "fim": 13.36
+    },
+    {
+      "texto": "Doença",
+      "ini": 13.36,
+      "fim": 13.84
+    },
+    {
+      "texto": "grave,",
+      "ini": 13.84,
+      "fim": 14.32
+    },
+    {
+      "texto": "um",
+      "ini": 14.32,
+      "fim": 14.48
+    },
+    {
+      "texto": "remédio",
+      "ini": 14.48,
+      "fim": 14.96
+    },
+    {
+      "texto": "de",
+      "ini": 14.96,
+      "fim": 15.12
+    },
+    {
+      "texto": "custo",
+      "ini": 15.12,
+      "fim": 15.52
+    },
+    {
+      "texto": "alto,",
+      "ini": 15.52,
+      "fim": 15.92
+    },
+    {
+      "texto": "exames,",
+      "ini": 15.92,
+      "fim": 16.525
+    },
+    {
+      "texto": "tratamentos,",
+      "ini": 16.56,
+      "fim": 17.44
+    },
+    {
+      "texto": "além,",
+      "ini": 17.44,
+      "fim": 17.84
+    },
+    {
+      "texto": "é",
+      "ini": 17.84,
+      "fim": 17.995
+    },
+    {
+      "texto": "claro,",
+      "ini": 18.0,
+      "fim": 18.32
+    },
+    {
+      "texto": "da",
+      "ini": 18.32,
+      "fim": 18.55
+    },
+    {
+      "texto": "renda",
+      "ini": 18.56,
+      "fim": 18.96
+    },
+    {
+      "texto": "poder",
+      "ini": 18.96,
+      "fim": 19.2
+    },
+    {
+      "texto": "cair.",
+      "ini": 19.2,
+      "fim": 19.655
+    },
+    {
+      "texto": "No",
+      "ini": 19.671,
+      "fim": 19.901
+    },
+    {
+      "texto": "período",
+      "ini": 19.911,
+      "fim": 20.231
+    },
+    {
+      "texto": "que",
+      "ini": 20.231,
+      "fim": 20.391
+    },
+    {
+      "texto": "você",
+      "ini": 20.391,
+      "fim": 20.551
+    },
+    {
+      "texto": "está",
+      "ini": 20.551,
+      "fim": 20.791
+    },
+    {
+      "texto": "acamado.",
+      "ini": 20.791,
+      "fim": 21.431
+    },
+    {
+      "texto": "Invalidez,",
+      "ini": 21.431,
+      "fim": 22.151
+    },
+    {
+      "texto": "a",
+      "ini": 22.151,
+      "fim": 22.231
+    },
+    {
+      "texto": "renda",
+      "ini": 22.231,
+      "fim": 22.551
+    },
+    {
+      "texto": "diminui,",
+      "ini": 22.551,
+      "fim": 23.111
+    },
+    {
+      "texto": "mas",
+      "ini": 23.111,
+      "fim": 23.271
+    },
+    {
+      "texto": "as",
+      "ini": 23.271,
+      "fim": 23.431
+    },
+    {
+      "texto": "contas",
+      "ini": 23.431,
+      "fim": 23.911
+    },
+    {
+      "texto": "continuam.",
+      "ini": 23.911,
+      "fim": 24.551
+    },
+    {
+      "texto": "Você",
+      "ini": 24.551,
+      "fim": 24.871
+    },
+    {
+      "texto": "ficar",
+      "ini": 24.871,
+      "fim": 25.191
+    },
+    {
+      "texto": "inválido,",
+      "ini": 25.191,
+      "fim": 25.946
+    },
+    {
+      "texto": "não",
+      "ini": 26.071,
+      "fim": 26.311
+    },
+    {
+      "texto": "isenta",
+      "ini": 26.311,
+      "fim": 26.841
+    },
+    {
+      "texto": "de",
+      "ini": 27.031,
+      "fim": 27.261
+    },
+    {
+      "texto": "você",
+      "ini": 27.271,
+      "fim": 27.431
+    },
+    {
+      "texto": "pagar",
+      "ini": 27.431,
+      "fim": 27.751
+    },
+    {
+      "texto": "as",
+      "ini": 27.751,
+      "fim": 27.831
+    },
+    {
+      "texto": "contas",
+      "ini": 27.831,
+      "fim": 28.231
+    },
+    {
+      "texto": "o",
+      "ini": 28.231,
+      "fim": 28.311
+    },
+    {
+      "texto": "próximo",
+      "ini": 28.311,
+      "fim": 28.551
+    },
+    {
+      "texto": "mês.",
+      "ini": 28.551,
+      "fim": 28.871
+    },
+    {
+      "texto": "O",
+      "ini": 28.871,
+      "fim": 29.026
+    },
+    {
+      "texto": "seguro",
+      "ini": 29.031,
+      "fim": 29.351
+    },
+    {
+      "texto": "de",
+      "ini": 29.351,
+      "fim": 29.431
+    },
+    {
+      "texto": "vida",
+      "ini": 29.431,
+      "fim": 29.751
+    },
+    {
+      "texto": "existe",
+      "ini": 29.751,
+      "fim": 30.151
+    },
+    {
+      "texto": "para",
+      "ini": 30.151,
+      "fim": 30.311
+    },
+    {
+      "texto": "ajudar",
+      "ini": 30.311,
+      "fim": 30.711
+    },
+    {
+      "texto": "nessas",
+      "ini": 30.711,
+      "fim": 31.031
+    },
+    {
+      "texto": "despesas,",
+      "ini": 31.031,
+      "fim": 31.751
+    },
+    {
+      "texto": "conforme",
+      "ini": 31.751,
+      "fim": 32.231
+    },
+    {
+      "texto": "as",
+      "ini": 32.231,
+      "fim": 32.391
+    },
+    {
+      "texto": "coberturas",
+      "ini": 32.391,
+      "fim": 32.951
+    },
+    {
+      "texto": "que",
+      "ini": 32.951,
+      "fim": 33.031
+    },
+    {
+      "texto": "você",
+      "ini": 33.031,
+      "fim": 33.271
+    },
+    {
+      "texto": "contratar.",
+      "ini": 33.271,
+      "fim": 33.911
+    },
+    {
+      "texto": "Existem",
+      "ini": 33.911,
+      "fim": 34.311
+    },
+    {
+      "texto": "coberturas",
+      "ini": 34.311,
+      "fim": 34.871
+    },
+    {
+      "texto": "para",
+      "ini": 34.871,
+      "fim": 35.031
+    },
+    {
+      "texto": "morte,",
+      "ini": 35.031,
+      "fim": 35.431
+    },
+    {
+      "texto": "invalidez",
+      "ini": 35.431,
+      "fim": 35.991
+    },
+    {
+      "texto": "e",
+      "ini": 35.991,
+      "fim": 36.146
+    },
+    {
+      "texto": "doenças",
+      "ini": 36.151,
+      "fim": 36.631
+    },
+    {
+      "texto": "graves.",
+      "ini": 36.631,
+      "fim": 37.191
+    },
+    {
+      "texto": "Cada",
+      "ini": 37.191,
+      "fim": 37.511
+    },
+    {
+      "texto": "uma",
+      "ini": 37.511,
+      "fim": 37.816
+    },
+    {
+      "texto": "com",
+      "ini": 37.831,
+      "fim": 37.991
+    },
+    {
+      "texto": "suas",
+      "ini": 37.991,
+      "fim": 38.231
+    },
+    {
+      "texto": "regras.",
+      "ini": 38.231,
+      "fim": 38.711
+    },
+    {
+      "texto": "Pelo",
+      "ini": 38.711,
+      "fim": 38.951
+    },
+    {
+      "texto": "Código",
+      "ini": 38.951,
+      "fim": 39.351
+    },
+    {
+      "texto": "Civil.",
+      "ini": 39.351,
+      "fim": 39.881
+    },
+    {
+      "texto": "O",
+      "ini": 39.946,
+      "fim": 40.101
+    },
+    {
+      "texto": "capital",
+      "ini": 40.186,
+      "fim": 40.506
+    },
+    {
+      "texto": "do",
+      "ini": 40.506,
+      "fim": 40.666
+    },
+    {
+      "texto": "seguro",
+      "ini": 40.666,
+      "fim": 41.066
+    },
+    {
+      "texto": "por",
+      "ini": 41.066,
+      "fim": 41.226
+    },
+    {
+      "texto": "morte",
+      "ini": 41.226,
+      "fim": 41.626
+    },
+    {
+      "texto": "não",
+      "ini": 41.626,
+      "fim": 41.706
+    },
+    {
+      "texto": "é",
+      "ini": 41.706,
+      "fim": 41.861
+    },
+    {
+      "texto": "considerada",
+      "ini": 41.866,
+      "fim": 42.346
+    },
+    {
+      "texto": "herança.",
+      "ini": 42.346,
+      "fim": 42.906
+    },
+    {
+      "texto": "Quer",
+      "ini": 42.906,
+      "fim": 43.146
+    },
+    {
+      "texto": "ver",
+      "ini": 43.146,
+      "fim": 43.306
+    },
+    {
+      "texto": "o",
+      "ini": 43.306,
+      "fim": 43.386
+    },
+    {
+      "texto": "que",
+      "ini": 43.386,
+      "fim": 43.546
+    },
+    {
+      "texto": "faz",
+      "ini": 43.546,
+      "fim": 43.706
+    },
+    {
+      "texto": "sentido",
+      "ini": 43.706,
+      "fim": 44.026
+    },
+    {
+      "texto": "para",
+      "ini": 44.026,
+      "fim": 44.106
+    },
+    {
+      "texto": "o",
+      "ini": 44.106,
+      "fim": 44.261
+    },
+    {
+      "texto": "seu",
+      "ini": 44.266,
+      "fim": 44.426
+    },
+    {
+      "texto": "caso?",
+      "ini": 44.426,
+      "fim": 44.881
+    },
+    {
+      "texto": "Comenta",
+      "ini": 44.906,
+      "fim": 45.511
+    },
+    {
+      "texto": "seguro",
+      "ini": 45.546,
+      "fim": 46.076
+    },
+    {
+      "texto": "e",
+      "ini": 46.106,
+      "fim": 46.261
+    },
+    {
+      "texto": "eu",
+      "ini": 46.346,
+      "fim": 46.506
+    },
+    {
+      "texto": "mesmo",
+      "ini": 46.506,
+      "fim": 46.826
+    },
+    {
+      "texto": "vou",
+      "ini": 46.826,
+      "fim": 46.986
+    },
+    {
+      "texto": "fazer",
+      "ini": 46.986,
+      "fim": 47.226
+    },
+    {
+      "texto": "uma",
+      "ini": 47.226,
+      "fim": 47.386
+    },
+    {
+      "texto": "análise",
+      "ini": 47.386,
+      "fim": 47.866
+    },
+    {
+      "texto": "contigo",
+      "ini": 47.866,
+      "fim": 48.471
+    },
+    {
+      "texto": "do",
+      "ini": 48.506,
+      "fim": 48.736
+    },
+    {
+      "texto": "que",
+      "ini": 48.746,
+      "fim": 48.906
+    },
+    {
+      "texto": "faz",
+      "ini": 48.906,
+      "fim": 49.211
+    },
+    {
+      "texto": "mais",
+      "ini": 49.226,
+      "fim": 49.386
+    },
+    {
+      "texto": "sentido",
+      "ini": 49.386,
+      "fim": 49.706
+    },
+    {
+      "texto": "para",
+      "ini": 49.706,
+      "fim": 49.866
+    },
+    {
+      "texto": "ti.",
+      "ini": 49.866,
+      "fim": 50.112
+    }
+  ],
+  "cenas": [
+    {
+      "id": "c1",
+      "fundo": "branco",
+      "elementos": [
+        {
+          "tipo": "frase",
+          "inicio": 0.0,
+          "tamanho": "g",
+          "pos": "alto",
+          "texto": "Seguro de vida\né **caro**?",
+          "id": "c1-frase-0",
+          "segura": true,
+          "fim": 3.167
+        },
+        {
+          "tipo": "frase",
+          "tamanho": "m",
+          "pos": "baixo",
+          "ancora": "Olha o que custa",
+          "sincronizar": true,
+          "texto": "Olha o que custa\n**caro** de verdade",
+          "id": "c1-frase-1",
+          "tempos": [
+            1.5,
+            1.7,
+            1.86,
+            2.02,
+            2.34,
+            2.58,
+            2.74
+          ],
+          "segura": true,
+          "inicio": 1.5,
+          "fim": 3.167
+        }
+      ],
+      "inicio": 0.0,
+      "fim": 3.167
+    },
+    {
+      "id": "c2",
+      "ancora": "Inventário: tem",
+      "fundo": "preto",
+      "transicao": "cortina",
+      "elementos": [
+        {
+          "tipo": "frase",
+          "tamanho": "g",
+          "pos": "alto",
+          "ancora": "Inventário",
+          "sincronizar": true,
+          "texto": "**Inventário**",
+          "id": "c2-frase-0",
+          "tempos": [
+            3.22
+          ],
+          "segura": true,
+          "inicio": 3.167,
+          "fim": 6.667
+        },
+        {
+          "tipo": "lista",
+          "pos": "centro",
+          "itens": [
+            {
+              "texto": "Advogado",
+              "ancora": "advogado",
+              "em": 4.167
+            },
+            {
+              "texto": "Cartório",
+              "ancora": "cartório",
+              "em": 4.833
+            },
+            {
+              "texto": "Documentos",
+              "ancora": "documentos",
+              "em": 5.5
+            },
+            {
+              "texto": "Imposto",
+              "ancora": "imposto",
+              "em": 6.167
+            }
+          ],
+          "id": "c2-lista-1",
+          "segura": true,
+          "inicio": 3.333,
+          "fim": 6.667
+        }
+      ],
+      "inicio": 3.167,
+      "fim": 6.667
+    },
+    {
+      "id": "c3",
+      "ancora": "O imposto sobre herança",
+      "fundo": "roxo",
+      "transicao": "circulo",
+      "origem": [
+        540,
+        800
+      ],
+      "elementos": [
+        {
+          "tipo": "frase",
+          "tamanho": "m",
+          "pos": "alto",
+          "ancora": "O imposto sobre herança",
+          "sincronizar": true,
+          "texto": "Imposto sobre herança\né **estadual**",
+          "fim": 9.25,
+          "id": "c3-frase-0",
+          "tempos": [
+            6.82,
+            7.22,
+            7.54,
+            8.1,
+            8.26
+          ],
+          "inicio": 6.667
+        },
+        {
+          "tipo": "numero",
+          "pos": "alto",
+          "ancora": "até 8%",
+          "topo": "Teto nacional do ITCMD",
+          "valor": "até 8%",
+          "fonte": "Resolução do Senado nº 9/1992. A alíquota varia por estado.",
+          "id": "c3-numero-1",
+          "segura": true,
+          "inicio": 9.333,
+          "fim": 13.333
+        },
+        {
+          "tipo": "frase",
+          "tamanho": "p",
+          "ancora": "E a herança só",
+          "sincronizar": true,
+          "texto": "A herança só é dividida\nno **fim do processo**",
+          "y": 880,
+          "id": "c3-frase-2",
+          "tempos": [
+            10.5,
+            10.66,
+            11.22,
+            11.38,
+            11.54,
+            12.26,
+            12.42,
+            12.66,
+            12.74
+          ],
+          "segura": true,
+          "inicio": 10.333,
+          "fim": 13.333
+        }
+      ],
+      "inicio": 6.667,
+      "fim": 13.333
+    },
+    {
+      "id": "c4",
+      "ancora": "Doença grave",
+      "fundo": "branco",
+      "transicao": "lateral",
+      "elementos": [
+        {
+          "tipo": "frase",
+          "tamanho": "g",
+          "pos": "alto",
+          "ancora": "Doença grave",
+          "sincronizar": true,
+          "texto": "**Doença grave**",
+          "id": "c4-frase-0",
+          "tempos": [
+            13.333,
+            13.78
+          ],
+          "segura": true,
+          "inicio": 13.333,
+          "fim": 17.333
+        },
+        {
+          "tipo": "lista",
+          "pos": "centro",
+          "itens": [
+            {
+              "texto": "Remédio de alto custo",
+              "ancora": "remédio de custo",
+              "em": 14.5
+            },
+            {
+              "texto": "Exames",
+              "ancora": "exames",
+              "em": 15.833
+            },
+            {
+              "texto": "Tratamento",
+              "ancora": "tratamentos",
+              "em": 16.5
+            }
+          ],
+          "id": "c4-lista-1",
+          "segura": true,
+          "inicio": 13.5,
+          "fim": 17.333
+        }
+      ],
+      "inicio": 13.333,
+      "fim": 17.333
+    },
+    {
+      "id": "c4b",
+      "ancora": "além, é claro",
+      "fundo": "preto",
+      "transicao": "corte",
+      "elementos": [
+        {
+          "tipo": "frase",
+          "tamanho": "m",
+          "pos": "alto",
+          "ancora": "além, é claro",
+          "texto": "E a **renda**\npode cair",
+          "id": "c4b-frase-0",
+          "segura": true,
+          "inicio": 17.333,
+          "fim": 21.333
+        },
+        {
+          "tipo": "personagem",
+          "pos": "baixo",
+          "humor": "preocupado",
+          "balao": "Sem poder trabalhar",
+          "balao_ancora": "No período",
+          "id": "c4b-personagem-1",
+          "balao_em": 19.667,
+          "segura": true,
+          "inicio": 17.5,
+          "fim": 21.333
+        }
+      ],
+      "inicio": 17.333,
+      "fim": 21.333
+    },
+    {
+      "id": "c5",
+      "ancora": "Invalidez, a renda",
+      "fundo": "lilas",
+      "transicao": "empurra",
+      "elementos": [
+        {
+          "tipo": "frase",
+          "tamanho": "g",
+          "pos": "alto",
+          "ancora": "Invalidez",
+          "sincronizar": true,
+          "texto": "**Invalidez**",
+          "id": "c5-frase-0",
+          "tempos": [
+            21.371
+          ],
+          "segura": true,
+          "inicio": 21.333,
+          "fim": 24.5
+        },
+        {
+          "tipo": "icones",
+          "pos": "centro",
+          "itens": [
+            {
+              "icone": "grafico_desce",
+              "rotulo": "Renda diminui",
+              "ancora": "renda diminui",
+              "em": 22.167
+            },
+            {
+              "icone": "casa",
+              "rotulo": "Contas continuam",
+              "ancora": "contas continuam",
+              "em": 23.333
+            }
+          ],
+          "id": "c5-icones-1",
+          "segura": true,
+          "inicio": 21.5,
+          "fim": 24.5
+        }
+      ],
+      "inicio": 21.333,
+      "fim": 24.5
+    },
+    {
+      "id": "c5b",
+      "ancora": "Você ficar inválido",
+      "fundo": "branco",
+      "transicao": "corte",
+      "elementos": [
+        {
+          "tipo": "frase",
+          "tamanho": "m",
+          "pos": "alto",
+          "ancora": "Você ficar inválido",
+          "texto": "Inválido, mas as contas\n**não param**",
+          "id": "c5b-frase-0",
+          "segura": true,
+          "inicio": 24.5,
+          "fim": 28.833
+        },
+        {
+          "tipo": "icone",
+          "pos": "baixo",
+          "icone": "calendario",
+          "ancora": "pagar as contas",
+          "rotulo": "Todo **mês**",
+          "id": "c5b-icone-1",
+          "segura": true,
+          "inicio": 27.333,
+          "fim": 28.833
+        }
+      ],
+      "inicio": 24.5,
+      "fim": 28.833
+    },
+    {
+      "id": "c6",
+      "ancora": "O seguro de vida existe",
+      "fundo": "preto",
+      "transicao": "cortina",
+      "elementos": [
+        {
+          "tipo": "frase",
+          "tamanho": "m",
+          "pos": "alto",
+          "ancora": "O seguro de vida existe",
+          "sincronizar": true,
+          "texto": "O seguro de vida\n**ajuda** nessas despesas",
+          "id": "c6-frase-0",
+          "tempos": [
+            28.833,
+            28.971,
+            29.291,
+            29.371,
+            29.491,
+            30.651,
+            30.971
+          ],
+          "segura": true,
+          "inicio": 28.833,
+          "fim": 33.833
+        },
+        {
+          "tipo": "icone",
+          "icone": "escudo",
+          "ancora": "nessas despesas",
+          "pos": "baixo",
+          "id": "c6-icone-1",
+          "segura": true,
+          "inicio": 30.667,
+          "fim": 33.833
+        },
+        {
+          "tipo": "aviso",
+          "ancora": "conforme as coberturas",
+          "texto": "Conforme as coberturas contratadas, sujeito a carências e exclusões.",
+          "id": "c6-aviso-2",
+          "segura": true,
+          "inicio": 31.667,
+          "fim": 33.833
+        }
+      ],
+      "inicio": 28.833,
+      "fim": 33.833
+    },
+    {
+      "id": "c7",
+      "ancora": "Existem coberturas",
+      "fundo": "branco",
+      "transicao": "lateral",
+      "elementos": [
+        {
+          "tipo": "frase",
+          "tamanho": "g",
+          "pos": "alto",
+          "ancora": "Existem coberturas",
+          "texto": "**Coberturas**",
+          "id": "c7-frase-0",
+          "segura": true,
+          "inicio": 33.833,
+          "fim": 38.667
+        },
+        {
+          "tipo": "icones",
+          "itens": [
+            {
+              "icone": "familia",
+              "rotulo": "Morte",
+              "ancora": "morte",
+              "em": 35.0
+            },
+            {
+              "icone": "pessoa",
+              "rotulo": "Invalidez",
+              "ancora": "invalidez",
+              "em": 35.333
+            },
+            {
+              "icone": "saude",
+              "rotulo": "Doença grave",
+              "ancora": "doenças graves",
+              "em": 36.167
+            }
+          ],
+          "id": "c7-icones-1",
+          "segura": true,
+          "inicio": 34.0,
+          "fim": 38.667
+        }
+      ],
+      "inicio": 33.833,
+      "fim": 38.667
+    },
+    {
+      "id": "c8",
+      "ancora": "Pelo Código Civil",
+      "fundo": "lilas",
+      "transicao": "circulo",
+      "origem": [
+        540,
+        600
+      ],
+      "elementos": [
+        {
+          "tipo": "numero",
+          "pos": "alto",
+          "ancora": "Pelo Código Civil",
+          "topo": "Código Civil",
+          "valor": "Art. 794",
+          "contar": false,
+          "fonte": "Código Civil (Lei nº 10.406/2002), art. 794.",
+          "id": "c8-numero-0",
+          "segura": true,
+          "inicio": 38.667,
+          "fim": 42.833
+        },
+        {
+          "tipo": "frase",
+          "tamanho": "m",
+          "pos": "baixo",
+          "ancora": "O capital do seguro",
+          "sincronizar": true,
+          "texto": "Capital do seguro por morte\n**não é herança**",
+          "id": "c8-frase-1",
+          "tempos": [
+            40.126,
+            40.446,
+            40.606,
+            41.006,
+            41.166,
+            41.566,
+            41.646,
+            42.286
+          ],
+          "segura": true,
+          "inicio": 39.833,
+          "fim": 42.833
+        }
+      ],
+      "inicio": 38.667,
+      "fim": 42.833
+    },
+    {
+      "id": "c9",
+      "ancora": "Quer ver o que",
+      "fundo": "roxo",
+      "transicao": "corte",
+      "elementos": [
+        {
+          "tipo": "frase",
+          "tamanho": "m",
+          "pos": "alto",
+          "ancora": "Quer ver o que",
+          "sincronizar": true,
+          "texto": "O que faz sentido\n**para o seu caso**?",
+          "ate_ancora": "eu mesmo",
+          "id": "c9-frase-0",
+          "tempos": [
+            43.246,
+            43.326,
+            43.486,
+            43.646,
+            43.966,
+            44.046,
+            44.206,
+            44.366
+          ],
+          "inicio": 42.833,
+          "fim": 46.856
+        },
+        {
+          "tipo": "frase",
+          "tamanho": "m",
+          "pos": "alto",
+          "ancora": "uma análise contigo",
+          "texto": "Uma análise\n**com você**",
+          "id": "c9-frase-1",
+          "segura": true,
+          "inicio": 47.167,
+          "fim": 51.312
+        },
+        {
+          "tipo": "cta",
+          "ancora": "Comenta seguro",
+          "texto": "Comenta [[SEGURO]]",
+          "id": "c9-cta-2",
+          "segura": true,
+          "inicio": 44.833,
+          "fim": 51.312
+        }
+      ],
+      "inicio": 42.833,
+      "fim": 51.312
+    }
+  ]
+}
