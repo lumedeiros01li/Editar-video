@@ -1,0 +1,251 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"/r3d/node_modules/three/build/three.module.js","three/addons/":"/r3d/node_modules/three/examples/jsm/"}}</script>
+</head><body>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+const W = 1280, H = 720, FPS = 30;
+const DATA = await (await fetch('/scene_data.json')).json();
+const SEGS = DATA.segments.map(s => s.t);
+const TRANS = DATA.transitions;            // times of 3D transitions
+const HEAD = DATA.head;                   // per frame [nx, ny] (0..1 image coords)
+const DUR = DATA.duration;
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H); renderer.setPixelRatio(1);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+// ---------- backdrop (seen when the stage swings) ----------
+const bgCanvas = document.createElement('canvas'); bgCanvas.width = 4; bgCanvas.height = 256;
+{ const g = bgCanvas.getContext('2d'); const gr = g.createLinearGradient(0, 0, 0, 256);
+  gr.addColorStop(0, '#0b0820'); gr.addColorStop(0.55, '#1d0f3d'); gr.addColorStop(1, '#3a1450');
+  g.fillStyle = gr; g.fillRect(0, 0, 4, 256); }
+const bgTex = new THREE.CanvasTexture(bgCanvas); bgTex.colorSpace = THREE.SRGBColorSpace;
+scene.background = bgTex;
+scene.fog = new THREE.Fog(0x140a2e, 6, 22);
+
+const grid = new THREE.GridHelper(60, 60, 0xb44dff, 0x3d2a8a);
+grid.position.y = -1.6; grid.material.transparent = true; grid.material.opacity = 0.55;
+scene.add(grid);
+
+// star dust far away
+{ const n = 900, pos = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) { pos[i*3] = (Math.random()-0.5)*40; pos[i*3+1] = Math.random()*14-1; pos[i*3+2] = -4 - Math.random()*16; }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  scene.add(new THREE.Points(g, new THREE.PointsMaterial({ color: 0xd9c2ff, size: 0.05, transparent: true, opacity: 0.8 }))); }
+
+// ---------- lights ----------
+const key = new THREE.DirectionalLight(0xfff1e0, 2.2); key.position.set(-3, 4, 5);
+key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.radius = 6; key.shadow.blurSamples = 16;
+Object.assign(key.shadow.camera, { left: -4, right: 4, top: 3, bottom: -3, near: 0.5, far: 20 });
+scene.add(key);
+const rim = new THREE.PointLight(0x6a5cff, 18, 12); rim.position.set(3, 1.5, 2.5); scene.add(rim);
+const rim2 = new THREE.PointLight(0xff4fb0, 10, 10); rim2.position.set(-2.5, -1, 2.0); scene.add(rim2);
+scene.add(new THREE.AmbientLight(0xffffff, 0.25));
+
+// ---------- stage: video plane with thickness ----------
+const PH = 2, PW = PH * 16 / 9, OVER = 1.06;
+const stage = new THREE.Group(); scene.add(stage);
+const vidTex = new THREE.Texture(); vidTex.colorSpace = THREE.SRGBColorSpace;
+const maskTex = new THREE.Texture();
+const planeGeo = new THREE.PlaneGeometry(PW * OVER, PH * OVER);
+
+const bgPlane = new THREE.Mesh(planeGeo, new THREE.MeshBasicMaterial({ map: vidTex, toneMapped: false }));
+bgPlane.renderOrder = 0; stage.add(bgPlane);
+
+const body = new THREE.Mesh(new RoundedBoxGeometry(PW * OVER + 0.04, PH * OVER + 0.04, 0.12, 4, 0.03),
+  new THREE.MeshPhysicalMaterial({ color: 0x15102a, metalness: 0.6, roughness: 0.25, clearcoat: 1,
+    emissive: 0x7a3cff, emissiveIntensity: 0.35 }));
+body.position.z = -0.065; stage.add(body);
+
+const shadowPlane = new THREE.Mesh(planeGeo, new THREE.ShadowMaterial({ opacity: 0.32, transparent: true, depthWrite: false }));
+shadowPlane.position.z = 0.002; shadowPlane.receiveShadow = true; shadowPlane.renderOrder = 1; stage.add(shadowPlane);
+
+// person layer: same video, alpha = mask, drawn over "behind" objects
+const personMat = new THREE.ShaderMaterial({
+  uniforms: { map: { value: vidTex }, mask: { value: maskTex } },
+  vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+  fragmentShader: `uniform sampler2D map; uniform sampler2D mask; varying vec2 vUv;
+    void main(){ vec4 c=texture2D(map,vUv); float a=texture2D(mask,vUv).r; gl_FragColor=vec4(c.rgb,a);
+    #include <colorspace_fragment>
+    }`,
+  transparent: true, depthTest: false, depthWrite: false
+});
+const personPlane = new THREE.Mesh(planeGeo, personMat); personPlane.position.z = 0.003; personPlane.renderOrder = 10;
+stage.add(personPlane);
+
+// ---------- 3D elements ----------
+const behind = [], front = [], orbiters = [];
+function iri(color, extra = {}) {
+  return new THREE.MeshPhysicalMaterial(Object.assign({ color, metalness: 0.85, roughness: 0.12,
+    iridescence: 1, iridescenceIOR: 1.6, iridescenceThicknessRange: [200, 900], clearcoat: 1, clearcoatRoughness: 0.05 }, extra));
+}
+function add(mesh, list, base) {
+  mesh.castShadow = true; mesh.userData = Object.assign({ base: mesh.position.clone(), s: mesh.scale.x, delay: 0 }, base);
+  list.push(mesh); stage.add(mesh); return mesh;
+}
+// right side of the wall
+const torus = add(new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.085, 48, 128), iri(0x8f7bff)), behind, { delay: 0.10, spin: [0.4, 0.7, 0] });
+torus.position.set(1.02, 0.42, 0.45);
+const knot = add(new THREE.Mesh(new THREE.TorusKnotGeometry(0.15, 0.05, 220, 32), iri(0xffb84d, { metalness: 1, roughness: 0.18 })), behind, { delay: 0.22, spin: [0.3, 0.9, 0.2] });
+knot.position.set(1.08, -0.38, 0.4);
+const ico = add(new THREE.Mesh(new THREE.IcosahedronGeometry(0.13, 0), new THREE.MeshPhysicalMaterial({ color: 0xff5fc8, metalness: 0.2,
+  roughness: 0.05, transmission: 0.9, thickness: 0.6, ior: 1.5, clearcoat: 1, flatShading: true })), behind, { delay: 0.34, spin: [0.6, 0.4, 0.3] });
+ico.position.set(0.78, 0.86, 0.3);
+// left upper corner
+const cube = add(new THREE.Mesh(new RoundedBoxGeometry(0.16, 0.16, 0.16, 5, 0.04), iri(0x4de1ff)), behind, { delay: 0.28, spin: [0.5, 0.6, 0.1] });
+cube.position.set(1.26, 0.02, 0.5);
+const ring = add(new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.03, 24, 96), iri(0xffffff, { metalness: 1, roughness: 0.05 })), behind, { delay: 0.4, spin: [1.1, 0.3, 0] });
+ring.position.set(-1.42, 0.55, 0.45);
+
+// foreground blurred-ish depth objects (in front of person)
+const fs1 = add(new THREE.Mesh(new THREE.SphereGeometry(0.11, 48, 32), iri(0xffd36e, { metalness: 1 })), front, { delay: 0.5, spin: [0, 0, 0] });
+fs1.position.set(1.15, -0.8, 1.1);
+const fs2 = add(new THREE.Mesh(new THREE.OctahedronGeometry(0.09, 0), iri(0x9d7bff, { flatShading: true })), front, { delay: 0.6, spin: [0.9, 1.2, 0] });
+fs2.position.set(-1.25, -0.45, 1.0);
+
+for (const m of behind.concat(front)) m.userData.base = m.position.clone();
+// orbiters around the head (pass behind and in front of the person)
+const orbMats = [iri(0xffcf5a, { metalness: 1, roughness: 0.1 }), iri(0x7fe8ff), iri(0xff7ad9)];
+for (let i = 0; i < 3; i++) {
+  const m = new THREE.Mesh(new THREE.SphereGeometry(0.038 + i * 0.006, 32, 24), orbMats[i]);
+  m.castShadow = true; m.userData = { phase: i * 2.1, r: 0.88 + i * 0.08, speed: 1.0 - i * 0.15, tilt: 0.45 + i * 0.1, delay: 0.7 + i * 0.1 };
+  m.material.transparent = true; orbiters.push(m); stage.add(m);
+}
+
+// floating bokeh particles in front
+const bokTexC = document.createElement('canvas'); bokTexC.width = bokTexC.height = 64;
+{ const g = bokTexC.getContext('2d'); const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.35, 'rgba(255,255,255,0.55)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, 64, 64); }
+const bokTex = new THREE.CanvasTexture(bokTexC);
+const bokeh = [];
+const bokColors = [0xffc6f0, 0xbfa8ff, 0x9fe9ff, 0xffe2a8];
+for (let i = 0; i < 16; i++) {
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: bokTex, color: bokColors[i % 4], transparent: true, opacity: 0.0,
+    depthWrite: false, blending: THREE.AdditiveBlending }));
+  const s = 0.04 + Math.random() * 0.12; sp.scale.set(s, s, 1);
+  sp.userData = { x: (Math.random() - 0.5) * 3.8, y: (Math.random() - 0.5) * 2.2, z: 0.3 + Math.random() * 1.6,
+    sp: 0.05 + Math.random() * 0.12, ph: Math.random() * 6.28, op: 0.18 + Math.random() * 0.35 };
+  sp.renderOrder = 20; bokeh.push(sp); stage.add(sp);
+}
+
+// ---------- camera ----------
+const FOV = 35;
+const camera = new THREE.PerspectiveCamera(FOV, W / H, 0.05, 100);
+const DIST = (PH / 2) / Math.tan(THREE.MathUtils.degToRad(FOV / 2));
+
+// ---------- helpers ----------
+const clamp01 = x => Math.max(0, Math.min(1, x));
+const easeOutCubic = x => 1 - Math.pow(1 - x, 3);
+const easeInOut = x => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const easeOutBack = x => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const i3 = u => u.phase / 2.1;
+function segIndex(t) { let k = 0; for (let i = 0; i < SEGS.length; i++) if (t >= SEGS[i] - 1e-6) k = i; return k; }
+const ZOOMS = [1.0, 1.14, 1.0, 1.22, 1.06, 1.16];
+function headWorld(f) {
+  const h = HEAD[Math.min(HEAD.length - 1, f)];
+  return new THREE.Vector2((h[0] - 0.5) * PW * OVER, (0.5 - h[1]) * PH * OVER);
+}
+
+// ---------- per-frame state ----------
+function update(f) {
+  const t = f / FPS;
+  const si = segIndex(t);
+  const hw = headWorld(f);
+
+  // punch-in zoom per segment (jump-cut style) aimed at the face
+  const z = ZOOMS[si % ZOOMS.length];
+  const aim = new THREE.Vector2(hw.x * (1 - 1 / z) * 0.9, (hw.y - 0.15) * (1 - 1 / z) * 0.9);
+  const drift = new THREE.Vector3(Math.sin(t * 0.37) * 0.05, Math.sin(t * 0.29 + 1) * 0.03, 0);
+  camera.position.set(aim.x + drift.x * 2.2, aim.y + drift.y * 2.2, DIST / z);
+  camera.lookAt(aim.x, aim.y, 0);
+
+  // stage transforms: intro / transitions / outro
+  let ry = 0, rx = 0, pz = 0, px = 0, sc = 1;
+  // intro: fly in from depth with a twist
+  const it = clamp01(t / 0.9);
+  if (it < 1) { const e = easeOutCubic(it); pz = -7 * (1 - e); ry = -0.9 * (1 - e); rx = 0.25 * (1 - e); }
+  // transitions: whip out (last 0.16s of previous) and swing in (first 0.4s of next)
+  TRANS.forEach((T, k) => {
+    const dir = k % 2 === 0 ? 1 : -1;
+    const type = k % 3;
+    const dOut = T - t, dIn = t - T;
+    if (dOut > 0 && dOut < 0.16) {
+      const e = 1 - dOut / 0.16; const q = e * e;
+      if (type === 0) { ry += dir * 0.7 * q; px += dir * 0.6 * q; }
+      else if (type === 1) { rx += 0.6 * q; pz += -1.2 * q; }
+      else { pz += 1.4 * q; ry += dir * 0.25 * q; }
+    }
+    if (dIn >= 0 && dIn < 0.42) {
+      const e = 1 - easeOutCubic(dIn / 0.42);
+      if (type === 0) { ry += -dir * 0.75 * e; px += -dir * 0.7 * e; }
+      else if (type === 1) { rx += -0.6 * e; pz += -1.5 * e; }
+      else { pz += -2.4 * e; ry += -dir * 0.35 * e; }
+    }
+  });
+  // outro: pull back and tilt
+  const ot = clamp01((t - (DUR - 0.9)) / 0.9);
+  if (ot > 0) { const e = easeInOut(ot); pz += -1.6 * e; ry += 0.35 * e; rx += -0.12 * e; }
+  stage.position.set(px, 0, pz); stage.rotation.set(rx, ry, 0); stage.scale.setScalar(sc);
+
+  // subtle reactive bump at every cut (objects pulse)
+  const sinceCut = t - SEGS[si];
+  const bump = si > 0 ? Math.exp(-sinceCut * 9) * 0.18 : 0;
+
+  for (const m of behind.concat(front)) {
+    const u = m.userData; const a = clamp01((t - 0.35 - u.delay) / 0.6);
+    const s = (a <= 0 ? 0.0001 : easeOutBack(a)) * (1 + bump);
+    m.scale.setScalar(Math.max(0.0001, s));
+    m.position.set(u.base.x + Math.sin(t * 0.8 + u.base.x * 3) * 0.04, u.base.y + Math.sin(t * 1.1 + u.base.y * 4) * 0.05, u.base.z);
+    m.rotation.set(t * u.spin[0], t * u.spin[1], t * u.spin[2]);
+  }
+  for (const m of front) { m.renderOrder = 15; m.material.transparent = true; }
+  for (const m of behind) m.renderOrder = 5;
+
+  // orbiters circle the head; behind the person when z < 0.25 (wall side)
+  for (const m of orbiters) {
+    const u = m.userData; const a = clamp01((t - 0.35 - u.delay) / 0.5);
+    const ang = t * u.speed * 1.6 + u.phase;
+    const lx = Math.cos(ang) * u.r, lz = Math.sin(ang) * u.r * 0.9;
+    const ly = -Math.sin(ang) * (0.7 + i3(u) * 0.06);
+    m.position.set(hw.x + lx, hw.y - 0.45 + ly, 0.3 + lz);
+    m.scale.setScalar(Math.max(0.0001, easeOutBack(a)));
+    const isFront = lz > 0;
+    m.renderOrder = isFront ? 15 : 5;
+  }
+
+  for (const sp of bokeh) {
+    const u = sp.userData;
+    sp.position.set(u.x + Math.sin(t * u.sp * 3 + u.ph) * 0.15, ((u.y + t * u.sp + 1.1) % 2.2) - 1.1, u.z);
+    sp.material.opacity = u.op * clamp01((t - 0.5) / 0.8) * (0.6 + 0.4 * Math.sin(t * 2 + u.ph));
+  }
+
+  rim.intensity = 18 + Math.sin(t * 1.3) * 5;
+  // final fade
+}
+
+function loadImg(url) { return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; }); }
+
+window.renderFrame = async (f) => {
+  const n = String(f + 1).padStart(5, '0');
+  const [img, msk] = await Promise.all([loadImg(`/frames_in/${n}.jpg`), loadImg(`/masks/${n}.png`)]);
+  vidTex.image = img; vidTex.needsUpdate = true;
+  maskTex.image = msk; maskTex.needsUpdate = true;
+  update(f);
+  renderer.render(scene, camera);
+  return renderer.domElement.toDataURL('image/jpeg', 0.95);
+};
+window.READY = true;
+</script></body></html>
