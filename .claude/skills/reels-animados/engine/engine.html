@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>motor reels-animados</title>
+<style>
+  @font-face { font-family: 'Barlow'; font-weight: 300; src: url('fontes/barlow-latin-300-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Barlow'; font-weight: 600; src: url('fontes/barlow-latin-600-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Barlow'; font-weight: 700; src: url('fontes/barlow-latin-700-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'JetBrains Mono'; font-weight: 500; src: url('fontes/jetbrains-mono-latin-500-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'JetBrains Mono'; font-weight: 700; src: url('fontes/jetbrains-mono-latin-700-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Archivo Black'; font-weight: 400; src: url('fontes/archivo-black-latin-400-normal.woff2') format('woff2'); }
+
+  /* paleta única dos dois estilos */
+  :root { --roxo-profundo: #170A2E; --roxo: #9966FF; --limao: #EBFF70; --preto: #000000; --branco: #FFFFFF;
+          --cinza: #EDEDED; --mono: 'JetBrains Mono', monospace; }
+  /* Blueprint: Barlow light no título, semibold no destaque. JetBrains Mono na interface */
+  body.blueprint { --titulo: 'Barlow', sans-serif; --pt: 300; --ui: 'JetBrains Mono', monospace; --caixa: none; }
+  /* Brutalista: Archivo Black (sempre caixa alta) no título. JetBrains Mono na interface */
+  body.brutalista { --titulo: 'Archivo Black', sans-serif; --pt: 400; --ui: 'JetBrains Mono', monospace; --caixa: uppercase; }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+  #palco { position: absolute; inset: 0; overflow: hidden; }
+  #tela { position: absolute; inset: 0; }
+
+  /* papel quadriculado do Blueprint (camada global, as linhas se desenham no começo) */
+  #papel { position: absolute; inset: 0; background: var(--roxo-profundo); display: none; }
+  body.blueprint #papel { display: block; }
+  #papel svg { position: absolute; inset: 0; }
+  #papel .mn { stroke: #9966FF; stroke-opacity: .11; stroke-width: 1.5; }
+  #papel .mj { stroke: #9966FF; stroke-opacity: .42; stroke-width: 2; }
+  #regua { position: absolute; left: 0; right: 0; height: 4px; background: var(--roxo); display: none; z-index: 4; }
+
+  /* temas de cena */
+  .cena { position: absolute; inset: 0; overflow: hidden; display: none; background: var(--fundo); color: var(--tinta); }
+  .t-papel { --base: #170A2E; --fundo: transparent; --tinta: #FFFFFF; --sec: rgba(255,255,255,.72); --destaque: #EBFF70;
+             --linha: #9966FF; --superficie: rgba(153,102,255,.16); --sombra: transparent; --corpo: #9966FF; }
+  /* --marca: bloco atrás da palavra-chave (roxo, ou preto quando o fundo já é roxo) */
+  .t-cinza { --base: #F2F2F2; --fundo: #F2F2F2; --tinta: #000000; --sec: rgba(0,0,0,.68); --destaque: #EBFF70;
+             --linha: #9966FF; --superficie: #FFFFFF; --sombra: #9966FF; --corpo: #EBFF70; --marca: #9966FF; }
+  .t-preto { --base: #000000; --fundo: #000000; --tinta: #FFFFFF; --sec: rgba(255,255,255,.72); --destaque: #EBFF70;
+             --linha: #9966FF; --superficie: #1A1A1A; --sombra: #9966FF; --corpo: #EBFF70; --marca: #9966FF; }
+  .t-roxo  { --base: #9966FF; --fundo: #9966FF; --tinta: #000000; --sec: rgba(0,0,0,.72); --destaque: #EBFF70;
+             --linha: #000000; --superficie: #FFFFFF; --sombra: #000000; --corpo: #EBFF70; --marca: #000000; }
+
+  .conteudo { position: absolute; inset: 0; transform-origin: 540px 800px; }
+  .el { position: absolute; left: 90px; right: 90px; display: none; }
+
+  /* cartão brutalista: borda preta de 6 px e sombra dura, sem canto arredondado */
+  .cartao-b { background: #FFFFFF; border: 6px solid #000; box-shadow: 14px 14px 0 var(--sombra); padding: 40px 44px 44px;
+              --tinta: #000000; --sec: rgba(0,0,0,.68); --superficie: #EDEDED; --linha: #9966FF; --base: #FFFFFF; color: #000; }
+
+  /* destaque **palavra**: Blueprint = peso semibold sobre o light, Brutalista = bloco roxo que varre por trás, texto branco */
+  b { font-weight: inherit; color: inherit; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  body.blueprint b { font-weight: 600; color: #F1EBFF; }
+  body.brutalista b { background: linear-gradient(var(--marca), var(--marca)) no-repeat 0 0 / var(--v, 0%) 100%; padding: 0 .08em; }
+
+  /* etiqueta colada ao elemento: "// texto" no Blueprint, "[ TEXTO ]" no Brutalista */
+  .etiqueta { display: inline-block; font: 500 40px/1 var(--mono); letter-spacing: .02em; margin-bottom: 24px; white-space: nowrap; text-transform: none; }
+  body.blueprint .etiqueta { color: #9966FF; }
+  body.brutalista .etiqueta { color: var(--tinta); }
+
+  /* traço de caneta (Blueprint) */
+  .caneta { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; visibility: hidden; }
+  .caneta path { fill: none; stroke: #EBFF70; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* frase cinética */
+  .frase { font-family: var(--titulo); font-weight: var(--pt); text-transform: var(--caixa); }
+  .frase .w { display: inline-block; vertical-align: top; padding-bottom: .08em; margin-right: .24em; clip-path: inset(-40% -30% 0 -30%); }
+  .frase .w > span { display: inline-block; }
+  body.blueprint .frase.g { font-size: 124px; line-height: 1.0; letter-spacing: -1px; }
+  body.blueprint .frase.m { font-size: 96px; line-height: 1.04; }
+  body.blueprint .frase.p { font-size: 70px; line-height: 1.1; }
+  body.brutalista .frase.g { font-size: 106px; line-height: 1.05; }
+  body.brutalista .frase.m { font-size: 84px; line-height: 1.07; }
+  body.brutalista .frase.p { font-size: 64px; line-height: 1.1; }
+  body.brutalista .frase .w { margin-right: .2em; }
+  .frase.centro-x { text-align: center; }
+  .sub { font: 700 48px/1.2 var(--ui); color: var(--sec); margin-top: 26px; text-transform: none; }
+
+  /* número */
+  .numero.centro-x { text-align: center; }
+  .numero .topo { font: 700 48px/1.15 var(--ui); color: var(--sec); margin-bottom: 14px; }
+  .numero .valor { display: inline-block; position: relative; font-family: var(--titulo); font-weight: var(--pt); font-size: 220px;
+                   line-height: .95; white-space: nowrap; letter-spacing: -3px; }
+  body.brutalista .numero .valor { font-size: 168px; letter-spacing: -2px; }
+  /* resposta brutalista: caixa limão com borda preta e sombra roxa */
+  body.brutalista .numero.cartao-b { background: #EBFF70; }
+  body.brutalista .numero .topo { font: 500 40px/1.1 var(--mono); color: #000; text-transform: uppercase; }
+  .numero .rotulo { font: 700 56px/1.12 var(--ui); margin-top: 20px; }
+  .fonte { font: 500 30px/1.25 var(--ui); color: var(--sec); margin-top: 24px; }
+
+  /* conta: quadro de equação em JetBrains Mono, rótulo à esquerda e valor à direita */
+  .conta .linhas { font: 500 52px/1.5 var(--mono); }
+  .conta .ln { white-space: pre; }
+  .conta .ln .t { display: inline-block; position: relative; }
+  .conta .ln.duas .t { display: flex; justify-content: space-between; gap: 24px; width: 100%; }
+  .conta .ln .v { position: relative; }
+  .conta .dim { color: var(--sec); }
+  body.blueprint .conta .linhas { border: 2px solid rgba(153,102,255,.75); padding: 30px 40px 34px; background: rgba(23,10,46,.55); }
+  body.blueprint .conta .regra { border-top: 3px dashed rgba(153,102,255,.7); margin: 14px 0 10px; transform-origin: 0 50%; }
+  body.blueprint .conta .ln.res { color: #EBFF70; font-weight: 700; font-size: 58px; }
+  body.brutalista .conta .regra { height: 8px; background: var(--tinta); margin: 20px 0 22px; transform-origin: 0 50%; }
+  body.brutalista .conta .ln.res .t { display: block; background: #EBFF70; color: #000; border: 6px solid #000;
+                   box-shadow: 14px 14px 0 var(--sombra); padding: 22px 30px 26px; }
+  body.brutalista .conta .ln.res .r { display: block; font: 500 38px/1.2 var(--mono); text-transform: uppercase; }
+  body.brutalista .conta .ln.res .v { display: block; font: 400 104px/1.05 'Archivo Black', sans-serif; letter-spacing: -1px; }
+
+  /* ícones */
+  .ico svg { display: block; overflow: visible; }
+  .ico .tr { fill: none; stroke: var(--tinta); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+  .ico .tr.d { stroke: var(--destaque); }
+  body.brutalista .ico .tr { stroke: #000; stroke-width: 3.2; }
+  body.brutalista .ico .tr.d { stroke: #9966FF; }
+  .disco { display: grid; place-items: center; }
+  body.blueprint .disco { border-radius: 50%; border: 4px solid var(--linha); }
+  body.brutalista .disco { background: #FFF; border: 6px solid #000; box-shadow: 14px 14px 0 var(--sombra); }
+  body.brutalista .ico .tr.d { stroke: #9966FF; }
+  .icone { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .icone .disco { width: 400px; height: 400px; }
+  .icone .rot { font-family: var(--titulo); font-weight: var(--pt); text-transform: var(--caixa); font-size: 70px; line-height: 1.08;
+                margin-top: 48px; max-width: 900px; }
+  body.brutalista .icone .rot { font-size: 58px; }
+  .icones { display: flex; justify-content: space-between; align-items: flex-start; }
+  .icones .cel { width: 270px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .icones .disco { width: 220px; height: 220px; }
+  .icones .rot { font: 700 46px/1.1 var(--ui); margin-top: 26px; }
+
+  /* personagem */
+  .personagem { display: flex; flex-direction: column; align-items: center; }
+  .personagem .corpo { fill: var(--corpo); }
+  body.brutalista .personagem .corpo { stroke: #000; stroke-width: 8; }
+  .personagem .nome { font-family: var(--titulo); font-weight: var(--pt); text-transform: var(--caixa); font-size: 58px; line-height: 1.1;
+                      margin-top: 18px; text-align: center; }
+  .personagem .desc { font: 700 42px/1.2 var(--ui); color: var(--sec); margin-top: 8px; text-align: center; }
+  .balao { position: absolute; left: 50%; top: 0; translate: 40px -100%; font: 500 44px/1.2 var(--ui); padding: 24px 32px;
+           max-width: 560px; width: max-content; }
+  body.blueprint .balao { background: var(--base); color: #FFF; border: 3px solid var(--linha); border-radius: 10px; }
+  body.brutalista .balao { background: #FFF; color: #000; border: 6px solid #000; box-shadow: 10px 10px 0 var(--sombra); }
+
+  /* título de elemento */
+  .h { font-family: var(--titulo); font-weight: var(--pt); text-transform: var(--caixa); font-size: 74px; line-height: 1.04; margin-bottom: 18px; }
+  body.brutalista .h { font-size: 58px; line-height: 1.06; }
+
+  /* barras */
+  .linha-comp { margin-top: 32px; }
+  .linha-comp .rot { font: 500 46px/1.1 var(--ui); margin-bottom: 14px; display: flex; justify-content: space-between; gap: 20px; }
+  .linha-comp .rot .num { color: var(--sec); white-space: nowrap; }
+  body.blueprint .linha-comp.dest .rot .num { color: var(--destaque); }
+  body.brutalista .linha-comp.dest .rot .num { color: #000; }
+  .linha-comp .trilho { height: 70px; }
+  .linha-comp .barra { height: 100%; transform-origin: 0 50%; }
+  body.blueprint .linha-comp .trilho { border: 2px solid rgba(153,102,255,.55); border-radius: 4px; padding: 6px; }
+  body.blueprint .linha-comp .barra { background: var(--linha); border-radius: 2px; }
+  body.blueprint .linha-comp.dest .barra { background: var(--destaque); }
+  body.brutalista .linha-comp .trilho { border: 5px solid #000; background: #EDEDED; }
+  body.brutalista .linha-comp .barra { background: #9966FF; border-right: 5px solid #000; }
+  body.brutalista .linha-comp.dest .barra { background: #EBFF70; }
+
+  /* gráfico */
+  .grafico svg { display: block; overflow: visible; }
+  .grafico .eixo-t { font: 500 36px var(--ui); fill: var(--sec); }
+  .grafico .final { font-family: var(--titulo); font-weight: var(--pt); font-size: 66px; fill: var(--tinta); }
+  body.brutalista .grafico .final { font-size: 54px; }
+
+  /* moedas */
+  .moedas .pilhas { display: flex; justify-content: space-around; align-items: flex-end; height: 600px; }
+  .moedas .col { width: 230px; position: relative; height: 100%; }
+  .moedas .coin { position: absolute; left: 15px; width: 200px; height: 46px; border-radius: 50%; }
+  body.blueprint .moedas .coin { background: #2A1650; border: 4px solid var(--linha); }
+  body.brutalista .moedas .coin { background: #EBFF70; border: 5px solid #000; }
+  .moedas .val { position: absolute; left: -70px; right: -70px; white-space: nowrap; text-align: center;
+                 font-family: var(--titulo); font-weight: var(--pt); font-size: 60px; }
+  body.brutalista .moedas .val { font-size: 46px; }
+  .moedas .rots { display: flex; justify-content: space-around; margin-top: 18px; }
+  .moedas .rots div { width: 230px; text-align: center; font: 700 44px/1.1 var(--ui); }
+
+  /* lista */
+  .item { display: flex; align-items: center; gap: 28px; margin-top: 30px; }
+  .item .chk { width: 68px; height: 68px; flex: none; position: relative; }
+  .item .chk svg { position: absolute; inset: 0; }
+  body.blueprint .item .chk { border: 4px solid var(--linha); border-radius: 6px; }
+  body.blueprint .item .chk path { stroke: #EBFF70; }
+  body.brutalista .item .chk { border: 5px solid #000; background: #FFF; }
+  body.brutalista .item .chk path { stroke: #000; }
+  .item .txt { font: 500 52px/1.1 var(--ui); }
+  body.brutalista .item .txt { font-weight: 700; }
+  .item .mask { overflow: hidden; }
+  .item .vazio { height: 22px; width: 300px; }
+  body.blueprint .item .vazio { border-bottom: 3px dashed rgba(153,102,255,.55); }
+  body.brutalista .item .vazio { background: #EDEDED; }
+
+  /* linha do tempo */
+  .tempo { position: relative; }
+  .tempo .eixo { position: absolute; left: 34px; top: 20px; width: 8px; }
+  body.blueprint .tempo .eixo { background: rgba(153,102,255,.3); }
+  body.brutalista .tempo .eixo { background: #EDEDED; }
+  .tempo .eixo i { position: absolute; inset: 0; transform-origin: 50% 0; }
+  body.blueprint .tempo .eixo i { background: var(--linha); }
+  body.brutalista .tempo .eixo i { background: #000; }
+  .tempo .marco { position: relative; padding-left: 110px; height: 170px; }
+  .tempo .ponto { position: absolute; left: 14px; top: 8px; width: 48px; height: 48px; }
+  body.blueprint .tempo .ponto { border-radius: 50%; background: var(--base); border: 6px solid #EBFF70; }
+  body.brutalista .tempo .ponto { background: #EBFF70; border: 5px solid #000; }
+  .tempo .quando { font-family: var(--titulo); font-weight: var(--pt); font-size: 64px; line-height: 1; }
+  body.brutalista .tempo .quando { font-size: 52px; }
+  .tempo .oque { font: 700 44px/1.15 var(--ui); margin-top: 8px; color: var(--sec); }
+
+  /* rosca */
+  .rosca { display: flex; flex-direction: column; align-items: center; }
+  .rosca svg { display: block; }
+  .rosca .centro { font-family: var(--titulo); font-weight: var(--pt); font-size: 140px; fill: var(--tinta); }
+  body.brutalista .rosca .centro { font-size: 110px; }
+  .rosca .leg { display: flex; gap: 36px; margin-top: 30px; font: 700 44px var(--ui); flex-wrap: wrap; justify-content: center; }
+  .rosca .leg i { display: inline-block; width: 34px; height: 34px; margin-right: 14px; vertical-align: -4px; }
+  body.brutalista .rosca .leg i { border: 4px solid #000; }
+
+  /* carimbo e sticker (Brutalista) */
+  .carimbo { display: flex; justify-content: center; }
+  .carimbo .selo { display: inline-block; font: 400 150px/1 'Archivo Black', sans-serif; text-transform: uppercase; color: #000;
+                   padding: 20px 44px 26px; background: #FFF; border: 10px solid #000; box-shadow: 16px 16px 0 var(--sombra);
+                   rotate: var(--giro, -7deg); }
+  .carimbo.dest .selo { background: #EBFF70; }
+  .sticker { text-align: right; }
+  .sticker.esq { text-align: left; }
+  .sticker .s { display: inline-block; max-width: 620px; font: 700 44px/1.15 var(--mono); text-align: left;
+                background: #EBFF70; color: #000; border: 5px solid #000; padding: 12px 22px 16px; box-shadow: 8px 8px 0 #000;
+                rotate: var(--giro, 5deg); }
+
+  /* cta e aviso */
+  .cta { display: flex; justify-content: center; }
+  .cta .caixa { text-align: center; max-width: 900px; }
+  body.blueprint .cta .caixa { font: 300 70px/1.25 var(--titulo); color: #FFF; padding: 10px 0; }
+  body.brutalista .cta .caixa { text-align: left; font: 400 64px/1.12 'Archivo Black', sans-serif; color: var(--tinta); text-transform: uppercase; }
+  .chip { display: inline-block; }
+  body.blueprint .chip { background: #EBFF70; color: #000; border-radius: 6px; padding: 0 20px 6px; font-weight: 600; }
+  body.brutalista .chip { background: #000; color: #EBFF70; padding: 0 20px 4px; margin-top: 8px; }
+  .t-preto .cta .chip { background: #EBFF70; color: #000; }
+  .aviso { text-align: center; }
+  .aviso span { display: inline-block; font: 500 30px/1.3 var(--ui); padding: 8px 18px; }
+  body.blueprint .aviso span { color: rgba(255,255,255,.62); }
+  body.brutalista .aviso { text-align: left; }
+  body.brutalista .aviso span { color: var(--tinta); text-transform: uppercase; padding: 8px 0; }
+
+  /* legenda */
+  #legenda { position: absolute; z-index: 5; top: 1300px; display: none; flex-wrap: wrap; justify-content: center; align-items: center; }
+  body.blueprint #legenda { left: 90px; right: 90px; gap: 4px 18px; translate: 0 -50%; }
+  body.blueprint #legenda .p { font: 700 64px/1.2 'Barlow', sans-serif; color: #FFF; display: inline-block; padding-bottom: .04em;
+                               background: linear-gradient(#EBFF70, #EBFF70) no-repeat 0 98% / var(--v, 0%) .1em; }
+  body.brutalista #legenda { left: 50%; width: max-content; max-width: 900px; translate: -50% -50%; gap: 0 16px;
+                             background: #000; padding: 10px 24px 14px; }
+  body.brutalista #legenda .p { font: 700 56px/1.2 var(--mono); color: #FFF; display: inline-block; }
+  body.brutalista #legenda .p.ativo { color: #EBFF70; }
+
+  #guias { position: absolute; inset: 0; display: none; pointer-events: none; z-index: 9; }
+  #guias div { position: absolute; left: 0; right: 0; background: rgba(255,0,60,.22); border: 2px dashed rgba(255,0,60,.8); }
+  #guias .lat { top: 0; bottom: 0; width: 90px; background: rgba(255,170,0,.12); border: none; }
+</style>
+</head>
+<body class="blueprint">
+<div id="palco">
+  <div id="tela">
+    <div id="papel"></div>
+    <div id="cenas"></div>
+    <div id="regua"></div>
+    <div id="legenda"></div>
+  </div>
+  <div id="guias">
+    <div style="top:0;height:320px"></div>
+    <div style="top:1450px;bottom:0"></div>
+    <div class="lat" style="left:0"></div>
+    <div class="lat" style="right:0;left:auto"></div>
+  </div>
+</div>
+<script src="icones.js"></script>
+<script src="engine.js"></script>
+</body>
+</html>

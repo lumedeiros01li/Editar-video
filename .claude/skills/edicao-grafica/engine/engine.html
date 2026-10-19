@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>motor edicao-grafica</title>
+<style>
+  @font-face { font-family: 'Barlow'; font-weight: 300; src: url('fontes/barlow-latin-300-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Barlow'; font-weight: 600; src: url('fontes/barlow-latin-600-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Barlow'; font-weight: 700; src: url('fontes/barlow-latin-700-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'JetBrains Mono'; font-weight: 500; src: url('fontes/jetbrains-mono-latin-500-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'JetBrains Mono'; font-weight: 700; src: url('fontes/jetbrains-mono-latin-700-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Archivo Black'; font-weight: 400; src: url('fontes/archivo-black-latin-400-normal.woff2') format('woff2'); }
+
+  /* paleta única dos dois estilos */
+  :root { --roxo-profundo: #170A2E; --roxo: #9966FF; --limao: #EBFF70; --preto: #000000; --branco: #FFFFFF;
+          --mono: 'JetBrains Mono', monospace;
+          --emoji: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; }
+  /* Blueprint: quadro escuro quadriculado, Barlow light (semibold no destaque) + JetBrains Mono */
+  body.blueprint { --titulo: 'Barlow', sans-serif; --pt: 300; --ui: 'JetBrains Mono', monospace; --caixa: none;
+                   --tinta: #FFFFFF; --sec: rgba(255,255,255,.72); --destaque: #EBFF70; --linha: #9966FF; --base: #170A2E; --sombra: transparent; }
+  /* Brutalista: cartão branco com borda e sombra roxa, Archivo Black + JetBrains Mono */
+  body.brutalista { --titulo: 'Archivo Black', sans-serif; --pt: 400; --ui: 'JetBrains Mono', monospace; --caixa: uppercase;
+                    --tinta: #000000; --sec: rgba(0,0,0,.68); --destaque: #EBFF70; --linha: #9966FF; --base: #FFFFFF; --sombra: #9966FF; }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+  #palco { position: absolute; inset: 0; overflow: hidden; }
+  #tela { position: absolute; inset: 0; }
+
+  /* vídeo de fundo */
+  #bg { position: absolute; inset: 0; will-change: transform; }
+  #bg img { width: 1080px; height: 1920px; object-fit: cover; display: block; }
+  #veu { position: absolute; inset: 0; opacity: 0; }
+  body.blueprint #veu { background: #170A2E; }
+  body.brutalista #veu { background: #000; }
+
+  .camada { position: absolute; display: none; }
+
+  /* painel por cima do vídeo */
+  .painel { background-color: rgba(23,10,46,.95); border: 2px solid rgba(153,102,255,.6); border-radius: 6px; color: #FFF;
+            background-image: linear-gradient(rgba(153,102,255,.16) 1.5px, transparent 1.5px),
+                              linear-gradient(90deg, rgba(153,102,255,.16) 1.5px, transparent 1.5px);
+            background-size: 30px 30px; background-position: -1px -1px; }
+  .cartao-b { background: #FFFFFF; border: 6px solid #000; box-shadow: 14px 14px 0 #9966FF; color: #000; }
+
+  /* destaque **palavra** */
+  b { font-weight: inherit; color: inherit; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  body.blueprint b { font-weight: 600; color: #F1EBFF; }
+  body.brutalista b { background: linear-gradient(#9966FF, #9966FF) no-repeat 0 0 / var(--v, 0%) 100%; padding: 0 .08em; }
+
+  /* etiqueta colada ao elemento: "// texto" no Blueprint, "[ TEXTO ]" no Brutalista */
+  .etiqueta { display: inline-block; font: 500 38px/1 var(--mono); letter-spacing: .02em; margin-bottom: 20px; white-space: nowrap; }
+  body.blueprint .etiqueta { color: #9966FF; }
+  body.brutalista .etiqueta { color: #000; }
+
+  .caneta { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; visibility: hidden; }
+  .caneta path { fill: none; stroke: #EBFF70; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* título (gancho) */
+  .titulo { left: 90px; max-width: 900px; padding: 26px 40px 30px; }
+  .titulo .t { font-family: var(--titulo); font-weight: var(--pt); text-transform: var(--caixa); font-size: 82px; line-height: 1.04; letter-spacing: -0.5px; }
+  body.brutalista .titulo .t { font-size: 70px; line-height: 1.06; letter-spacing: 0; }
+
+  /* palavra de impacto */
+  .palavra { left: 0; right: 0; text-align: center; }
+  .palavra .linha { display: inline-block; position: relative; padding: 0 10px; font-family: var(--titulo); font-weight: var(--pt);
+                    text-transform: uppercase; white-space: nowrap; }
+  body.blueprint .palavra .linha { font-size: 156px; line-height: 1; color: #FFF; clip-path: inset(-40% -10% 0 -10%);
+                    text-shadow: 0 6px 0 rgba(23,10,46,.85); }
+  body.blueprint .palavra .l { display: inline-block; }
+  body.brutalista .palavra .linha { font-size: 132px; line-height: 1.05; color: #FFF; background: #9966FF; border: 8px solid #000;
+                    padding: 14px 34px 18px; box-shadow: 16px 16px 0 #000; }
+
+  /* cartões */
+  .cartao { left: 130px; width: 820px; padding: 44px 52px 48px; }
+  .cartao .topo { font: 700 42px/1.15 var(--ui); color: var(--sec); margin-bottom: 10px; }
+  .cartao .h { font-family: var(--titulo); font-weight: var(--pt); text-transform: var(--caixa); font-size: 64px; line-height: 1.05; margin-bottom: 26px; }
+  body.brutalista .cartao .h { font-size: 52px; line-height: 1.08; }
+  .cartao .valor { display: inline-block; position: relative; font-family: var(--titulo); font-weight: var(--pt); font-size: 172px; line-height: .95;
+                   letter-spacing: -2px; white-space: nowrap; }
+  body.brutalista .cartao .valor { font-size: 140px; }
+  /* resposta brutalista: caixa limão com borda preta e sombra roxa */
+  body.brutalista .numero.cartao-b { background: #EBFF70; }
+  body.brutalista .numero .topo { font: 500 38px/1.1 var(--mono); color: #000; text-transform: uppercase; }
+  .cartao .rotulo { font: 700 48px/1.15 var(--ui); margin-top: 14px; }
+  .cartao .fonte { font: 500 28px/1.2 var(--ui); color: var(--sec); margin-top: 22px; }
+  body.blueprint .cartao .rotulo { font-size: 44px; }
+
+  .item { display: flex; align-items: center; gap: 24px; margin-top: 22px; }
+  .item .chk { width: 54px; height: 54px; flex: none; position: relative; }
+  .item .chk svg { position: absolute; inset: 0; }
+  body.blueprint .item .chk { border: 4px solid var(--linha); border-radius: 6px; }
+  body.blueprint .item .chk path { stroke: #EBFF70; }
+  body.brutalista .item .chk { border: 5px solid #000; background: #FFF; }
+  body.brutalista .item .chk path { stroke: #000; }
+  .item .txt { font: 500 48px/1.12 var(--ui); }
+  body.brutalista .item .txt { font-weight: 700; }
+  .item .mask { overflow: hidden; }
+  .item .vazio { height: 20px; width: 260px; }
+  body.blueprint .item .vazio { border-bottom: 3px dashed rgba(153,102,255,.55); }
+  body.brutalista .item .vazio { background: #EDEDED; }
+
+  .linha-comp { margin-top: 24px; }
+  .linha-comp .rot { font: 500 42px/1.1 var(--ui); margin-bottom: 12px; display: flex; justify-content: space-between; gap: 16px; }
+  .linha-comp .rot .num { color: var(--sec); white-space: nowrap; }
+  body.blueprint .linha-comp.dest .rot .num { color: #EBFF70; }
+  body.brutalista .linha-comp.dest .rot .num { color: #000; }
+  .linha-comp .trilho { height: 58px; }
+  .linha-comp .barra { height: 100%; transform-origin: 0 50%; }
+  body.blueprint .linha-comp .trilho { border: 2px solid rgba(153,102,255,.55); border-radius: 4px; padding: 5px; }
+  body.blueprint .linha-comp .barra { background: var(--linha); border-radius: 2px; }
+  body.blueprint .linha-comp.dest .barra { background: #EBFF70; }
+  body.brutalista .linha-comp .trilho { border: 5px solid #000; background: #EDEDED; }
+  body.brutalista .linha-comp .barra { background: #9966FF; border-right: 5px solid #000; }
+  body.brutalista .linha-comp.dest .barra { background: #EBFF70; }
+
+  .grafico svg { display: block; overflow: visible; }
+  .grafico .eixo-t { font: 500 32px var(--ui); fill: var(--sec); }
+  .grafico .final { font-family: var(--titulo); font-weight: var(--pt); font-size: 58px; fill: var(--tinta); }
+  body.brutalista .grafico .final { font-size: 48px; }
+
+  /* conta: rótulo à esquerda e valor à direita, em JetBrains Mono */
+  .conta .linhas { font: 500 46px/1.5 var(--mono); }
+  .conta .ln { white-space: pre; }
+  .conta .ln .t { display: inline-block; position: relative; }
+  .conta .ln.duas .t { display: flex; justify-content: space-between; gap: 20px; width: 100%; }
+  .conta .ln .v { position: relative; }
+  .conta .dim { color: var(--sec); }
+  body.blueprint .conta .regra { border-top: 3px dashed rgba(153,102,255,.7); margin: 12px 0 8px; transform-origin: 0 50%; }
+  body.blueprint .conta .ln.res { color: #EBFF70; font-weight: 700; font-size: 52px; }
+  body.brutalista .conta .regra { height: 8px; background: #000; margin: 18px 0 20px; transform-origin: 0 50%; }
+  body.brutalista .conta .ln.res .t { display: block; background: #EBFF70; border: 6px solid #000; box-shadow: 12px 12px 0 #9966FF; padding: 18px 26px 22px; }
+  body.brutalista .conta .ln.res .r { display: block; font: 500 34px/1.2 var(--mono); text-transform: uppercase; }
+  body.brutalista .conta .ln.res .v { display: block; font: 400 86px/1.05 'Archivo Black', sans-serif; letter-spacing: -1px; }
+
+  /* carimbo e sticker (Brutalista) */
+  .carimbo { left: 90px; right: 90px; display: none; justify-content: center; }
+  .carimbo .selo { display: inline-block; font: 400 150px/1 'Archivo Black', sans-serif; text-transform: uppercase; color: #000;
+                   padding: 20px 44px 26px; background: #FFF; border: 10px solid #000; box-shadow: 16px 16px 0 #9966FF; rotate: var(--giro, -7deg); }
+  .carimbo.dest .selo { background: #EBFF70; }
+  .sticker { left: 90px; right: 90px; text-align: right; }
+  .sticker.esq { text-align: left; }
+  .sticker .s { display: inline-block; max-width: 620px; font: 700 44px/1.15 var(--mono); text-align: left;
+                background: #EBFF70; color: #000; border: 5px solid #000; padding: 12px 22px 16px; box-shadow: 8px 8px 0 #000;
+                rotate: var(--giro, 5deg); }
+
+  /* emoji */
+  .emoji { font: 128px/1 var(--emoji); transform-origin: 50% 60%; translate: -50% -50%; }
+
+  /* aviso legal */
+  .aviso { left: 90px; right: 90px; top: 1392px; text-align: center; }
+  .aviso span { display: inline-block; font: 500 30px/1.25 var(--ui); padding: 8px 18px; }
+  body.blueprint .aviso span { color: rgba(255,255,255,.85); background: rgba(23,10,46,.9); border: 2px solid rgba(153,102,255,.45); border-radius: 4px; }
+  body.brutalista .aviso span { color: #FFF; background: #000; text-transform: uppercase; }
+
+  /* chamada final */
+  .cta { left: 90px; right: 90px; top: 1270px; justify-content: center; }
+  .cta .caixa { text-align: center; max-width: 900px; }
+  body.blueprint .cta .caixa { background: #170A2E; border: 2px solid rgba(153,102,255,.75); border-radius: 6px; padding: 28px 40px 32px;
+                               font: 300 60px/1.25 var(--titulo); color: #FFF; }
+  body.brutalista .cta .caixa { background: #FFF; border: 6px solid #000; box-shadow: 14px 14px 0 #9966FF; padding: 26px 36px 30px;
+                                font: 400 52px/1.15 'Archivo Black', sans-serif; color: #000; text-transform: uppercase; text-align: left; }
+  .chip { display: inline-block; }
+  body.blueprint .chip { background: #EBFF70; color: #000; border-radius: 6px; padding: 0 18px 6px; font-weight: 600; }
+  body.brutalista .chip { background: #000; color: #EBFF70; padding: 0 18px 4px; margin-top: 6px; }
+
+  /* legenda */
+  #legenda { position: absolute; top: 1290px; display: none; flex-wrap: wrap; justify-content: center; align-items: center; }
+  body.blueprint #legenda { left: 90px; right: 90px; gap: 4px 16px; translate: 0 -50%; }
+  body.blueprint #legenda .p { font: 700 66px/1.18 'Barlow', sans-serif; color: #FFF; display: inline-block; padding-bottom: .04em;
+                               text-shadow: 0 4px 0 #170A2E, 0 -2px 0 #170A2E, 3px 0 0 #170A2E, -3px 0 0 #170A2E;
+                               background: linear-gradient(#EBFF70, #EBFF70) no-repeat 0 98% / 0% .1em; }
+  body.blueprint #legenda .p.ativo { background-size: var(--v, 100%) .1em; }
+  body.brutalista #legenda { left: 50%; width: max-content; max-width: 900px; translate: -50% -50%; gap: 0 16px;
+                             background: #000; padding: 10px 24px 14px; }
+  body.brutalista #legenda .p { font: 700 56px/1.2 var(--mono); color: #FFF; display: inline-block; }
+  body.brutalista #legenda .p.ativo { color: #EBFF70; }
+
+  /* guias de zona segura (só na folha de contato) */
+  #guias { position: absolute; inset: 0; display: none; pointer-events: none; }
+  #guias div { position: absolute; left: 0; right: 0; background: rgba(255,0,60,.22); border: 2px dashed rgba(255,0,60,.8); }
+  #guias .lat { top: 0; bottom: 0; width: 90px; background: rgba(255,170,0,.12); border: none; }
+</style>
+</head>
+<body class="blueprint">
+<div id="palco">
+  <div id="tela">
+    <div id="bg"><img id="frame" alt=""></div>
+    <div id="veu"></div>
+    <div id="camadas"></div>
+    <div id="legenda"></div>
+  </div>
+  <div id="guias">
+    <div style="top:0;height:320px"></div>
+    <div style="top:1450px;bottom:0"></div>
+    <div class="lat" style="left:0"></div>
+    <div class="lat" style="right:0;left:auto"></div>
+  </div>
+</div>
+<script src="engine.js"></script>
+</body>
+</html>
