@@ -228,6 +228,7 @@ def main():
     ap.add_argument('--inicio', type=float, default=0.0)
     ap.add_argument('--base', default=os.path.expanduser('~/reels-r7'))
     ap.add_argument('--tmp')
+    ap.add_argument('--capa-tempo', type=float, default=0.5, help='segundo do vídeo usado como fundo da capa (padrão 0,5)')
     ap.add_argument('--ultrapassar', action='store_true', help='libera a área segura (olhos e boca continuam proibidos)')
     a = ap.parse_args()
     rid, base = a.id, a.base
@@ -297,7 +298,7 @@ def main():
     # capa
     capa = os.path.join(out, f'{rid}_capa.png')
     cf = os.path.join(tmp, 'capa_fundo.png')
-    frame_at(base_mp4, 0.5, cf)
+    frame_at(base_mp4, a.capa_tempo, cf)
     if lay.get('capa'):
         ff('-i', cf, '-i', os.path.join(png, 'capa_balao.png'), '-filter_complex', 'overlay=0:0', '-frames:v', '1', capa)
     else:

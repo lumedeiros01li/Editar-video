@@ -53,6 +53,7 @@ python3 <skill>/scripts/r7.py <ID> --roteiros <arquivo_do_prompt.md> [--inicio <
 - O roteiro de cada ID fica no prompt, em blocos `### <ID> · <título>` com as linhas `1.` a `4.`, `Aviso no balão N: ...` (opcional) e `Capa: ...`. Destaques vão entre `[[ ]]`. Se o prompt veio como texto colado, salve-o como `.md` na pasta temporária e passe esse caminho.
 - "edita o QUI22-8": rode só esse ID.
 - "edita todos": rode cada vídeo de `entrada/` cujo nome bate com um ID do prompt, um por vez.
+- `--capa-tempo <s>`: segundo do vídeo usado como fundo da capa (padrão 0,5). Use quando a expressão do quadro padrão ficar ruim: olhos fechados, boca no meio da palavra ou mão na frente do rosto.
 - `--ultrapassar`: só quando o usuário pedir para passar dos limites. Libera a área segura (balões até y 1880, laterais de x 10 a 1070, chamada com centro até y 1850). Olhos e boca continuam proibidos. Nesse modo o layout dividido (passo 6) é testado primeiro, porque estoura menos a base. Avise que o que passa de y 1525 fica sob a legenda do Instagram.
 - O script imprime um JSON com fontes, larguras, linhas, passos da regra do rosto aplicados, música, LUFS, contagem de quadros, alertas e o caminho da folha de conferência.
 
