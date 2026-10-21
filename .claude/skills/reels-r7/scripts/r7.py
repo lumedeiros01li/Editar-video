@@ -226,11 +226,14 @@ def main():
     ap.add_argument('--inicio', type=float, default=0.0)
     ap.add_argument('--base', default=os.path.expanduser('~/reels-r7'))
     ap.add_argument('--tmp')
+    ap.add_argument('--ultrapassar', action='store_true', help='libera a área segura (olhos e boca continuam proibidos)')
     a = ap.parse_args()
     rid, base = a.id, a.base
     tmp = a.tmp or tempfile.mkdtemp(prefix=f'r7_{rid}_')
     os.makedirs(tmp, exist_ok=True)
     alerts = []
+    if a.ultrapassar:
+        alerts.append('modo ultrapassar: balões e chamada podem sair da área segura')
 
     roteiro = parse_roteiro(a.roteiros, rid)
     srcs = [p for p in glob.glob(os.path.join(base, 'entrada', rid + '.*')) if p.lower().endswith(('.mp4', '.mov', '.m4v'))]
@@ -257,7 +260,7 @@ def main():
 
     png = os.path.join(tmp, 'png')
     job = {'roteiro': roteiro, 'face': {'proibida': face['proibida'], 'zona': face['zona']} if face.get('proibida') else None,
-           'out': png, 'fonts': FONTS}
+           'out': png, 'fonts': FONTS, 'livre': a.ultrapassar}
     jp = os.path.join(tmp, 'job.json')
     json.dump(job, open(jp, 'w'), ensure_ascii=False)
     r = subprocess.run(['node', os.path.join(SCRIPTS, 'render.mjs'), jp])

@@ -17,13 +17,14 @@ const R = job.roteiro, FACE = job.face, OUT = job.out, FD = job.fonts;
 fs.mkdirSync(OUT, { recursive: true });
 
 // ---------- constantes de layout (ver SKILL.md) ----------
-const AREA = { x1: 50, y1: 258, x2: 893, y2: 1525 };
+const LIVRE = !!job.livre;  // --ultrapassar: libera a área segura, olhos e boca continuam proibidos
+const AREA = { x1: 50, y1: 258, x2: LIVRE ? 1880 : 893, y2: LIVRE ? 1880 : 1525 };
 const CX = 520;            // centro horizontal padrão da pilha e da chamada
-const X_MIN = 30, X_MAX = 930;   // limite lateral absoluto, sombra incluída
+const X_MIN = LIVRE ? 10 : 30, X_MAX = LIVRE ? 1070 : 930;   // limite lateral absoluto, sombra incluída
 const B1_TOP_MIN = 228;    // título pode passar 30 px acima da área
 const STACK_TOP = 270;     // topo da faixa onde a pilha é centralizada
 const GAP = 26, GAP_CHIP = 40;
-const CHIP = { size: 44, cy: 1500, padV: 16, padH: 28, shadow: 6, bottomMax: 1560, cyMin: 1440, cyMax: 1510, sizeMin: 38 };
+const CHIP = { size: 44, cy: 1500, padV: 16, padH: 28, shadow: 6, bottomMax: LIVRE ? 1900 : 1560, cyMin: 1440, cyMax: LIVRE ? 1850 : 1510, sizeMin: 38 };
 const WIDTHS = [800, 750, 700, 650, 600];
 const LEVELS = [0, 1, 2, 3, 4];  // 0 = regra normal de fonte, 4 = mínimo (52 / 32)
 const SH = { 1: 10, 2: 8, 3: 8, 4: 8 };
@@ -110,7 +111,7 @@ async function measure(i, size, maxW) {
     if (m2.lines === m.lines && m2.hlOk) Object.assign(m, { w: m2.w, h: m2.h });
     else m.tight = Math.round(m.w);
   }
-  const res = { ...m, size, width: Math.round(m.hlOk && m.fits ? m.tight : m.w), h: Math.round(m.h) };
+  const res = { ...m, size, width: Math.ceil(m.hlOk && m.fits ? m.tight : m.w), h: Math.round(m.h) };
   cacheM.set(key, res);
   return res;
 }
@@ -203,7 +204,9 @@ function chipCandidates(step5) {
 
 async function solve() {
   // passos cumulativos: 0 padrão, 1 deslocar na horizontal, 2 largura, 3 fonte, 4 vertical, 5 chamada, 6 dividido
-  for (let step = 0; step <= 6; step++) {
+  // no modo livre o layout dividido vem primeiro: estoura menos a base da área segura
+  const order = LIVRE && P ? [6, 0, 1, 2, 3, 4, 5] : [0, 1, 2, 3, 4, 5, 6];
+  for (const step of order) {
     const widths = step >= 2 ? WIDTHS : [800];
     const levels = step >= 3 ? LEVELS : [0];
     const chips = chipCandidates(step >= 5);
@@ -224,7 +227,7 @@ async function solve() {
             for (const top of topsList) {
               const pos = place(m, cx, stackTops(m, top));
               const ev = evaluate(pos, chip);
-              if (ev) cands.push({ pos, chip, ev, cx, score: (ev.margin > 0 ? 1e6 : 0) + Math.abs(cx - CX) * 2 + Math.abs(top - centered) + (CHIP.cy - cc.cy) * 3 + (CHIP.size - cc.size) * 20 });
+              if (ev) cands.push({ pos, chip, ev, cx, score: (ev.margin > 0 ? 1e6 : 0) + Math.abs(cx - CX) * 2 + Math.abs(top - centered) + Math.abs(CHIP.cy - cc.cy) * 3 + (CHIP.size - cc.size) * 20 });
             }
           } else if (P) {
             // layout dividido: balão 1 acima do rosto, 2 a 4 empilhados abaixo
@@ -240,7 +243,7 @@ async function solve() {
               const tops = { 1: t1 }; let y = t2; for (let i = 2; i <= 4; i++) { tops[i] = y; y += m[i - 1].h + GAP; }
               const pos = place(m, cx, tops);
               const ev = evaluate(pos, chip);
-              if (ev) { cands.push({ pos, chip, ev, cx, split: true, score: (ev.margin > 0 ? 1e6 : 0) + Math.abs(cx - CX) * 2 + (CHIP.cy - cc.cy) * 3 + (CHIP.size - cc.size) * 20 }); break; }
+              if (ev) { cands.push({ pos, chip, ev, cx, split: true, score: (ev.margin > 0 ? 1e6 : 0) + Math.abs(cx - CX) * 2 + Math.abs(CHIP.cy - cc.cy) * 3 + (CHIP.size - cc.size) * 20 }); break; }
             }
           }
         }
