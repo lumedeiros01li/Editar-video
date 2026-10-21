@@ -113,8 +113,24 @@ Coordenadas no vídeo de 1080 x 1920.
 - Com 800 px de largura, o balão vai de x 120 a 920 e a sombra até 930.
 - **Pilha centralizada na vertical** no espaço livre entre y 270 e 40 px acima da chamada.
 - O balão 1 pode subir até y 228, ou seja, 30 px acima da área.
-- Os balões 2 a 4 ficam com a sombra dentro de y 258 a 1525.
-- **Chamada menor e mais baixa:** centro em y 1500. Ela pode passar da base da área até y 1560, contando a sombra. A distância mínima para o balão 4 é de 40 px.
+- Os balões 2 a 4 ficam, de preferência, com a sombra dentro de y 258 a 1525.
+- **Chamada menor e mais baixa:** centro em y 1500. A distância mínima para o balão 4 é de 40 px.
+
+### Expansão leve (medida num Reel publicado)
+
+Os limites abaixo vêm de um print do app (tela de 1080 x 2002, vídeo escalado 1,043x e cortado 23 px de cada lado). Neles, o texto continua visível e não encosta na interface. A posição padrão não muda: a expansão só é usada quando a regra do rosto precisa de espaço, e sempre vira alerta no resumo.
+
+| Limite (com sombra) | Preferido | Expansão leve | Interface do app no print |
+|---|---|---|---|
+| Base dos balões | y 1525 | y 1590 | balão mais baixo do print em y 1554 |
+| Direita, acima de y 1080 | x 930 | x 990 | nada, balão do print chega a x 995 |
+| Direita, abaixo de y 1080 | x 930 | x 940 | coluna de ícones a partir de x 954 e y 1093 |
+| Centro da chamada | y 1440 a 1510 | até y 1620 | chamada do print com centro em y 1619 |
+| Base da chamada | y 1560 | y 1670 | nome do perfil a partir de y 1721 |
+| Topo do balão 1 | y 228 | y 228 | barra "Reels" termina perto de y 96 |
+| Esquerda | x 30 | x 30 | balão do print em x 36 |
+
+Na folha de conferência, o limite da expansão aparece em ciano.
 
 ### Regra do rosto
 
@@ -129,7 +145,7 @@ Se a posição padrão tocar a faixa proibida, os passos abaixo são aplicados e
 2. Reduzir a largura máxima de 800 até 600 px.
 3. Reduzir as fontes até o mínimo: balão 1 até 52 px, balões 2 a 4 até 32 px.
 4. Mover a pilha na vertical, ficando o mais perto possível do centro.
-5. Mover a chamada (centro entre y 1440 e 1510) e reduzir a fonte dela até 38 px.
+5. Mover a chamada (centro entre y 1440 e 1620, dentro da expansão leve) e reduzir a fonte dela até 38 px.
 6. Layout dividido, já aprovado pelo usuário: balão 1 acima do rosto e balões 2 a 4 empilhados abaixo, todos centralizados no mesmo x, e o grupo de baixo centralizado no espaço entre o rosto e a chamada. Nesse passo vale a combinação que não toca a margem do rosto. Se nenhuma evitar a margem, vale a que tem as maiores fontes.
 
 Se ainda houver toque na faixa proibida, o script sai com código 2. Encostar só na margem da zona do rosto é permitido, e vira alerta no resumo.
@@ -161,7 +177,7 @@ Abra a folha de conferência com a ferramenta de leitura de imagem. As marcaçõ
 
 - O balão 1 está presente em 0,0 s.
 - Nenhum balão toca o vermelho.
-- Os balões 2 a 4 estão inteiros dentro do verde, na vertical. O título e a chamada ficam dentro das tolerâncias.
+- Os balões 2 a 4 estão dentro do verde ou, no máximo, do ciano (expansão leve). O título e a chamada ficam dentro das tolerâncias.
 - O texto bate letra por letra com o roteiro, com acentos e aspas.
 - Cada destaque está inteiro numa linha.
 - Os balões não mudam de lugar entre os quadros.
@@ -189,6 +205,6 @@ Responda só com:
 - a fonte da chamada
 - os passos da regra do rosto aplicados (ou "nenhum")
 - se a música veio da pasta ou foi sintetizada
-- os alertas: vídeo horizontal, quadro congelado, sobreposição na margem do rosto, contraste da chamada
+- os alertas: vídeo horizontal, quadro congelado, sobreposição na margem do rosto, contraste da chamada, expansão leve além da área segura
 
 Envie ao usuário o mp4, a folha de contato e a capa.

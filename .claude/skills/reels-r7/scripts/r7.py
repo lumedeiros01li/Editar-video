@@ -20,6 +20,7 @@ FPS, FRAMES, DUR = 30, 210, 7.0
 ENTRY = {'2': 36, '3': 72, '4': 108, 'c': 138}   # 1,2 s  2,4 s  3,6 s  4,6 s
 SHEET_TIMES = [0.0, 1.3, 2.5, 3.7, 4.7, 6.9]
 AREA = (50, 258, 893, 1525)
+EXPANSAO = (30, 228, 990, 1590)  # limite da expansão leve (direita 940 abaixo de y 1080)
 
 
 def run(cmd, **kw):
@@ -190,6 +191,7 @@ def sheets(frames, capa, out_clean, out_check, face):
                 box = lambda r, c: d.rectangle([v * sc for v in r], outline=c, width=2)
                 if lab != 'capa':
                     box(AREA, (0, 200, 0))
+                    box(EXPANSAO, (0, 200, 220))
                 else:
                     box((0, 285, 1079, 1635), (0, 80, 255))
                 if face.get('zona'):
@@ -276,6 +278,8 @@ def main():
     lay = json.load(open(os.path.join(png, 'layout.json')))
     if not lay.get('capa'):
         alerts.append('capa não coube sem tocar olhos e boca')
+    if lay.get('expansao'):
+        alerts.append('expansão leve além da área segura: ' + ', '.join(lay['expansao']))
     if lay['margem']:
         alerts.append('sobreposição só na margem da zona do rosto: ' + ', '.join(lay['margem']))
     if lay['capa'] and lay['capa'].get('margem'):

@@ -26,6 +26,7 @@ Use a skill `reels-r7` para editar os Reels desta semana. Ela já tem todo o pad
 - Balões mais centralizados: o centro horizontal é x 520, e não mais 472. Eles podem passar um pouco das bordas laterais da área segura, mas nunca de x 930, contando a sombra.
 - Pilha centralizada na vertical, no espaço entre y 270 e a chamada.
 - Chamada "LEIA A LEGENDA 👇" menor (Archivo Black 44 px, padding 16 x 28, sombra roxa de 6 px) e mais baixa: centro em y 1500, podendo passar da base da área segura até y 1560, contando a sombra.
+- Expansão leve autorizada: se a regra do rosto precisar de espaço, balões e chamada podem passar um pouco da área segura, nos limites medidos num Reel publicado. Balões até y 1590, direita até x 990 (x 940 ao lado dos ícones, abaixo de y 1080), chamada com centro até y 1620 e base até y 1670. Olhos e boca continuam proibidos. Avise no resumo quando usar.
 - Se o rosto bloquear a pilha, o passo 6 da skill está autorizado: balão 1 acima do rosto e balões 2 a 4 empilhados abaixo. Avise no resumo quando usar.
 
 ## Resposta
@@ -35,7 +36,7 @@ No fim, me responda só com:
 - fonte e largura de cada balão, e fonte da chamada
 - quais passos da regra do rosto foram aplicados
 - se usou música da pasta ou sintetizada
-- alertas: vídeo horizontal, quadro congelado, sobreposição na margem do rosto, chamada sem contraste com o fundo
+- alertas: vídeo horizontal, quadro congelado, sobreposição na margem do rosto, chamada sem contraste com o fundo, expansão leve além da área segura
 
 Se o rosto bloquear mesmo com os 6 passos, não exporte. Me mostre o quadro com o problema e diga como reenquadrar.
 

@@ -18,13 +18,17 @@ fs.mkdirSync(OUT, { recursive: true });
 
 // ---------- constantes de layout (ver SKILL.md) ----------
 const LIVRE = !!job.livre;  // --ultrapassar: libera a área segura, olhos e boca continuam proibidos
-const AREA = { x1: 50, y1: 258, x2: LIVRE ? 1880 : 893, y2: LIVRE ? 1880 : 1525 };
+// área preferida (y 258 a 1525) + expansão leve medida num print real do app: balões até y 1590,
+// direita até x 990 acima da coluna de ícones (y 1080) e até x 940 ao lado dela, chamada com base até y 1670
+const AREA = { x1: 50, y1: 258, x2: LIVRE ? 1880 : 893, y2: LIVRE ? 1880 : 1590 };
+const PREF = { y2: 1525, xMax: 930, chipBottom: 1560 };  // passar disso vira alerta de expansão
+const ICONS_Y = 1080, X_MAX_ICONS = 940;
 const CX = 520;            // centro horizontal padrão da pilha e da chamada
-const X_MIN = LIVRE ? 10 : 30, X_MAX = LIVRE ? 1070 : 930;   // limite lateral absoluto, sombra incluída
+const X_MIN = LIVRE ? 10 : 30, X_MAX = LIVRE ? 1070 : 990;   // limite lateral absoluto, sombra incluída
 const B1_TOP_MIN = 228;    // título pode passar 30 px acima da área
 const STACK_TOP = 270;     // topo da faixa onde a pilha é centralizada
 const GAP = 26, GAP_CHIP = 40;
-const CHIP = { size: 44, cy: 1500, padV: 16, padH: 28, shadow: 6, bottomMax: LIVRE ? 1900 : 1560, cyMin: 1440, cyMax: LIVRE ? 1850 : 1510, sizeMin: 38 };
+const CHIP = { size: 44, cy: 1500, padV: 16, padH: 28, shadow: 6, bottomMax: LIVRE ? 1900 : 1670, cyMin: 1440, cyMax: LIVRE ? 1850 : 1620, sizeMin: 38 };
 const WIDTHS = [800, 750, 700, 650, 600];
 const LEVELS = [0, 1, 2, 3, 4];  // 0 = regra normal de fonte, 4 = mínimo (52 / 32)
 const SH = { 1: 10, 2: 8, 3: 8, 4: 8 };
@@ -157,6 +161,7 @@ const P = FACE ? FACE.proibida : null, Z = FACE ? FACE.zona : null;
 const hit = (r, box) => box && r[0] < box[2] && r[2] > box[0] && r[1] < box[3] && r[3] > box[1];
 const overlapArea = (r, box) => !box ? 0 : Math.max(0, Math.min(r[2], box[2]) - Math.max(r[0], box[0])) * Math.max(0, Math.min(r[3], box[3]) - Math.max(r[1], box[1]));
 const shadowRect = (p, sh) => [p.x, p.y, p.x + p.w + sh, p.y + p.h + sh];
+const xMaxFor = (r) => (!LIVRE && r[3] > ICONS_Y ? X_MAX_ICONS : X_MAX);
 
 function place(m, cx, tops) { // tops[i] = topo de cada balão
   const pos = {};
@@ -170,14 +175,14 @@ function evaluate(pos, chip) {
   // limites
   for (let i = 1; i <= 4; i++) {
     const r = shadowRect(pos[i], SH[i]);
-    if (r[0] < X_MIN || r[2] > X_MAX) return null;
+    if (r[0] < X_MIN || r[2] > xMaxFor(r)) return null;
     if (i === 1 ? r[1] < B1_TOP_MIN : r[1] < AREA.y1) return null;
     if (r[3] > AREA.y2) return null;
     if (hit(r, P)) return null;
   }
   for (let i = 1; i < 4; i++) if (pos[i].y + pos[i].h > pos[i + 1].y) return null;
   const cr = shadowRect(chip, CHIP.shadow);
-  if (cr[0] < X_MIN || cr[2] > X_MAX || cr[3] > CHIP.bottomMax || hit(cr, P)) return null;
+  if (cr[0] < X_MIN || cr[2] > xMaxFor(cr) || cr[3] > CHIP.bottomMax || hit(cr, P)) return null;
   if (pos[4].y + pos[4].h > chip.y - GAP_CHIP) return null;
   let margin = 0; const margemIds = [];
   for (const k of [1, 2, 3, 4]) { const a = overlapArea(shadowRect(pos[k], SH[k]), Z); if (a > 0) { margin += a; margemIds.push(String(k)); } }
@@ -346,6 +351,8 @@ const result = {
   chamada: { fonte: chip.size, centroY: Math.round(chip.y + chip.h / 2) },
   centroX: sol.cx, larguraMax: sol.maxW, nivelFonte: sol.level,
   passos: sol.applied, margem: sol.ev.margemIds, pos, chip, shots, capa,
+  expansao: [1, 2, 3, 4].filter((i) => { const r = shadowRect(pos[i], SH[i]); return r[2] > PREF.xMax || r[3] > PREF.y2; }).map(String)
+    .concat(shadowRect(chip, CHIP.shadow)[3] > PREF.chipBottom || shadowRect(chip, CHIP.shadow)[2] > PREF.xMax ? ['chamada'] : []),
 };
 fs.writeFileSync(path.join(OUT, 'layout.json'), JSON.stringify(result, null, 2));
 console.log(JSON.stringify({ ok: true, fontes: result.fontes, larguras: result.larguras, chamada: result.chamada, passos: result.passos, margem: result.margem, capa }));
