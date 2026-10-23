@@ -2,4 +2,6 @@ out/frames/
 out/audio/
 out/render.log
 out/render.time
+out/verif-*.log
+out/fim.flag
 node_modules/
