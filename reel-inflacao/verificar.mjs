@@ -88,21 +88,22 @@ srv.close();
   if (faltam.length || sobram.length) falha(`marcos: faltam ${faltam}, sobram ${sobram}`); else ok(`marcos do Brasil na tela: ${[...textosMarco].join(' | ')}`);
 }
 
-// ---------- 2. zona segura ----------
+// ---------- 2. limites definidos pelo Lucas: topo 176, base 1678 (tolerância de 4 px), margem lateral 90 ----------
+const ZT = 176 - 4, ZB = 1678 + 4;
 {
   let ruins = 0, minY = 1e9, maxY = 0, minX = 1e9, maxX = 0;
   const reg = (x0, y0, x1, y1) => { minY = Math.min(minY, y0); maxY = Math.max(maxY, y1); minX = Math.min(minX, x0); maxX = Math.max(maxX, x1); };
   for (const f of quadros) {
     for (const t of f.textos) {
       reg(t.x0, t.y0, t.x1, t.y1);
-      if (t.y0 < 320 || t.y1 > 1450 || t.x0 < 90 || t.x1 > 990) { if (ruins++ < 5) falha(`texto fora da zona segura t=${f.t.toFixed(2)} "${t.s}" [${t.x0.toFixed(0)},${t.y0.toFixed(0)},${t.x1.toFixed(0)},${t.y1.toFixed(0)}]`); }
+      if (t.y0 < ZT || t.y1 > ZB || t.x0 < 90 || t.x1 > 990) { if (ruins++ < 5) falha(`texto fora dos limites t=${f.t.toFixed(2)} "${t.s}" [${t.x0.toFixed(0)},${t.y0.toFixed(0)},${t.x1.toFixed(0)},${t.y1.toFixed(0)}]`); }
     }
     for (const b of f.boxes) {
       reg(b.x, b.y, b.x + b.w, b.y + b.h);
-      if (b.y < 320 || b.y + b.h > 1450 || b.x < 90 || b.x + b.w > 990) { if (ruins++ < 5) falha(`caixa fora da zona segura t=${f.t.toFixed(2)} ${b.tipo}:${b.id}`); }
+      if (b.y < ZT || b.y + b.h > ZB || b.x < 90 || b.x + b.w > 990) { if (ruins++ < 5) falha(`caixa fora dos limites t=${f.t.toFixed(2)} ${b.tipo}:${b.id}`); }
     }
   }
-  if (!ruins) ok(`zona segura: ${quadros.length} quadros, extremos x ${minX.toFixed(0)}-${maxX.toFixed(0)} (margem 90) y ${minY.toFixed(0)}-${maxY.toFixed(0)} (320-1450)`);
+  if (!ruins) ok(`limites: ${quadros.length} quadros, extremos x ${minX.toFixed(0)}-${maxX.toFixed(0)} (margem 90) y ${minY.toFixed(0)}-${maxY.toFixed(0)} (alvo 176-1678)`);
   // tamanho mínimo de fonte medido nos textos visíveis: 40 px, exceto a linha de fonte (28 px)
   const abaixo = new Set();
   for (const f of quadros) for (const t of f.textos) {

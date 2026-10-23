@@ -34,10 +34,14 @@ const PAISES = {
 };
 
 // ---- geometria (px) ----
-const CARD = { x: 90, y: 756, w: 892, h: 614 };      // sombra de 8 px fecha em 990 x 1378
+// Limites definidos pelo Lucas (traços no print, convertidos para px do vídeo): topo 176, meio 530, base 1678
+const LIM = { topo: 176, meio: 530, base: 1678 };
+const HY = 224;                                      // centro da foto de perfil (topo da foto = LIM.topo)
+const ET = 318, T1 = 374, T2 = 432, YB = 510;        // linhas de base: etiqueta, título (2 linhas), ano
+const CARD = { x: 90, y: LIM.meio, w: 892, h: 1072 }; // sombra de 8 px fecha em 990 x 1610
 const EIXO = new URLSearchParams(location.search).get('eixo') === 'log' ? 'log' : 'linear';
 const CY = CARD.y + 6 + 34;                          // centro da faixa de legenda/chips
-const PL = 190, PR = 762, PT = 846, PB = 1302;       // área do gráfico
+const PL = 190, PR = 762, PT = CARD.y + 6 + 84, PB = CARD.y + CARD.h - 6 - 62;       // área do gráfico
 const PW = PR - PL, PH = PB - PT;
 const TOPO_ITENS = PT - 16;                              // bandeiras nunca acima disto
 const FLAG_W = 72, FLAG_H = 48, FLAG_GAP = 8, BR_H = 100, BR_W = 178;
@@ -126,16 +130,16 @@ function empurrar(alvos, metades) {
 // ---- estática (foto, cabeçalho, cartão) ----
 function estatica() {
   const defs = `<defs>
-    <clipPath id="cFoto"><circle cx="326" cy="400" r="48"/></clipPath>
-    <clipPath id="cEtiq"><rect x="90" y="482" width="900" height="56"/></clipPath>
-    <clipPath id="cTit"><rect x="90" y="540" width="900" height="130"/></clipPath>
+    <clipPath id="cFoto"><circle cx="326" cy="${HY}" r="48"/></clipPath>
+    <clipPath id="cEtiq"><rect x="90" y="${ET - 41}" width="900" height="56"/></clipPath>
+    <clipPath id="cTit"><rect x="90" y="${T1 - 44}" width="900" height="130"/></clipPath>
     <clipPath id="cTira"><rect x="96" y="${CARD.y + 6}" width="880" height="84"/></clipPath>
     <clipPath id="cPlot"><rect x="${PL - 2}" y="${PT - 30}" width="${PW + 4}" height="${PH + 30}"/></clipPath>
     <clipPath id="cX"><rect x="96" y="${PB + 2}" width="880" height="56"/></clipPath>
-    <clipPath id="cFonte"><rect x="90" y="1380" width="900" height="70"/></clipPath>
+    <clipPath id="cFonte"><rect x="90" y="1612" width="900" height="${LIM.base - 1612}"/></clipPath>
   </defs>`;
   // selo roxo próprio com check (estrela de 12 pontas)
-  const cx = 394 + 14 * 24 + 10 + 20, cy = 378;
+  const cx = 394 + 14 * 24 + 10 + 20, cy = HY - 22;
   let pts = '';
   for (let i = 0; i < 24; i++) {
     const r = i % 2 ? 17 : 21, a = (Math.PI * 2 * i) / 24;
@@ -143,11 +147,11 @@ function estatica() {
   }
   const selo = `<polygon points="${pts}" fill="${ROXO}"/><path d="M${cx - 8},${cy} l6,7 l11,-13" fill="none" stroke="#FFF" stroke-width="4.5" stroke-linecap="square"/>`;
   const header =
-    `<image href="assets/foto-perfil.jpg" x="278" y="352" width="96" height="120" preserveAspectRatio="xMidYMin slice" clip-path="url(#cFoto)"/>` +
-    `<circle cx="326" cy="400" r="46" fill="none" stroke="#000" stroke-width="4"/>` +
-    `<text x="394" y="392" font-family="${MONO}" font-weight="700" font-size="40" fill="#000">Lucas Medeiros</text>` +
+    `<image href="assets/foto-perfil.jpg" x="278" y="${HY - 48}" width="96" height="120" preserveAspectRatio="xMidYMin slice" clip-path="url(#cFoto)"/>` +
+    `<circle cx="326" cy="${HY}" r="46" fill="none" stroke="#000" stroke-width="4"/>` +
+    `<text x="394" y="${HY - 8}" font-family="${MONO}" font-weight="700" font-size="40" fill="#000">Lucas Medeiros</text>` +
     selo +
-    `<text x="394" y="438" font-family="${MONO}" font-weight="500" font-size="40" fill="#000">@lucasmedeiros.ai</text>`;
+    `<text x="394" y="${HY + 38}" font-family="${MONO}" font-weight="500" font-size="40" fill="#000">@lucasmedeiros.ai</text>`;
   const cartao =
     `<rect x="${CARD.x + 8}" y="${CARD.y + 8}" width="${CARD.w}" height="${CARD.h}" fill="${ROXO}"/>` +
     `<rect x="${CARD.x + 3}" y="${CARD.y + 3}" width="${CARD.w - 6}" height="${CARD.h - 6}" fill="#FFF" stroke="#000" stroke-width="6"/>`;
@@ -162,35 +166,35 @@ function seek(t) {
   let s = '';
 
   // cabeçalho (sempre presente, só registra caixas)
-  box('header', 'foto', 278, 352, 96, 96);
-  box('header', 'nome', 394, 392 - 29, 14 * 24, 29);
-  box('header', 'selo', 394 + 14 * 24 + 10, 358, 40, 40);
-  box('header', 'handle', 394, 438 - 29, 17 * 24, 29 + 9);
+  box('header', 'foto', 278, HY - 48, 96, 96);
+  box('header', 'nome', 394, HY - 8 - 29, 14 * 24, 29);
+  box('header', 'selo', 394 + 14 * 24 + 10, HY - 42, 40, 40);
+  box('header', 'handle', 394, HY + 38 - 29, 17 * 24, 29 + 9);
 
   // etiqueta e título entram por deslocamento
   const eEt = ease((t - 0.1) / 0.4), eTi = ease((t - 0.3) / 0.5);
   const nPaises = M.ids.length, ano0 = D.ano_inicial, base = D.base.valor;
   const etq = `[ INFLAÇÃO EM ${nPaises} PAÍSES ]`;
-  s += `<g clip-path="url(#cEtiq)">${txt(540, 523 + (1 - eEt) * 70, etq, { tipo: 'etiqueta', reg: eEt >= 1 })}</g>`;
+  s += `<g clip-path="url(#cEtiq)">${txt(540, ET + (1 - eEt) * 70, etq, { tipo: 'etiqueta', reg: eEt >= 1 })}</g>`;
   {
-    const fs = 56, l1 = 'O QUE CUSTAVA';
+    const fs = 52, l1 = 'O QUE CUSTAVA';
     const a = String(base), b = ` EM ${ano0}?`;
     const wa = larguraArch(a, fs), wb = larguraArch(b, fs);
     const x0 = 540 - (wa + wb) / 2, dy = (1 - eTi) * 150;
-    let g = txt(540, 588 + dy, l1, { fam: 'arch', fs, tipo: 'titulo', reg: false });
-    g += `<rect x="${f1(x0 - 12)}" y="${f1(600 + dy)}" width="${f1(wa + 24)}" height="64" fill="${ROXO}"/>`;
-    g += `<text x="${f1(x0)}" y="${f1(650 + dy)}" font-family="${ARCH}" font-size="${fs}" fill="#FFF">${a}</text>`;
-    g += `<text x="${f1(x0 + wa)}" y="${f1(650 + dy)}" font-family="${ARCH}" font-size="${fs}" fill="#000">${b}</text>`;
+    let g = txt(540, T1 + dy, l1, { fam: 'arch', fs, tipo: 'titulo', reg: false });
+    g += `<rect x="${f1(x0 - 12)}" y="${f1(T2 - 48 + dy)}" width="${f1(wa + 24)}" height="58" fill="${ROXO}"/>`;
+    g += `<text x="${f1(x0)}" y="${f1(T2 + dy)}" font-family="${ARCH}" font-size="${fs}" fill="#FFF">${a}</text>`;
+    g += `<text x="${f1(x0 + wa)}" y="${f1(T2 + dy)}" font-family="${ARCH}" font-size="${fs}" fill="#000">${b}</text>`;
     s += `<g clip-path="url(#cTit)">${g}</g>`;
     if (eTi >= 1) {
-      box('titulo', 'l1', 540 - larguraArch(l1, fs) / 2, 588 - 0.73 * fs, larguraArch(l1, fs), 0.73 * fs);
-      box('titulo', 'l2', x0 - 12, 600, wa + wb + 24, 64);
+      box('titulo', 'l1', 540 - larguraArch(l1, fs) / 2, T1 - 0.73 * fs, larguraArch(l1, fs), 0.73 * fs);
+      box('titulo', 'l2', x0 - 12, T2 - 48, wa + wb + 24, 58);
     }
   }
 
   // ano rodando
   const ano = ano0 + Math.min(Math.floor(p + 1e-9), M.P_MAX);
-  s += txt(540, 740, String(ano), { fam: 'arch', fs: 84, tipo: 'ano', id: 'ano' });
+  s += txt(540, YB, String(ano), { fam: 'arch', fs: 72, tipo: 'ano', id: 'ano' });
 
   // ---- gráfico ----
   // grade
@@ -311,14 +315,14 @@ function seek(t) {
   let rod = '';
   if (gs < 1) {
     const dy = gs * 90;
-    rod += txt(540, 1408 + dy, l1, { fs: 28, w: 500, tipo: 'fonte', id: 'fonte1', reg: gs <= 0 });
-    rod += txt(540, 1442 + dy, l2, { fs: 28, w: 500, tipo: 'fonte', id: 'fonte2', reg: gs <= 0 });
+    rod += txt(540, 1638 + dy, l1, { fs: 28, w: 500, tipo: 'fonte', id: 'fonte1', reg: gs <= 0 });
+    rod += txt(540, 1672 + dy, l2, { fs: 28, w: 500, tipo: 'fonte', id: 'fonte2', reg: gs <= 0 });
   }
   if (g > 0) {
     const cta = 'EXPLICO NA LEGENDA', fs = 40, w = larguraArch(cta, fs) + 56, dy = (1 - g) * 90;
-    rod += `<rect x="${f1(540 - w / 2)}" y="${f1(1384 + dy)}" width="${f1(w)}" height="64" fill="#000"/>`;
-    rod += txt(540, 1416 + 0.365 * fs + dy, cta, { fam: 'arch', fs, fill: LIMAO, tipo: 'cta', id: 'cta', reg: false });
-    if (g >= 1) box('cta', 'cta', 540 - w / 2, 1384, w, 64);
+    rod += `<rect x="${f1(540 - w / 2)}" y="${f1(1612 + dy)}" width="${f1(w)}" height="64" fill="#000"/>`;
+    rod += txt(540, 1644 + 0.365 * fs + dy, cta, { fam: 'arch', fs, fill: LIMAO, tipo: 'cta', id: 'cta', reg: false });
+    if (g >= 1) box('cta', 'cta', 540 - w / 2, 1612, w, 64);
   }
   s += `<g clip-path="url(#cFonte)">${rod}</g>`;
 
