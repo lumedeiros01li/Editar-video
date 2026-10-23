@@ -447,5 +447,10 @@
     "Último ano disponível: 2024."
   ],
   "mes_inicial": "2000",
-  "mes_final": "2024"
+  "mes_final": "2024",
+  "exibicao": {
+    "fonte_curta": "Banco Mundial",
+    "indicador": "FP.CPI.TOTL",
+    "medida": "média anual"
+  }
 }

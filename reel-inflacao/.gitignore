@@ -1,0 +1,5 @@
+out/frames/
+out/audio/
+out/render.log
+out/render.time
+node_modules/

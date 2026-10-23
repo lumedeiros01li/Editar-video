@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080,height=1920">
+<title>Reel inflação em 7 países</title>
+<style>
+@font-face{font-family:'Archivo Black';src:url('fontes/archivo-black-latin-400-normal.woff2') format('woff2');font-weight:400}
+@font-face{font-family:'JetBrains Mono';src:url('fontes/jetbrains-mono-latin-400-normal.woff2') format('woff2');font-weight:400}
+@font-face{font-family:'JetBrains Mono';src:url('fontes/jetbrains-mono-latin-500-normal.woff2') format('woff2');font-weight:500}
+@font-face{font-family:'JetBrains Mono';src:url('fontes/jetbrains-mono-latin-700-normal.woff2') format('woff2');font-weight:700}
+html,body{margin:0;padding:0;background:#F2F2F2;width:1080px;height:1920px;overflow:hidden}
+svg{display:block}
+text{white-space:pre}
+</style>
+</head>
+<body>
+<svg id="root" xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
+<script type="module">
+// Cada quadro é função pura de seek(t). Sem setTimeout, requestAnimationFrame ou transições CSS.
+import { construir, FPS, T_FIM, T_CTA, MARCO_DUR, MARCO_ANIM, GRADE_ANIM, Y_MIN } from './modelo.mjs';
+
+const ROXO = '#9966FF', LIMAO = '#EBFF70', PRETO = '#000', BRANCO = '#FFF', GRADE = '#D9D9D9';
+const MONO = "'JetBrains Mono', monospace", ARCH = "'Archivo Black', sans-serif";
+
+const PAISES = {
+  BRA: { nome: 'Brasil', cor: '#00A94F' },
+  USA: { nome: 'EUA', cor: '#1F3A93' },
+  GBR: { nome: 'Reino Unido', cor: '#3FA7E0' },
+  JPN: { nome: 'Japão', cor: '#D6002A' },
+  CHE: { nome: 'Suíça', cor: '#F26B1D' },
+  DEU: { nome: 'Alemanha', cor: '#C99700' },
+  MEX: { nome: 'México', cor: '#00573F' },
+};
+
+// ---- geometria (px) ----
+const CARD = { x: 90, y: 760, w: 892, h: 572 };      // sombra de 8 px fecha em 990 x 1340
+const PL = 190, PR = 762, PT = 850, PB = 1264;       // área do gráfico
+const PW = PR - PL, PH = PB - PT;
+const TOPO_ITENS = 830;                              // bandeiras nunca acima disto
+const FLAG_W = 72, FLAG_H = 48, FLAG_GAP = 8, BR_H = 100, BR_W = 178;
+const SLOT_X = 24;                                   // folga entre ponta da linha e bandeira
+
+const ease = (x) => { x = Math.min(Math.max(x, 0), 1); return 1 - Math.pow(1 - x, 3); };
+const f1 = (n) => (Math.round(n * 10) / 10).toString();
+
+let M, D, boxes, ctx2d;
+
+function larguraArch(s, fs) { ctx2d.font = `${fs}px "Archivo Black"`; return ctx2d.measureText(s).width; }
+function larguraTxt(s, fs, fam) { return fam === 'arch' ? larguraArch(s, fs) : s.length * 0.6 * fs; }
+
+function box(tipo, id, x, y, w, h) { boxes.push({ tipo, id, x, y, w, h }); }
+
+// texto: y é a linha de base
+function txt(x, y, s, o = {}) {
+  const { fs = 40, w = 700, fam = 'mono', fill = PRETO, anchor = 'middle', tipo = 'texto', id = '', reg = true } = o;
+  const wd = larguraTxt(s, fs, fam);
+  if (reg) {
+    const x0 = anchor === 'middle' ? x - wd / 2 : anchor === 'end' ? x - wd : x;
+    const cap = 0.73 * fs, desc = /[çpqgyj(),;@]/.test(s) ? 0.22 * fs : 0;
+    box(tipo, id || s, x0, y - cap, wd, cap + desc);
+  }
+  return `<text x="${f1(x)}" y="${f1(y)}" font-family="${fam === 'arch' ? ARCH : MONO}" font-weight="${fam === 'arch' ? 400 : w}" font-size="${fs}" fill="${fill}" text-anchor="${anchor}">${s}</text>`;
+}
+
+// ---- bandeiras 72x48, borda preta de 4 px ----
+function bandeira(id, x, yc) {
+  const W = FLAG_W, H = FLAG_H;
+  let c = '';
+  if (id === 'BRA') {
+    c = `<rect width="${W}" height="${H}" fill="#009C3B"/><polygon points="36,7 65,24 36,41 7,24" fill="#FFDF00"/><circle cx="36" cy="24" r="10" fill="#002776"/>`;
+  } else if (id === 'USA') {
+    for (let i = 0; i < 7; i++) c += `<rect x="0" y="${(i * H) / 7}" width="${W}" height="${H / 7 + 0.3}" fill="${i % 2 ? '#FFF' : '#B22234'}"/>`;
+    c += `<rect width="32" height="${(H * 4) / 7}" fill="#3C3B6E"/>`;
+    for (let r = 0; r < 3; r++) for (let q = 0; q < 4; q++) c += `<rect x="${5 + q * 7}" y="${5 + r * 7}" width="3" height="3" fill="#FFF"/>`;
+  } else if (id === 'GBR') {
+    c = `<rect width="${W}" height="${H}" fill="#012169"/>` +
+        `<path d="M0,0 L${W},${H} M${W},0 L0,${H}" stroke="#FFF" stroke-width="9"/>` +
+        `<path d="M0,0 L${W},${H} M${W},0 L0,${H}" stroke="#C8102E" stroke-width="3"/>` +
+        `<path d="M${W / 2},0 V${H} M0,${H / 2} H${W}" stroke="#FFF" stroke-width="14"/>` +
+        `<path d="M${W / 2},0 V${H} M0,${H / 2} H${W}" stroke="#C8102E" stroke-width="8"/>`;
+  } else if (id === 'JPN') {
+    c = `<rect width="${W}" height="${H}" fill="#FFF"/><circle cx="36" cy="24" r="12" fill="#BC002D"/>`;
+  } else if (id === 'CHE') {
+    c = `<rect width="${W}" height="${H}" fill="#DA291C"/><rect x="31" y="9" width="10" height="30" fill="#FFF"/><rect x="21" y="19" width="30" height="10" fill="#FFF"/>`;
+  } else if (id === 'DEU') {
+    c = `<rect width="${W}" height="${H / 3 + 0.3}" fill="#000"/><rect y="${H / 3}" width="${W}" height="${H / 3 + 0.3}" fill="#DD0000"/><rect y="${(2 * H) / 3}" width="${W}" height="${H / 3 + 0.3}" fill="#FFCE00"/>`;
+  } else if (id === 'MEX') {
+    c = `<rect width="${W / 3 + 0.3}" height="${H}" fill="#006847"/><rect x="${W / 3}" width="${W / 3 + 0.3}" height="${H}" fill="#FFF"/><rect x="${(2 * W) / 3}" width="${W / 3 + 0.3}" height="${H}" fill="#CE1126"/><circle cx="36" cy="24" r="6" fill="#8B5A2B"/>`;
+  }
+  return `<g transform="translate(${f1(x)} ${f1(yc - H / 2)})"><svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" overflow="hidden">${c}</svg><rect x="2" y="2" width="${W - 4}" height="${H - 4}" fill="none" stroke="#000" stroke-width="4"/></g>`;
+}
+
+// ---- regressão isotônica (PAV) para empurrar bandeiras ----
+function isotonica(y) {
+  const blocos = [];
+  for (const v of y) {
+    blocos.push({ soma: v, n: 1 });
+    while (blocos.length > 1) {
+      const b = blocos[blocos.length - 1], a = blocos[blocos.length - 2];
+      if (a.soma / a.n <= b.soma / b.n) break;
+      blocos.pop(); blocos.pop();
+      blocos.push({ soma: a.soma + b.soma, n: a.n + b.n });
+    }
+  }
+  const z = [];
+  for (const b of blocos) for (let i = 0; i < b.n; i++) z.push(b.soma / b.n);
+  return z;
+}
+
+// alturas (acima de PB) dos centros dos itens, da base para cima, na ordem fixa
+function empurrar(alvos, metades) {
+  const n = alvos.length, o = [0];
+  for (let i = 0; i < n - 1; i++) {
+    const folga = i === n - 2 ? 6 : FLAG_GAP;
+    o.push(o[i] + metades[i] + metades[i + 1] + folga);
+  }
+  let z = isotonica(alvos.map((a, i) => a - o[i]));
+  const lo = metades[0], hi = (PB - TOPO_ITENS) - metades[n - 1] - o[n - 1];
+  z = z.map((v) => Math.min(Math.max(v, lo), Math.max(hi, lo)));
+  return z.map((v, i) => v + o[i]);
+}
+
+// ---- estática (foto, cabeçalho, cartão) ----
+function estatica() {
+  const defs = `<defs>
+    <clipPath id="cFoto"><circle cx="326" cy="400" r="48"/></clipPath>
+    <clipPath id="cEtiq"><rect x="90" y="482" width="900" height="56"/></clipPath>
+    <clipPath id="cTit"><rect x="90" y="540" width="900" height="130"/></clipPath>
+    <clipPath id="cTira"><rect x="96" y="766" width="880" height="84"/></clipPath>
+    <clipPath id="cPlot"><rect x="${PL - 2}" y="${PT - 30}" width="${PW + 4}" height="${PH + 30}"/></clipPath>
+    <clipPath id="cX"><rect x="96" y="${PB + 2}" width="880" height="56"/></clipPath>
+    <clipPath id="cFonte"><rect x="90" y="1346" width="900" height="94"/></clipPath>
+  </defs>`;
+  // selo roxo próprio com check (estrela de 12 pontas)
+  const cx = 394 + 14 * 24 + 10 + 20, cy = 378;
+  let pts = '';
+  for (let i = 0; i < 24; i++) {
+    const r = i % 2 ? 17 : 21, a = (Math.PI * 2 * i) / 24;
+    pts += `${f1(cx + r * Math.sin(a))},${f1(cy - r * Math.cos(a))} `;
+  }
+  const selo = `<polygon points="${pts}" fill="${ROXO}"/><path d="M${cx - 8},${cy} l6,7 l11,-13" fill="none" stroke="#FFF" stroke-width="4.5" stroke-linecap="square"/>`;
+  const header =
+    `<image href="assets/foto-perfil.jpg" x="278" y="352" width="96" height="120" preserveAspectRatio="xMidYMin slice" clip-path="url(#cFoto)"/>` +
+    `<circle cx="326" cy="400" r="46" fill="none" stroke="#000" stroke-width="4"/>` +
+    `<text x="394" y="392" font-family="${MONO}" font-weight="700" font-size="40" fill="#000">Lucas Medeiros</text>` +
+    selo +
+    `<text x="394" y="438" font-family="${MONO}" font-weight="500" font-size="40" fill="#000">@lucasmedeiros.ai</text>`;
+  const cartao =
+    `<rect x="${CARD.x + 8}" y="${CARD.y + 8}" width="${CARD.w}" height="${CARD.h}" fill="${ROXO}"/>` +
+    `<rect x="${CARD.x + 3}" y="${CARD.y + 3}" width="${CARD.w - 6}" height="${CARD.h - 6}" fill="#FFF" stroke="#000" stroke-width="6"/>`;
+  return defs + `<rect width="1080" height="1920" fill="#F2F2F2"/>` + header + cartao;
+}
+
+function seek(t) {
+  boxes = [];
+  const p = M.progresso(t), Mx = M.Mt(t);
+  const y = (v) => PB - ((v - Y_MIN) / (Mx - Y_MIN)) * PH;
+  const x = (pp) => PL + (pp / M.P_MAX) * PW;
+  let s = '';
+
+  // cabeçalho (sempre presente, só registra caixas)
+  box('header', 'foto', 278, 352, 96, 96);
+  box('header', 'nome', 394, 392 - 29, 14 * 24, 29);
+  box('header', 'selo', 394 + 14 * 24 + 10, 358, 40, 40);
+  box('header', 'handle', 394, 438 - 29, 17 * 24, 29 + 9);
+
+  // etiqueta e título entram por deslocamento
+  const eEt = ease((t - 0.1) / 0.4), eTi = ease((t - 0.3) / 0.5);
+  const nPaises = M.ids.length, ano0 = D.ano_inicial, base = D.base.valor;
+  const etq = `[ INFLAÇÃO EM ${nPaises} PAÍSES ]`;
+  s += `<g clip-path="url(#cEtiq)">${txt(540, 523 + (1 - eEt) * 70, etq, { tipo: 'etiqueta', reg: eEt >= 1 })}</g>`;
+  {
+    const fs = 56, l1 = 'O QUE CUSTAVA';
+    const a = String(base), b = ` EM ${ano0}?`;
+    const wa = larguraArch(a, fs), wb = larguraArch(b, fs);
+    const x0 = 540 - (wa + wb) / 2, dy = (1 - eTi) * 150;
+    let g = txt(540, 588 + dy, l1, { fam: 'arch', fs, tipo: 'titulo', reg: false });
+    g += `<rect x="${f1(x0 - 12)}" y="${f1(600 + dy)}" width="${f1(wa + 24)}" height="64" fill="${ROXO}"/>`;
+    g += `<text x="${f1(x0)}" y="${f1(650 + dy)}" font-family="${ARCH}" font-size="${fs}" fill="#FFF">${a}</text>`;
+    g += `<text x="${f1(x0 + wa)}" y="${f1(650 + dy)}" font-family="${ARCH}" font-size="${fs}" fill="#000">${b}</text>`;
+    s += `<g clip-path="url(#cTit)">${g}</g>`;
+    if (eTi >= 1) {
+      box('titulo', 'l1', 540 - larguraArch(l1, fs) / 2, 588 - 0.73 * fs, larguraArch(l1, fs), 0.73 * fs);
+      box('titulo', 'l2', x0 - 12, 600, wa + wb + 24, 64);
+    }
+  }
+
+  // ano rodando
+  const ano = ano0 + Math.min(Math.floor(p + 1e-9), M.P_MAX);
+  s += txt(540, 740, String(ano), { fam: 'arch', fs: 84, tipo: 'ano', id: 'ano' });
+
+  // ---- gráfico ----
+  // grade
+  const cand = new Set();
+  for (const sStr of Object.keys(M.familia)) {
+    const st = Number(sStr);
+    for (let v = Math.ceil(Y_MIN / st) * st; v <= Mx + 1e-9; v += st) cand.add(v);
+  }
+  let grade = '', rotulos = '';
+  for (const v of [...cand].sort((a, b) => a - b)) {
+    if (v === base) continue;
+    const rotular = v !== Y_MIN; // o 90 do piso fica só como linha
+    const pr = M.presenca(v, t);
+    if (!pr) continue;
+    const yy = y(v);
+    let xa = PL, xb = PR, dx = 0;
+    if (pr.modo === 'entra') { xb = PL + pr.f * PW; dx = -(1 - pr.f) * 8; }
+    if (pr.modo === 'sai') { xa = PL + pr.f * PW; dx = -pr.f * 8; }
+    grade += `<rect x="${f1(xa)}" y="${f1(yy - 1)}" width="${f1(xb - xa)}" height="2" fill="${GRADE}"/>`;
+    if (rotular) rotulos += txt(182 + dx, yy + 14.6, String(v), { anchor: 'end', tipo: 'ylabel', id: 'y' + v });
+  }
+  s += grade;
+  // linha de base 100
+  const yb = y(base);
+  s += `<rect x="${PL}" y="${f1(yb - 2)}" width="${PW}" height="4" fill="#000"/>`;
+  s += `<rect x="100" y="${f1(yb - 20)}" width="84" height="40" fill="#000"/>`;
+  box('ylabel', 'base', 100, yb - 20, 84, 40);
+  s += `<text x="142" y="${f1(yb + 14.6)}" font-family="${MONO}" font-weight="700" font-size="40" fill="#FFF" text-anchor="middle">${base}</text>`;
+  s += rotulos;
+  // legenda da base (dentro da faixa do cartão)
+  s += `<rect x="106" y="798" width="56" height="4" fill="#000"/>` + txt(176, 814.6, `BASE ${base}`, { anchor: 'start', tipo: 'legenda' });
+  box('legenda', 'amostra', 106, 796, 56, 8);
+
+  // eixo X: marca a cada 5 anos, rótulo a cada 10 (entram quando a ponta passa)
+  let xl = '', marcasX = '';
+  for (let k = 0; k <= M.P_MAX; k += 5) {
+    const tk = k === 0 ? 0.3 : M.tempoDe(k);
+    const f = ease((t - tk) / 0.2);
+    if (f <= 0) continue;
+    if (k > 0) marcasX += `<rect x="${f1(x(k) - 2)}" y="${PB + 3}" width="4" height="${f1(12 * f)}" fill="#000"/>`;
+    if (k % 10 === 0) xl += txt(x(k), PB + 54 + (1 - f) * 24, String(ano0 + k), { tipo: 'xlabel', id: 'x' + k, reg: f >= 1 });
+  }
+  s += marcasX + `<g clip-path="url(#cX)">${xl}</g>`;
+
+  // linhas
+  const passo = 0.125;
+  const tracado = (id) => {
+    let d = '';
+    for (let q = 0; q < p; q += passo) d += `${d ? 'L' : 'M'}${f1(x(q))} ${f1(y(M.valor(id, q)))}`;
+    d += `${d ? 'L' : 'M'}${f1(x(p))} ${f1(y(M.valor(id, p)))}`;
+    return d;
+  };
+  let linhas = '';
+  const desenha = [...M.ordem].filter((i) => i !== 'BRA').reverse().concat(['BRA']);
+  for (const id of desenha) {
+    const w = id === 'BRA' ? 10 : 6, d = tracado(id);
+    linhas += `<path d="${d}" fill="none" stroke="#FFF" stroke-width="${w + 4}" stroke-linejoin="round" stroke-linecap="butt"/>`;
+    linhas += `<path d="${d}" fill="none" stroke="${PAISES[id].cor}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="butt"/>`;
+  }
+  s += `<g clip-path="url(#cPlot)">${linhas}</g>`;
+
+  // bandeiras na ponta
+  const ids = M.ordem;
+  const alvos = ids.map((id) => PB - y(M.valor(id, p)));
+  const metades = ids.map((id) => (id === 'BRA' ? BR_H : FLAG_H) / 2);
+  const alt = empurrar(alvos, metades);
+  const xTip = x(p), xF = xTip + SLOT_X;
+  const pulso = t >= T_FIM && t <= T_FIM + 8 / FPS ? 1 + 0.08 * Math.sin(Math.PI * ((t - T_FIM) * FPS / 8)) : 1;
+  const valores = {};
+  let guias = '', marcas = '';
+  ids.forEach((id, i) => {
+    const yc = PB - alt[i], yt = y(M.valor(id, p));
+    const val = Math.round(M.valor(id, p));
+    valores[id] = val;
+    guias += `<path d="M${f1(xTip)} ${f1(yt)} L${f1(xF)} ${f1(yc)}" stroke="${PAISES[id].cor}" stroke-width="3" stroke-dasharray="7 5" fill="none"/>`;
+    if (id === 'BRA') {
+      const bx = xF, by = yc - BR_H / 2;
+      const cx = bx + BR_W / 2, cy = yc;
+      let g = `<rect x="${f1(bx + 3)}" y="${f1(by + 3)}" width="${BR_W - 6}" height="${BR_H - 6}" fill="${LIMAO}" stroke="#000" stroke-width="6"/>`;
+      g += txt(bx + BR_W / 2, by + 6 + 4 + 29, 'BRASIL', { tipo: 'brasil', id: 'rotuloBRA', reg: false });
+      g += bandeira('BRA', bx + 10, by + BR_H - 6 - 4 - FLAG_H / 2);
+      g += `<text x="${f1(bx + 10 + FLAG_W + 6)}" y="${f1(by + BR_H - 6 - 4 - FLAG_H / 2 + 14.6)}" font-family="${MONO}" font-weight="700" font-size="40" fill="#000" data-valor="BRA">${val}</text>`;
+      marcas += `<g transform="translate(${f1(cx)} ${f1(cy)}) scale(${pulso.toFixed(4)}) translate(${f1(-cx)} ${f1(-cy)})">${g}</g>`;
+      box('brasil', 'caixaBRA', cx - (BR_W * pulso) / 2, cy - (BR_H * pulso) / 2, BR_W * pulso, BR_H * pulso);
+    } else {
+      marcas += `<rect x="${f1(xF - 5)}" y="${f1(yc - 26)}" width="${FLAG_W + 8 + 72 + 10}" height="52" fill="#FFF"/>`;
+      marcas += bandeira(id, xF, yc);
+      marcas += `<text x="${f1(xF + FLAG_W + 8)}" y="${f1(yc + 14.6)}" font-family="${MONO}" font-weight="700" font-size="40" fill="#000" data-valor="${id}">${val}</text>`;
+      box('flag', 'flag' + id, xF, yc - FLAG_H / 2, FLAG_W, FLAG_H);
+      box('valor', 'valor' + id, xF + FLAG_W + 8, yc - 14.6, 72, 29);
+    }
+  });
+  s += guias + marcas;
+
+  // marcos do Brasil (chip limão na faixa superior do cartão, deslocamento curto)
+  let chips = '';
+  for (const m of M.marcos) {
+    const ent = ease((t - m.t) / MARCO_ANIM), sai = ease((t - (m.t + MARCO_DUR)) / MARCO_ANIM);
+    if (t < m.t || sai >= 1) continue;
+    const dy = -(1 - ent) * 24 - sai * 24;
+    const w = m.texto.length * 24 + 28, x0 = 966 - w;
+    chips += `<rect x="${f1(x0 + 3)}" y="${f1(777 + dy)}" width="${w - 6}" height="${46}" fill="${LIMAO}" stroke="#000" stroke-width="6"/>`;
+    chips += txt(x0 + w / 2, 800 + 14.6 + dy, m.texto, { tipo: 'chip', id: m.texto, reg: false });
+    if (ent >= 1 && sai <= 0) box('chip', m.texto, x0, 774, w, 52);
+  }
+  s += `<g clip-path="url(#cTira)">${chips}</g>`;
+
+  // linha de fonte e CTA
+  const gs = ease((t - T_CTA) / (5 / FPS));            // a linha de fonte sai primeiro
+  const g = ease((t - T_CTA - 4 / FPS) / (8 / FPS));  // depois o chip entra
+  const f = D.exibicao;
+  const l1 = `Fonte: ${f.fonte_curta} (${f.indicador}) · ${f.medida}`;
+  const l2 = `Índice de preços ao consumidor · ${ano0} = ${base}`;
+  let rod = '';
+  if (gs < 1) {
+    const dy = gs * 90;
+    rod += txt(540, 1384 + dy, l1, { fs: 28, w: 500, tipo: 'fonte', id: 'fonte1', reg: gs <= 0 });
+    rod += txt(540, 1420 + dy, l2, { fs: 28, w: 500, tipo: 'fonte', id: 'fonte2', reg: gs <= 0 });
+  }
+  if (g > 0) {
+    const cta = 'EXPLICO NA LEGENDA', fs = 44, w = larguraArch(cta, fs) + 64, dy = (1 - g) * 90;
+    rod += `<rect x="${f1(540 - w / 2)}" y="${f1(1355 + dy)}" width="${f1(w)}" height="80" fill="#000"/>`;
+    rod += txt(540, 1395 + 0.365 * fs + dy, cta, { fam: 'arch', fs, fill: LIMAO, tipo: 'cta', id: 'cta', reg: false });
+    if (g >= 1) box('cta', 'cta', 540 - w / 2, 1355, w, 80);
+  }
+  s += `<g clip-path="url(#cFonte)">${rod}</g>`;
+
+  document.getElementById('dyn').innerHTML = s;
+  window.__state = { t, p, ano, Mx, valores, boxes, passo: M.passoQ[Math.min(Math.round(t * FPS), M.passoQ.length - 1)] };
+}
+
+async function init() {
+  const resp = await fetch('dados.json');
+  D = await resp.json();
+  M = construir(D);
+  ctx2d = document.createElement('canvas').getContext('2d');
+  await Promise.all([
+    document.fonts.load('400 40px "Archivo Black"'), document.fonts.load('400 40px "JetBrains Mono"'),
+    document.fonts.load('500 40px "JetBrains Mono"'), document.fonts.load('700 40px "JetBrains Mono"'),
+  ]);
+  await document.fonts.ready;
+  const root = document.getElementById('root');
+  root.innerHTML = estatica() + '<g id="dyn"></g>';
+  const img = root.querySelector('image');
+  await new Promise((res) => { const i = new Image(); i.onload = i.onerror = res; i.src = img.getAttribute('href'); });
+  window.seek = seek;
+  window.__modelo = M;
+  window.__dados = D;
+  seek(0);
+  window.__ready = true;
+}
+init();
+</script>
+</body>
+</html>
