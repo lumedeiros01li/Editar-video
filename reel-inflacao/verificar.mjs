@@ -1,4 +1,4 @@
-// node verificar.mjs
+// node verificar.mjs [--eixo=linear|log]
 // Verificações automáticas: valores x dados.json, zona segura, colisões, sincronia, ffprobe e loudness.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -7,7 +7,9 @@ import { FPS, N_FRAMES, construir } from './modelo.mjs';
 import { AQUI, carregarPlaywright, servidor, abrir } from './util.mjs';
 
 const OUT = path.join(AQUI, 'out');
-const MP4 = path.join(OUT, 'reel-inflacao-7-paises.mp4');
+const EIXO = process.argv.find((a) => a.startsWith('--eixo='))?.slice(7) === 'log' ? 'log' : 'linear';
+const MP4 = path.join(OUT, EIXO === 'log' ? 'reel-inflacao-7-paises-log.mp4' : 'reel-inflacao-7-paises.mp4');
+console.log(`== eixo ${EIXO} ==`);
 const dados = JSON.parse(fs.readFileSync(path.join(AQUI, 'dados.json'), 'utf8'));
 const relatorio = { falhas: [], ok: [] };
 const ok = (m) => { relatorio.ok.push(m); console.log('OK   ', m); };
@@ -16,7 +18,7 @@ const falha = (m) => { relatorio.falhas.push(m); console.log('FALHA', m); };
 const { chromium } = carregarPlaywright();
 const { srv, url } = await servidor();
 const browser = await chromium.launch();
-const page = await abrir(browser, url);
+const page = await abrir(browser, url, EIXO);
 
 // varre todos os quadros uma vez, guardando o estado e as medidas do DOM
 const quadros = await page.evaluate((n) => {
@@ -104,7 +106,7 @@ srv.close();
   // tamanho mínimo de fonte medido nos textos visíveis: 40 px, exceto a linha de fonte (28 px)
   const abaixo = new Set();
   for (const f of quadros) for (const t of f.textos) {
-    const fonte = /^(Fonte:|Índice de preços)/.test(t.s);
+    const fonte = /^(Fonte:|Índice de preços|Preços ao consumidor)/.test(t.s);
     if ((fonte && t.fs !== 28) || (!fonte && t.fs < 40)) abaixo.add(`${t.s}:${t.fs}`);
   }
   if (!abaixo.size) ok('fontes: todo texto visível tem 40 px ou mais, exceto a linha de fonte (28 px)'); else falha(`fontes fora da regra: ${[...abaixo].slice(0, 5)}`);
@@ -138,10 +140,10 @@ srv.close();
 
 // ---------- 4. eixo Y e ponta do Brasil ----------
 {
-  const mod = construir(dados);
+  const mod = construir(dados, { eixo: EIXO, altura: 456 });
   let mn = 1e9, mx = 0, maxSalto = 0, prev = null, piorT = 0;
   for (const f of quadros) {
-    const tip = (mod.valor('BRA', mod.progresso(f.t)) - 90) / (f.Mx - 90);
+    const tip = mod.frac(mod.valor('BRA', mod.progresso(f.t)), f.Mx);
     if (f.t >= 1.5) { mn = Math.min(mn, tip); if (tip > mx) { mx = tip; piorT = f.t; } }
     if (prev !== null) maxSalto = Math.max(maxSalto, Math.abs(f.Mx - prev));
     prev = f.Mx;
@@ -204,6 +206,6 @@ srv.close();
   else falha(`loudness do MP4: ${lufs} LUFS, ${tp} dBTP`);
 }
 
-fs.writeFileSync(path.join(OUT, 'verificacao.json'), JSON.stringify(relatorio, null, 2));
+fs.writeFileSync(path.join(OUT, `verificacao-${EIXO}.json`), JSON.stringify(relatorio, null, 2));
 console.log(relatorio.falhas.length ? `\n${relatorio.falhas.length} falha(s)` : '\nTudo certo.');
 process.exit(relatorio.falhas.length ? 1 : 0);

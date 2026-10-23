@@ -7,12 +7,13 @@ MP4 de 26 s, 1080x1920, 30 fps, sem narração. Música e efeitos sintetizados e
 Requisitos: Node 22, ffmpeg, Playwright com Chromium (`npm i playwright`).
 
 ```
-node render.mjs      # captura os 780 quadros, gera o áudio e monta out/reel-inflacao-7-paises.mp4
-node verificar.mjs   # valores x dados.json, zona segura, colisões, sincronia, ffprobe, loudness
-node contato.mjs     # folhas de contato em out/contact-sheets/
+node render.mjs                # as duas versões: out/reel-inflacao-7-paises.mp4 (eixo linear) e ...-log.mp4
+node render.mjs --eixo=log     # só a versão com eixo logarítmico
+node verificar.mjs --eixo=log  # valores x dados.json, zona segura, colisões, sincronia, ffprobe, loudness
+node contato.mjs --eixo=log    # folhas de contato em out/contact-sheets/<eixo>/
 ```
 
-`node render.mjs --so-frames --frames=0,300,779` captura só quadros avulsos. O áudio sai de `node audio.mjs`.
+`node render.mjs --so-frames --frames=0,300,779` captura só quadros avulsos. As duas versões usam o mesmo áudio e a mesma linha do tempo, só muda o eixo Y. O áudio sai de `node audio.mjs`.
 
 ## Arquivos
 
@@ -38,4 +39,6 @@ node contato.mjs     # folhas de contato em out/contact-sheets/
 3. O Reino Unido do Banco Mundial parece corresponder ao CPIH do ONS, e não ao CPI. Hipótese não confirmada. Mantido por consistência de metodologia.
 4. Último ano disponível: 2024.
 5. Rótulos do eixo X a cada 10 anos, com marcas a cada 5, para manter 40 px de texto sem rótulos colados.
-6. Texto mínimo de 40 px (o `marca.md` aceita 32 px). Linha de fonte com 28 px.
+6. O cartão do gráfico desce até y=1370 e a linha de fonte e o CTA ficam entre 1384 e 1450, no limite da zona segura do Reels.
+7. Versão log: grade em 100, 200, 300, 400 e 500, selo LOG na legenda e "escala log" na linha de fonte.
+8. Texto mínimo de 40 px (o `marca.md` aceita 32 px). Linha de fonte com 28 px.

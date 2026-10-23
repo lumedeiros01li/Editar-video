@@ -1,11 +1,12 @@
-// node contato.mjs : folhas de contato em out/contact-sheets/ a partir de out/frames/
+// node contato.mjs [--eixo=linear|log] : folhas de contato em out/contact-sheets/<eixo>/
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { AQUI } from './util.mjs';
 import { FPS, N_FRAMES } from './modelo.mjs';
 
-const FR = path.join(AQUI, 'out', 'frames'), DEST = path.join(AQUI, 'out', 'contact-sheets');
+const EIXO = process.argv.find((a) => a.startsWith('--eixo='))?.slice(7) === 'log' ? 'log' : 'linear';
+const FR = path.join(AQUI, 'out', 'frames', EIXO), DEST = path.join(AQUI, 'out', 'contact-sheets', EIXO);
 fs.mkdirSync(DEST, { recursive: true });
 const tempos = [0, 1, 2.5, 4, 6, 8, 10, 12, 14, 16, 17.5, 19, 22, (N_FRAMES - 1) / FPS];
 const folhas = [tempos.slice(0, 7), tempos.slice(7)];

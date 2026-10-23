@@ -34,10 +34,12 @@ const PAISES = {
 };
 
 // ---- geometria (px) ----
-const CARD = { x: 90, y: 760, w: 892, h: 572 };      // sombra de 8 px fecha em 990 x 1340
-const PL = 190, PR = 762, PT = 850, PB = 1264;       // área do gráfico
+const CARD = { x: 90, y: 756, w: 892, h: 614 };      // sombra de 8 px fecha em 990 x 1378
+const EIXO = new URLSearchParams(location.search).get('eixo') === 'log' ? 'log' : 'linear';
+const CY = CARD.y + 6 + 34;                          // centro da faixa de legenda/chips
+const PL = 190, PR = 762, PT = 846, PB = 1302;       // área do gráfico
 const PW = PR - PL, PH = PB - PT;
-const TOPO_ITENS = 830;                              // bandeiras nunca acima disto
+const TOPO_ITENS = PT - 16;                              // bandeiras nunca acima disto
 const FLAG_W = 72, FLAG_H = 48, FLAG_GAP = 8, BR_H = 100, BR_W = 178;
 const SLOT_X = 24;                                   // folga entre ponta da linha e bandeira
 
@@ -127,10 +129,10 @@ function estatica() {
     <clipPath id="cFoto"><circle cx="326" cy="400" r="48"/></clipPath>
     <clipPath id="cEtiq"><rect x="90" y="482" width="900" height="56"/></clipPath>
     <clipPath id="cTit"><rect x="90" y="540" width="900" height="130"/></clipPath>
-    <clipPath id="cTira"><rect x="96" y="766" width="880" height="84"/></clipPath>
+    <clipPath id="cTira"><rect x="96" y="${CARD.y + 6}" width="880" height="84"/></clipPath>
     <clipPath id="cPlot"><rect x="${PL - 2}" y="${PT - 30}" width="${PW + 4}" height="${PH + 30}"/></clipPath>
     <clipPath id="cX"><rect x="96" y="${PB + 2}" width="880" height="56"/></clipPath>
-    <clipPath id="cFonte"><rect x="90" y="1346" width="900" height="94"/></clipPath>
+    <clipPath id="cFonte"><rect x="90" y="1380" width="900" height="70"/></clipPath>
   </defs>`;
   // selo roxo próprio com check (estrela de 12 pontas)
   const cx = 394 + 14 * 24 + 10 + 20, cy = 378;
@@ -155,7 +157,7 @@ function estatica() {
 function seek(t) {
   boxes = [];
   const p = M.progresso(t), Mx = M.Mt(t);
-  const y = (v) => PB - ((v - Y_MIN) / (Mx - Y_MIN)) * PH;
+  const y = (v) => PB - M.frac(v, Mx) * PH;
   const x = (pp) => PL + (pp / M.P_MAX) * PW;
   let s = '';
 
@@ -219,8 +221,12 @@ function seek(t) {
   s += `<text x="142" y="${f1(yb + 14.6)}" font-family="${MONO}" font-weight="700" font-size="40" fill="#FFF" text-anchor="middle">${base}</text>`;
   s += rotulos;
   // legenda da base (dentro da faixa do cartão)
-  s += `<rect x="106" y="798" width="56" height="4" fill="#000"/>` + txt(176, 814.6, `BASE ${base}`, { anchor: 'start', tipo: 'legenda' });
-  box('legenda', 'amostra', 106, 796, 56, 8);
+  s += `<rect x="106" y="${CY - 2}" width="56" height="4" fill="#000"/>` + txt(176, CY + 14.6, `BASE ${base}`, { anchor: 'start', tipo: 'legenda' });
+  box('legenda', 'amostra', 106, CY - 4, 56, 8);
+  if (EIXO === 'log') {
+    s += `<rect x="392" y="${CY - 20}" width="88" height="40" fill="#000"/>` + txt(436, CY + 14.6, 'LOG', { fill: '#FFF', tipo: 'legenda', id: 'log', reg: false });
+    box('legenda', 'logchip', 392, CY - 20, 88, 40);
+  }
 
   // eixo X: marca a cada 5 anos, rótulo a cada 10 (entram quando a ponta passa)
   let xl = '', marcasX = '';
@@ -290,9 +296,9 @@ function seek(t) {
     if (t < m.t || sai >= 1) continue;
     const dy = -(1 - ent) * 24 - sai * 24;
     const w = m.texto.length * 24 + 28, x0 = 966 - w;
-    chips += `<rect x="${f1(x0 + 3)}" y="${f1(777 + dy)}" width="${w - 6}" height="${46}" fill="${LIMAO}" stroke="#000" stroke-width="6"/>`;
-    chips += txt(x0 + w / 2, 800 + 14.6 + dy, m.texto, { tipo: 'chip', id: m.texto, reg: false });
-    if (ent >= 1 && sai <= 0) box('chip', m.texto, x0, 774, w, 52);
+    chips += `<rect x="${f1(x0 + 3)}" y="${f1(CY - 23 + dy)}" width="${w - 6}" height="${46}" fill="${LIMAO}" stroke="#000" stroke-width="6"/>`;
+    chips += txt(x0 + w / 2, CY + 14.6 + dy, m.texto, { tipo: 'chip', id: m.texto, reg: false });
+    if (ent >= 1 && sai <= 0) box('chip', m.texto, x0, CY - 26, w, 52);
   }
   s += `<g clip-path="url(#cTira)">${chips}</g>`;
 
@@ -301,18 +307,18 @@ function seek(t) {
   const g = ease((t - T_CTA - 4 / FPS) / (8 / FPS));  // depois o chip entra
   const f = D.exibicao;
   const l1 = `Fonte: ${f.fonte_curta} (${f.indicador}) · ${f.medida}`;
-  const l2 = `Índice de preços ao consumidor · ${ano0} = ${base}`;
+  const l2 = EIXO === 'log' ? `Preços ao consumidor · ${ano0} = ${base} · escala log` : `Índice de preços ao consumidor · ${ano0} = ${base}`;
   let rod = '';
   if (gs < 1) {
     const dy = gs * 90;
-    rod += txt(540, 1384 + dy, l1, { fs: 28, w: 500, tipo: 'fonte', id: 'fonte1', reg: gs <= 0 });
-    rod += txt(540, 1420 + dy, l2, { fs: 28, w: 500, tipo: 'fonte', id: 'fonte2', reg: gs <= 0 });
+    rod += txt(540, 1408 + dy, l1, { fs: 28, w: 500, tipo: 'fonte', id: 'fonte1', reg: gs <= 0 });
+    rod += txt(540, 1442 + dy, l2, { fs: 28, w: 500, tipo: 'fonte', id: 'fonte2', reg: gs <= 0 });
   }
   if (g > 0) {
-    const cta = 'EXPLICO NA LEGENDA', fs = 44, w = larguraArch(cta, fs) + 64, dy = (1 - g) * 90;
-    rod += `<rect x="${f1(540 - w / 2)}" y="${f1(1355 + dy)}" width="${f1(w)}" height="80" fill="#000"/>`;
-    rod += txt(540, 1395 + 0.365 * fs + dy, cta, { fam: 'arch', fs, fill: LIMAO, tipo: 'cta', id: 'cta', reg: false });
-    if (g >= 1) box('cta', 'cta', 540 - w / 2, 1355, w, 80);
+    const cta = 'EXPLICO NA LEGENDA', fs = 40, w = larguraArch(cta, fs) + 56, dy = (1 - g) * 90;
+    rod += `<rect x="${f1(540 - w / 2)}" y="${f1(1384 + dy)}" width="${f1(w)}" height="64" fill="#000"/>`;
+    rod += txt(540, 1416 + 0.365 * fs + dy, cta, { fam: 'arch', fs, fill: LIMAO, tipo: 'cta', id: 'cta', reg: false });
+    if (g >= 1) box('cta', 'cta', 540 - w / 2, 1384, w, 64);
   }
   s += `<g clip-path="url(#cFonte)">${rod}</g>`;
 
@@ -323,7 +329,7 @@ function seek(t) {
 async function init() {
   const resp = await fetch('dados.json');
   D = await resp.json();
-  M = construir(D);
+  M = construir(D, { eixo: EIXO, altura: PH });
   ctx2d = document.createElement('canvas').getContext('2d');
   await Promise.all([
     document.fonts.load('400 40px "Archivo Black"'), document.fonts.load('400 40px "JetBrains Mono"'),

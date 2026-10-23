@@ -47,7 +47,9 @@ function pchip(ys) {
   };
 }
 
-export function construir(dados) {
+export function construir(dados, opcoes = {}) {
+  const eixo = opcoes.eixo === 'log' ? 'log' : 'linear';
+  const ALTURA = opcoes.altura ?? 456; // altura útil do gráfico em px (só para espaçar a grade)
   const anos = [];
   for (let a = dados.ano_inicial; a <= dados.ano_final; a++) anos.push(a);
   const P_MAX = anos.length - 1;
@@ -79,15 +81,26 @@ export function construir(dados) {
   };
   const valor = (id, p) => interp[id](p);
 
+  // fração (0..1) da altura útil em que um valor cai, dado o máximo do eixo
+  const frac = eixo === 'log'
+    ? (v, mx) => Math.log(v / Y_MIN) / Math.log(mx / Y_MIN)
+    : (v, mx) => (v - Y_MIN) / (mx - Y_MIN);
+  // máximo do eixo que põe o valor v na fração f
+  const maxPara = eixo === 'log'
+    ? (v, f) => Y_MIN * Math.pow(v / Y_MIN, 1 / f)
+    : (v, f) => Y_MIN + (v - Y_MIN) / f;
+  const dom = eixo === 'log' ? (mx) => Math.log(mx / Y_MIN) : (mx) => mx;       // domínio da suavização
+  const undom = eixo === 'log' ? (g) => Y_MIN * Math.exp(g) : (g) => g;
+
   // tabela do máximo do eixo Y por quadro (suavizado uma vez, aqui no build)
-  const alvo = (t) => Y_MIN + (valor('BRA', progresso(t + 0.15)) - Y_MIN) / TIP_FRAC;
+  const alvo = (t) => dom(maxPara(valor('BRA', progresso(t + 0.15)), TIP_FRAC));
   const M = new Float64Array(N_FRAMES + 1);
   let m = alvo(0);
   for (let i = 0; i <= N_FRAMES; i++) {
     const t = i / FPS;
     m += 0.2 * (alvo(t) - m);
-    const piso = Y_MIN + (valor('BRA', progresso(t)) - Y_MIN) / TIP_TETO;
-    M[i] = Math.max(m, piso);
+    const piso = dom(maxPara(valor('BRA', progresso(t)), TIP_TETO));
+    M[i] = undom(Math.max(m, piso));
   }
   const Mt = (t) => {
     const f = Math.min(Math.max(t * FPS, 0), N_FRAMES);
@@ -95,29 +108,34 @@ export function construir(dados) {
     return M[i] + (M[i + 1] - M[i]) * (f - i);
   };
 
-  // passo da grade por quadro (nunca diminui) e eventos de troca
-  const contar = (s, mx) => Math.floor(mx / s) - Math.ceil(Y_MIN / s) + 1;
+  // passo da grade por quadro (nunca diminui): no máximo 6 linhas e pelo menos 50 px entre as duas de cima
+  const contar = (st, mx) => Math.floor(mx / st) - Math.ceil(Y_MIN / st) + 1;
+  const folgaTopo = (st, mx) => {
+    const topo = Math.floor(mx / st) * st;
+    if (topo - st < Y_MIN) return Infinity;
+    return ALTURA * (frac(topo, mx) - frac(topo - st, mx));
+  };
   const passoQ = [];
   let atual = PASSOS[0];
   for (let i = 0; i <= N_FRAMES; i++) {
-    let s = PASSOS.find((x) => contar(x, M[i]) <= MAX_LINHAS) ?? PASSOS[PASSOS.length - 1];
-    if (s < atual) s = atual;
-    atual = s;
-    passoQ.push(s);
+    let st = PASSOS.find((x) => contar(x, M[i]) <= MAX_LINHAS && folgaTopo(x, M[i]) >= 50) ?? PASSOS[PASSOS.length - 1];
+    if (st < atual) st = atual;
+    atual = st;
+    passoQ.push(st);
   }
   const familia = {}; // passo -> {ini, fim} em segundos
-  passoQ.forEach((s, i) => {
+  passoQ.forEach((st, i) => {
     const t = i / FPS;
-    if (!familia[s]) familia[s] = { ini: i === 0 ? null : t, fim: null };
-    if (i > 0 && passoQ[i - 1] !== s) familia[passoQ[i - 1]].fim = t;
+    if (!familia[st]) familia[st] = { ini: i === 0 ? null : t, fim: null };
+    if (i > 0 && passoQ[i - 1] !== st) familia[passoQ[i - 1]].fim = t;
   });
   const rampa = (x) => Math.min(Math.max(x, 0), 1);
   const presenca = (v, t) => {
     // devolve {modo:'cheia'|'entra'|'sai', f} ou null
     let melhor = null;
     for (const [sStr, fam] of Object.entries(familia)) {
-      const s = Number(sStr);
-      if (Math.abs(v / s - Math.round(v / s)) > 1e-9) continue;
+      const st = Number(sStr);
+      if (Math.abs(v / st - Math.round(v / st)) > 1e-9) continue;
       // a família nova só entra depois que a antiga saiu (sem rótulos sobrepostos)
       const on = fam.ini === null ? 1 : rampa((t - fam.ini - GRADE_ANIM) / GRADE_ANIM);
       const off = fam.fim === null ? 0 : rampa((t - fam.fim) / GRADE_ANIM);
@@ -143,5 +161,5 @@ export function construir(dados) {
   const ticks = anos.map((ano, k) => ({ k, ano, t: tempoDe(k), brasil: serie.BRA[k] }));
 
   return { anos, P_MAX, ids, ordem, serie, valor, progresso, tempoDe, Mt, M, passoQ, familia, presenca,
-           marcos, ticks, v0, Y_MIN };
+           marcos, ticks, v0, Y_MIN, eixo, frac };
 }

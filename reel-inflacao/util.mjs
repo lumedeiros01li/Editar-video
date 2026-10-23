@@ -26,9 +26,9 @@ export function servidor() {
   return new Promise((ok) => srv.listen(0, '127.0.0.1', () => ok({ srv, url: `http://127.0.0.1:${srv.address().port}/index.html` })));
 }
 
-export async function abrir(browser, url) {
+export async function abrir(browser, url, eixo = 'linear') {
   const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
-  await page.goto(url);
+  await page.goto(eixo === 'log' ? `${url}?eixo=log` : url);
   await page.waitForFunction('window.__ready === true', null, { timeout: 30000 });
   return page;
 }
