@@ -19,3 +19,15 @@ Edição dos dois vídeos gravados no carro (registro de água / organização p
 - Áudio: redução de ruído (RNNoise), EQ de presença, de-esser, compressor, -14 LUFS. Trilha ambiente sintetizada (~20 dB abaixo da voz, com ducking) e efeitos sonoros leves sintetizados (pop, whoosh, ding, tick).
 
 Pipeline em `scripts/reel/`: transcrição (Whisper turbo + Parakeet v3 via sherpa-onnx), `timeline.py` (cortes), `cues.py` (animações e SFX), `render.mjs` + `scene.html` (render Canvas no Chromium), `audio.py` (mix).
+
+## Versão limpa (`reel_limpo_brutalista.mp4` e `reel_limpo_caixinha.mp4`)
+
+Mesmos cortes de pausas, respirações e erros, sem animações, transições, movimentos de câmera ou efeitos sonoros. Cortes secos.
+
+- Legenda pequena estilo filme/brutalista: frase inteira, Space Grotesk branca em faixa preta reta.
+- Topo fixo com a pré-reflexão "Sua família sabe onde está o seu dinheiro?":
+  - `reel_limpo_brutalista.mp4`: balão brutalista (borda preta, sombra sólida, tag mono "PENSE NISSO ANTES").
+  - `reel_limpo_caixinha.mp4`: caixinha de pergunta estilo Instagram com foto do rosto.
+- Áudio: voz tratada, trilha ambiente mais baixa (~24 dB abaixo da voz), -14 LUFS.
+
+Render: `SCENE='scene2.html?box=brut' node scripts/reel/render2.mjs <raiz> <saida>` (ou `box=ig`).
