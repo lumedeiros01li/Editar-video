@@ -94,23 +94,35 @@ function isotonica(y) {
 const yDe = (v, mx) => PB - M.frac(v, mx) * PH;
 const xDe = (p) => PL + (p / M.P_MAX) * PW;
 
-// posição vertical (centro) dos rótulos por quadro: ordem pelo valor atual, empurrão mínimo e suavização
+// posição vertical (centro) dos rótulos por quadro. A ordem só troca quando a ultrapassagem passa de 4%
+// (histerese), o empurrão mínimo mantém o espaçamento e a suavização só anima o salto de uma troca:
+// com a ordem fixa, a média ponderada de posições já espaçadas continua espaçada.
+const HISTERESE = 1.08, ALFA = 0.75;
 function tabelaRotulos() {
   const tab = [];
-  let ant = null;
+  let ant = null, ordem = [...ORDEM_NEUTRA];
   for (let i = 0; i <= N_FRAMES; i++) {
     const t = i / FPS, p = M.progresso(t), mx = M.M[i];
-    const ordem = [...LINHAS].sort((a, b) => (M.valor(a, p) - M.valor(b, p)) || (ORDEM_NEUTRA.indexOf(a) - ORDEM_NEUTRA.indexOf(b)));
-    const alvo = ordem.map((id) => PB - yDe(M.valor(id, p), mx));
+    const v = (id) => M.valor(id, p);
+    if (t >= T_VOLTA || t < T_CORRIDA) {
+      ordem = [...LINHAS].sort((a, b) => (v(a) - v(b)) || (ORDEM_NEUTRA.indexOf(a) - ORDEM_NEUTRA.indexOf(b)));
+    } else {
+      for (let passe = 0; passe < ordem.length; passe++) {
+        for (let k = 0; k < ordem.length - 1; k++) {
+          if (v(ordem[k]) > v(ordem[k + 1]) * HISTERESE) [ordem[k], ordem[k + 1]] = [ordem[k + 1], ordem[k]];
+        }
+      }
+    }
+    const alvo = ordem.map((id) => PB - yDe(v(id), mx));
     const o = ordem.map((_, k) => k * (ROT_H + ROT_GAP));
     let z = isotonica(alvo.map((a, k) => a - o[k]));
     const lo = ROT_H / 2, hi = (PB - TOPO_ROT) - ROT_H / 2 - o[o.length - 1];
-    z = z.map((v) => Math.min(Math.max(v, lo), Math.max(hi, lo)));
+    z = z.map((x) => Math.min(Math.max(x, lo), Math.max(hi, lo)));
     const cru = {};
     ordem.forEach((id, k) => { cru[id] = PB - (z[k] + o[k]); });
     const suave = t > T_CORRIDA && t < T_VOLTA && ant;
     const atual = {};
-    for (const id of LINHAS) atual[id] = suave ? ant[id] + 0.35 * (cru[id] - ant[id]) : cru[id];
+    for (const id of LINHAS) atual[id] = suave ? ant[id] + ALFA * (cru[id] - ant[id]) : cru[id];
     tab.push(atual);
     ant = atual;
   }
