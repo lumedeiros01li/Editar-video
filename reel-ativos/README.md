@@ -26,7 +26,7 @@ node contato.mjs --eixo=log     # folhas de contato em out/contact-sheets/<eixo>
 | 14,5 a 16 s | ranking parado, "POUPANÇA: CERCA DE 1% AO ANO ACIMA DA INFLAÇÃO" e "LEIA A LEGENDA" |
 | 16 a 16,4 s | rebobina até o quadro 0 (último quadro = primeiro) |
 
-O ano rodando e o "LEIA A LEGENDA" ficam na faixa de cima do cartão, o que deixou o gráfico com 946 px de altura útil.
+O cartão ocupa a caixa marcada no print (x 90 a 990, de y 362 até o rodapé em 1678). A etiqueta, o selo LOG e o ano ficam na faixa de cima do cartão; no ranking, a faixa vira o "LEIA A LEGENDA". Na ponta de cada linha há um ícone (banco = CDI, barras = ouro, bandeira do Brasil = Ibovespa, bandeira dos EUA = S&P 500, porquinho = poupança, carrinho = inflação), e a legenda 2 x 3 embaixo do gráfico liga ícone e nome e recebe os valores na revelação. Área útil do gráfico: 682 x 856 px.
 
 Todos os números (valores, flashes, ano da ultrapassagem e o "1% ao ano") são calculados do `dados.json`.
 

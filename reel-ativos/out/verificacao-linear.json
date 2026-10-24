@@ -1,14 +1,14 @@
 {
   "falhas": [],
   "ok": [
-    "valores no ranking batem com dados.json e com o roteiro: POU R$ 593 | IBOV R$ 1.222 | SPX R$ 1.523 | CDI R$ 1.836 | OURO R$ 4.212 | IPCA R$ 456",
+    "valores no ranking batem com dados.json e com o roteiro: POU 593 | IBOV 1.222 | SPX 1.523 | CDI 1.836 | OURO 4.212 | IPCA 456",
     "ranking na tela, de cima para baixo: OURO > CDI > SPX > IBOV > POU > IPCA",
     "quadro inicial não entrega o ranking (topo: CDI)",
     "\"cerca de 1% ao ano acima da inflação\" confere: 1.02% a.a. em 25.75 anos",
     "flash \"2008: IBOVESPA -41%\" confere com os dados e fica 1.00 s parado na tela",
     "flash \"2018: S&P PASSA A POUPANÇA\" confere com os dados e fica 1.00 s parado na tela",
     "flash \"2024: DÓLAR +28%\" confere com os dados e fica 1.00 s parado na tela",
-    "limites: textos entre x 92-977 e y 275-1679 (alvo 176-1678, margem 90)",
+    "limites: textos entre x 92-977 e y 272-1679 (alvo 176-1678, margem 90)",
     "fontes: 40 px ou mais, rodapé em 28 px",
     "colisões: nenhuma entre textos, chips, eixos e rótulos de tipos diferentes",
     "loop: último quadro igual ao primeiro (PSNR inf dB)",
@@ -20,6 +20,6 @@
   ],
   "avisos": [
     "S&P em R$ já tinha passado a poupança em 2002 e voltou para trás; fica acima de vez a partir de 2018 (382 x 377)",
-    "rótulos se cruzando em ultrapassagens: 26 quadros de 492 (0.87 s)"
+    "rótulos se cruzando em ultrapassagens: 25 quadros de 492 (0.83 s)"
   ]
 }

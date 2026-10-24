@@ -28,17 +28,18 @@ const COR = { POU: '#9966FF', CDI: '#1F3A93', OURO: '#C99700', IBOV: '#00A94F', 
 // ---- geometria: limites definidos pelo Lucas (topo 176, meio 530, base 1678) ----
 const LIM = { topo: 176, meio: 530, base: 1678 };
 const HY = 224;                       // centro da foto (topo = 176)
-const ET = 316;                       // etiqueta
-const TT = 392, TT1 = 364, TT2 = 412; // título em uma linha / em duas linhas
-const CARD = { x: 90, y: 432, w: 892, h: 1104 }; // gráfico ampliado: o ano foi para a faixa do cartão; sombra fecha em 990 x 1544
-const CY = CARD.y + 6 + 42;           // centro da faixa (legenda à esquerda, ano/CTA à direita)
+const TT = 338, TT1 = 308, TT2 = 350; // título em uma linha / em duas linhas
+const CARD = { x: 90, y: 362, w: 892, h: 1174 }; // ocupa a caixa marcada (x 90-990, y ~340-1678 com o rodapé); sombra fecha em 1544
+const CY = CARD.y + 6 + 42;           // centro da faixa: etiqueta à esquerda, ano à direita, CTA no fim
 const EIXO = new URLSearchParams(location.search).get('eixo') === 'linear' ? 'linear' : 'log';
-const PL = 206, PR = 680, PT = CARD.y + 6 + 84, PB = CARD.y + CARD.h - 6 - 62;
+const PL = 206, PR = 888, PT = CARD.y + 6 + 84, PB = 1308;
 const PW = PR - PL, PH = PB - PT;
-const SLOT = 24;                      // ponta da linha até o rótulo
-const ROT_H = 96, ROT_GAP = 8;        // altura reservada por rótulo (nome + valor)
-const TOPO_ROT = PT + 84;             // rótulos nunca sobem na faixa dos flashes
+const SLOT = 12;                      // ponta da linha até o ícone
+const ICO = 56, ROT_H = 56, ROT_GAP = 8;
+const TOPO_ROT = PT + 84;             // ícones nunca sobem na faixa dos flashes
 const FLASH_Y = PT + 8, FLASH_H = 64;
+const LEG_Y = [PB + 86, PB + 138, PB + 190], LEG_X = [110, 550], LEG_VAL = 288; // legenda 2 x 3 abaixo do gráfico
+const ORDEM_LEGENDA = ['CDI', 'IBOV', 'OURO', 'POU', 'SPX', 'IPCA'];
 const RODAPE = [1572, 1605, 1638, 1671];
 
 const ease = (x) => { x = Math.min(Math.max(x, 0), 1); return 1 - Math.pow(1 - x, 3); };
@@ -75,6 +76,19 @@ function titulo(partes, destaque, y, fs, dy, reg, id) {
   });
   if (reg) box('titulo', id, 540 - total / 2 - 10, y - 0.86 * fs, total + 20, 1.06 * fs);
   return s;
+}
+
+// ícones dos ativos: ladrilho na cor da linha, borda preta, desenho branco simples
+function icone(id, x, y, tam) {
+  const B = '#FFF';
+  let g = '';
+  if (id === 'CDI') g = `<polygon points="9,22 28,10 47,22" fill="${B}"/><rect x="13" y="25" width="5" height="14" fill="${B}"/><rect x="25.5" y="25" width="5" height="14" fill="${B}"/><rect x="38" y="25" width="5" height="14" fill="${B}"/><rect x="9" y="41" width="38" height="5" fill="${B}"/>`;
+  if (id === 'IBOV') g = `<polygon points="28,11 47,28 28,45 9,28" fill="#FFDF00"/><circle cx="28" cy="28" r="8" fill="#002776"/>`;
+  if (id === 'OURO') g = `<g fill="#FFE58A" stroke="#000" stroke-width="2"><polygon points="7,45 27,45 24,36 10,36"/><polygon points="29,45 49,45 46,36 32,36"/><polygon points="18,35 38,35 35,26 21,26"/></g>`;
+  if (id === 'POU') g = `<ellipse cx="26" cy="31" rx="16" ry="11" fill="${B}"/><circle cx="43" cy="30" r="5" fill="${B}"/><polygon points="16,24 20,14 26,22" fill="${B}"/><rect x="16" y="38" width="5" height="8" fill="${B}"/><rect x="30" y="38" width="5" height="8" fill="${B}"/><rect x="21" y="23" width="9" height="3" fill="${COR.POU}"/><circle cx="36" cy="27" r="1.8" fill="#000"/>`;
+  if (id === 'SPX') g = `<rect x="4" y="13" width="48" height="5" fill="${B}"/><rect x="4" y="25" width="48" height="5" fill="${B}"/><rect x="4" y="37" width="48" height="5" fill="${B}"/><rect x="4" y="4" width="22" height="20" fill="#1F2A6B"/><g fill="${B}"><rect x="8" y="8" width="3" height="3"/><rect x="15" y="8" width="3" height="3"/><rect x="11.5" y="14" width="3" height="3"/><rect x="18.5" y="14" width="3" height="3"/></g>`;
+  if (id === 'IPCA') g = `<path d="M7,12 L14,12 L18,34 L42,34 L46,18 L15,18" fill="none" stroke="${B}" stroke-width="4" stroke-linejoin="miter"/><rect x="19" y="21" width="24" height="10" fill="${B}"/><circle cx="21" cy="42" r="4" fill="${B}"/><circle cx="39" cy="42" r="4" fill="${B}"/>`;
+  return `<g transform="translate(${f1(x)} ${f1(y)}) scale(${(tam / 56).toFixed(4)})"><svg width="56" height="56" viewBox="0 0 56 56" overflow="hidden"><rect width="56" height="56" fill="${COR[id]}"/>${g}</svg><rect x="2" y="2" width="52" height="52" fill="none" stroke="#000" stroke-width="4"/></g>`;
 }
 
 // regressão isotônica (PAV)
@@ -132,8 +146,8 @@ function tabelaRotulos() {
 function estatica() {
   const defs = `<defs>
     <clipPath id="cFoto"><circle cx="326" cy="${HY}" r="48"/></clipPath>
-    <clipPath id="cTit"><rect x="90" y="322" width="900" height="106"/></clipPath>
-    <clipPath id="cAno"><rect x="496" y="${CARD.y + 6}" width="480" height="84"/></clipPath>
+    <clipPath id="cTit"><rect x="90" y="272" width="900" height="${CARD.y - 272}"/></clipPath>
+    <clipPath id="cFaixa"><rect x="96" y="${CARD.y + 6}" width="880" height="84"/></clipPath>
     <clipPath id="cFlash"><rect x="96" y="${PT + 4}" width="880" height="76"/></clipPath>
     <clipPath id="cPlot"><rect x="${PL - 2}" y="${PT - 30}" width="${PW + 4}" height="${PH + 30}"/></clipPath>
     <clipPath id="cX"><rect x="96" y="${PB + 2}" width="880" height="56"/></clipPath>
@@ -181,16 +195,13 @@ function seek(t) {
   box('header', 'selo', 394 + 14 * 24 + 10, HY - 42, 40, 40);
   box('header', 'handle', 394, HY + 38 - 29, 17 * 24, 38);
 
-  // etiqueta fixa
-  s += txt(540, ET, `[ R$ ${base} EM ${ano0} ]`, { tipo: 'etiqueta' });
-
   // título: QUEM VIROU MAIS? -> QUAL FICOU EM 1º? -> poupança x inflação -> volta ao primeiro
   const pctAcima = Math.round(M.acima * 100);
   const fases = [{ t: 0, fase: 'A' }, { t: T_CONGELA, fase: 'B' }, { t: T_RANKING, fase: 'C' }, { t: T_VOLTA, fase: 'A' }];
   let tit = '';
   for (const f of troca(t, fases)) {
-    if (f.fase === 'A') tit += titulo(['QUEM VIROU ', 'MAIS', '?'], 1, TT, 60, f.dy, f.estavel, 'A');
-    if (f.fase === 'B') tit += titulo(['QUAL FICOU EM ', '1º', '?'], 1, TT, 60, f.dy, f.estavel, 'B');
+    if (f.fase === 'A') tit += titulo(['QUEM VIROU ', 'MAIS', '?'], 1, TT, 52, f.dy, f.estavel, 'A');
+    if (f.fase === 'B') tit += titulo(['QUAL FICOU EM ', '1º', '?'], 1, TT, 52, f.dy, f.estavel, 'B');
     if (f.fase === 'C') {
       tit += titulo(['POUPANÇA: CERCA DE ', `${pctAcima}% AO ANO`], 1, TT1, 40, f.dy, f.estavel, 'C1');
       tit += titulo(['ACIMA DA INFLAÇÃO'], -1, TT2, 40, f.dy, f.estavel, 'C2');
@@ -198,19 +209,26 @@ function seek(t) {
   }
   s += `<g clip-path="url(#cTit)">${tit}</g>`;
 
-  // ano rodando / CTA
+  // faixa do cartão: etiqueta, LOG e ano rodando; no ranking, só o CTA
   const ano = M.anoNaTela(p);
-  let slot = '';
-  for (const f of troca(t, [{ t: 0, fase: 'ano' }, { t: T_RANKING, fase: 'cta' }, { t: T_VOLTA, fase: 'ano' }], 90)) {
-    if (f.fase === 'ano') slot += txt(962, CY + 20 + f.dy, String(ano), { fam: 'arch', fs: 56, anchor: 'end', tipo: 'ano', id: 'ano', reg: f.estavel });
+  let faixa = '';
+  for (const f of troca(t, [{ t: 0, fase: 'faixa' }, { t: T_RANKING, fase: 'cta' }, { t: T_VOLTA, fase: 'faixa' }], 90)) {
+    if (f.fase === 'faixa') {
+      faixa += txt(110, CY + 14.6 + f.dy, `[ R$ ${base} EM ${ano0} ]`, { anchor: 'start', tipo: 'etiqueta', reg: f.estavel });
+      if (EIXO === 'log') {
+        faixa += `<rect x="556" y="${f1(CY - 20 + f.dy)}" width="88" height="40" fill="#000"/>` + txt(600, CY + 14.6 + f.dy, 'LOG', { fill: '#FFF', reg: false });
+        if (f.estavel) box('legenda', 'log', 556, CY - 20, 88, 40);
+      }
+      faixa += txt(962, CY + 20 + f.dy, String(ano), { fam: 'arch', fs: 56, anchor: 'end', tipo: 'ano', id: 'ano', reg: f.estavel });
+    }
     if (f.fase === 'cta') {
-      const cta = 'LEIA A LEGENDA', w = larguraArch(cta, 40) + 48;
-      slot += `<rect x="${f1(966 - w)}" y="${f1(CY - 30 + f.dy)}" width="${f1(w)}" height="60" fill="#000"/>`;
-      slot += txt(966 - w / 2, CY + 14.6 + f.dy, cta, { fam: 'arch', fs: 40, fill: LIMAO, reg: false });
-      if (f.estavel) box('cta', 'cta', 966 - w, CY - 30, w, 60);
+      const cta = 'LEIA A LEGENDA', w = larguraArch(cta, 40) + 48, xc = CARD.x + CARD.w / 2;
+      faixa += `<rect x="${f1(xc - w / 2)}" y="${f1(CY - 30 + f.dy)}" width="${f1(w)}" height="60" fill="#000"/>`;
+      faixa += txt(xc, CY + 14.6 + f.dy, cta, { fam: 'arch', fs: 40, fill: LIMAO, reg: false });
+      if (f.estavel) box('cta', 'cta', xc - w / 2, CY - 30, w, 60);
     }
   }
-  s += `<g clip-path="url(#cAno)">${slot}</g>`;
+  s += `<g clip-path="url(#cFaixa)">${faixa}</g>`;
 
   // ---- gráfico ----
   let grade = '', rot = '';
@@ -233,14 +251,6 @@ function seek(t) {
   box('ylabel', 'base', PL - 92, yb - 20, 84, 40);
   s += `<text x="${PL - 50}" y="${f1(yb + 14.6)}" font-family="${MONO}" font-weight="700" font-size="40" fill="#FFF" text-anchor="middle">${base}</text>`;
   s += rot;
-  // legenda da base e do eixo
-  s += `<rect x="106" y="${CY - 2}" width="56" height="4" fill="#000"/>` + txt(176, CY + 14.6, `BASE ${base}`, { anchor: 'start', tipo: 'legenda' });
-  box('legenda', 'amostra', 106, CY - 4, 56, 8);
-  if (EIXO === 'log') {
-    s += `<rect x="392" y="${CY - 20}" width="88" height="40" fill="#000"/>` + txt(436, CY + 14.6, 'LOG', { fill: '#FFF', reg: false });
-    box('legenda', 'log', 392, CY - 20, 88, 40);
-  }
-
   // eixo X: marca a cada 5 anos, rótulo a cada 10
   let xl = '', mx5 = '';
   for (let k = 0; k <= M.P_MAX; k += 5) {
@@ -248,7 +258,7 @@ function seek(t) {
     const tk = M.tempoDe(k);
     const f = k === 0 || t >= T_VOLTA ? 1 : ease((t - tk) / 0.2);
     if (k > 0) mx5 += `<rect x="${f1(xDe(k) - 2)}" y="${PB + 3}" width="4" height="${f1(12 * f)}" fill="#000"/>`;
-    if (k % 10 === 0) xl += txt(xDe(k), PB + 54 + (1 - f) * 24, String(ano0 + k), { tipo: 'xlabel', id: 'x' + k, reg: f >= 1 });
+    if (k % 10 === 0) xl += txt(xDe(k), PB + 48 + (1 - f) * 24, String(ano0 + k), { tipo: 'xlabel', id: 'x' + k, reg: f >= 1 });
   }
   s += mx5 + `<g clip-path="url(#cX)">${xl}</g>`;
 
@@ -264,44 +274,46 @@ function seek(t) {
   }
   s += `<g clip-path="url(#cPlot)">${linhas}</g>`;
 
-  // rótulos na ponta: nome sempre, valor depois da revelação
+  // ícones na ponta das linhas
   const xTip = xDe(p), x0 = xTip + SLOT;
   const valores = {};
   let guias = '', grupos = '';
   const ordemDesenho = [...LINHAS].sort((a, b) => POS[i][a] - POS[i][b]);
   for (const id of ordemDesenho) {
     const yc = POS[i][id], yt = y(M.valor(id, p));
-    guias += `<path d="M${f1(xTip)} ${f1(yt)} L${f1(x0 - 4)} ${f1(yc - 22)}" stroke="${COR[id]}" stroke-width="3" stroke-dasharray="7 5" fill="none"/>`;
-    const nome = D.series[id].rotulo, cinza = id === 'IPCA';
-    const tR = M.revela[id];
+    guias += `<path d="M${f1(xTip)} ${f1(yt)} L${f1(x0)} ${f1(yc)}" stroke="${COR[id]}" stroke-width="3" stroke-dasharray="6 4" fill="none"/>`;
+    const tR = M.revela[id], u = (t - tR) * FPS;
     const vence = id === M.vencedor && t >= tR && t < T_VOLTA;
+    const pulso = t >= tR && t < T_VOLTA && u < 8 ? 1 + 0.15 * Math.sin(Math.PI * u / 8) : 1;
+    const cx = x0 + ICO / 2, cy = yc;
     let g = '';
-    if (vence) g += `<rect x="${f1(x0 - 13)}" y="${f1(yc - 47)}" width="270" height="94" fill="${LIMAO}" stroke="#000" stroke-width="6"/>`;
-    else g += `<rect x="${f1(x0 - 6)}" y="${f1(yc - 44)}" width="258" height="88" fill="#FFF"/>`;
-    g += `<rect x="${f1(x0 + 1.5)}" y="${f1(yc - 32 + 1.5)}" width="17" height="17" fill="${COR[id]}" stroke="#000" stroke-width="3"/>`;
-    g += txt(x0 + 28, yc - 22 + 14.6, nome, { anchor: 'start', fill: cinza ? CINZA_TXT : PRETO, reg: false });
-    // valor: entra deslizando na revelação, sai deslizando na volta
-    let mostra = false, dx = 0;
-    if (t >= tR && t < T_VOLTA + 4 / FPS) {
-      mostra = true;
-      const u = (t - tR) * FPS;
-      dx = -(1 - ease(u / 6)) * 24;
-      if (t >= T_VOLTA) dx = -ease((t - T_VOLTA) * FPS / 4) * 24;
-    }
-    if (mostra) {
-      const val = `R$ ${milhar(M.final(id))}`;
-      valores[id] = val;
-      g += `<text x="${f1(x0 + 28 + dx)}" y="${f1(yc + 22 + 14.6)}" font-family="${MONO}" font-weight="700" font-size="40" fill="${cinza ? CINZA_TXT : PRETO}" data-valor="${id}">${esc(val)}</text>`;
-    }
-    // pulso do vencedor
-    const u = (t - tR) * FPS;
-    const esc1 = vence && u < 8 ? 1 + 0.06 * Math.sin(Math.PI * u / 8) : 1;
-    const cx = x0 + 122, cy = yc;
-    grupos += `<g transform="translate(${f1(cx)} ${f1(cy)}) scale(${esc1.toFixed(4)}) translate(${f1(-cx)} ${f1(-cy)})">${g}</g>`;
-    const bw = (vence ? 270 : 258) * esc1, bh = (vence ? 94 : 88) * esc1;
-    box('rotulo', id, cx - bw / 2 + (vence ? -1 : 0), cy - bh / 2, bw, bh);
+    if (vence) g += `<rect x="${f1(x0 - 8 + 2)}" y="${f1(yc - ICO / 2 - 8 + 2)}" width="${ICO + 12}" height="${ICO + 12}" fill="${LIMAO}" stroke="#000" stroke-width="4"/>`;
+    g += icone(id, x0, yc - ICO / 2, ICO);
+    grupos += `<g transform="translate(${f1(cx)} ${f1(cy)}) scale(${pulso.toFixed(4)}) translate(${f1(-cx)} ${f1(-cy)})">${g}</g>`;
+    const lado = (vence ? ICO + 16 : ICO) * pulso;
+    box('rotulo', id, cx - lado / 2, cy - lado / 2, lado, lado);
   }
   s += guias + grupos;
+
+  // legenda embaixo: ícone + nome; na revelação entra o valor
+  let leg = '';
+  ORDEM_LEGENDA.forEach((id, k) => {
+    const lx = LEG_X[k % 2], ly = LEG_Y[Math.floor(k / 2)];
+    const cinza = id === 'IPCA', tR = M.revela[id];
+    const vence = id === M.vencedor && t >= tR && t < T_VOLTA;
+    if (vence) leg += `<rect x="${lx - 8}" y="${ly - 27}" width="428" height="54" fill="${LIMAO}" stroke="#000" stroke-width="4"/>`;
+    leg += icone(id, lx, ly - 22, 44);
+    leg += txt(lx + 56, ly + 14.6, D.series[id].rotulo, { anchor: 'start', fill: cinza ? CINZA_TXT : PRETO, tipo: 'legenda', id: 'nome' + id });
+    if (t >= tR && t < T_VOLTA + 4 / FPS) {
+      const u = (t - tR) * FPS;
+      const dx = t >= T_VOLTA ? -ease((t - T_VOLTA) * FPS / 4) * 24 : -(1 - ease(u / 6)) * 24;
+      const val = milhar(M.final(id));
+      valores[id] = val;
+      leg += `<text x="${f1(lx + LEG_VAL + dx)}" y="${f1(ly + 14.6)}" font-family="${MONO}" font-weight="700" font-size="40" fill="${cinza ? CINZA_TXT : PRETO}" data-valor="${id}">${val}</text>`;
+      box('legenda', 'valor' + id, lx + LEG_VAL, ly - 15, val.length * 24, 30);
+    }
+  });
+  s += leg;
 
   // flashes (chip limão na faixa superior do gráfico)
   let fl = '', flashAtivo = null;

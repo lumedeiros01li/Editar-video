@@ -53,7 +53,7 @@ const finalDe = (id) => dados.series[id].valores.at(-1);
   const roteiro = { POU: 593, IBOV: 1222, SPX: 1523, CDI: 1836, OURO: 4212, IPCA: 456 };
   let ruins = 0;
   for (const [id, n] of Object.entries(roteiro)) {
-    const esperado = `R$ ${milhar(finalDe(id))}`;
+    const esperado = milhar(finalDe(id)); // a legenda mostra o valor sem "R$" (o título já diz R$ 100)
     const tela = q.textos.find((t) => t.v === id)?.s;
     if (tela !== esperado) { ruins++; falha(`${id}: tela "${tela}", dados "${esperado}"`); }
     if (Math.round(finalDe(id)) !== n) { ruins++; falha(`${id}: dados ${Math.round(finalDe(id))} diferente do roteiro ${n}`); }
