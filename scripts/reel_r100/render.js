@@ -1,0 +1,23 @@
+const { chromium } = require('playwright');
+const http = require('http'), fs = require('fs'), path = require('path');
+const ROOT = __dirname, OUT = process.argv[2], mode = process.argv[3] || 'all';
+const types = { '.html':'text/html', '.png':'image/png', '.ttf':'font/ttf' };
+const srv = http.createServer((req,res) => { const p = path.join(ROOT, decodeURIComponent(req.url.split('?')[0])); if (!fs.existsSync(p)) { res.writeHead(404); return res.end(); } res.writeHead(200, {'Content-Type': types[path.extname(p)]||'application/octet-stream'}); fs.createReadStream(p).pipe(res); });
+(async () => {
+  await new Promise(r => srv.listen(8766, r));
+  const browser = await chromium.launch();
+  fs.mkdirSync(OUT, { recursive: true });
+  const mk = async () => { const pg = await browser.newPage({ viewport:{width:1080,height:1920} }); pg.on('pageerror', e => console.log('ERR', e.message)); await pg.goto('http://localhost:8766/index.html'); await pg.waitForFunction(() => window.READY === true); return pg; };
+  const p0 = await mk(); const info = await p0.evaluate(() => window.INFO); console.log(info);
+  let list;
+  if (mode === 'all') list = [...Array(info.NFRAMES).keys()].map(f => ['f', f]);
+  else list = mode.split(',').map(Number).map(t => ['t', t]);
+  const W = Number(process.env.WORKERS || 4); const pages = [p0]; for (let i=1;i<W;i++) pages.push(await mk());
+  let next = 0, done = 0; const t0 = Date.now();
+  await Promise.all(pages.map(async pg => { while (next < list.length) { const [k, v] = list[next++];
+    const url = await pg.evaluate(([k,v]) => k === 'f' ? window.renderFrame(v) : window.renderAt(v), [k, v]);
+    const name = k === 'f' ? String(v).padStart(5,'0') : 't' + v;
+    fs.writeFileSync(path.join(OUT, name + '.png'), Buffer.from(url.split(',')[1], 'base64'));
+    if (++done % 100 === 0) console.log(done, ((Date.now()-t0)/done).toFixed(0)+'ms/f'); } }));
+  await browser.close(); srv.close();
+})();

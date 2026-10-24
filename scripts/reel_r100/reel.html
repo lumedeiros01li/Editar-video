@@ -1,0 +1,439 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:AB;src:url(assets/archivo.ttf)}
+@font-face{font-family:JB;font-weight:500;src:url(assets/jbm500.ttf)}
+@font-face{font-family:JB;font-weight:700;src:url(assets/jbm700.ttf)}
+@font-face{font-family:JB;font-weight:800;src:url(assets/jbm800.ttf)}
+body{margin:0;background:#F2F2F2}
+</style></head><body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+const FPS = 30, DUR = 32.5, NFRAMES = Math.round(DUR * FPS);
+const W = 1080, H = 1920;
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+
+// ---------- data ----------
+const CSV = `__CSV__`;
+const rows = CSV.trim().split('\n').map(l => l.split(','));
+const head = rows[0]; const body = rows.slice(1).map(r => r.map(Number));
+const col = name => body.map(r => r[head.indexOf(name)]);
+// x (anos desde dez/2000): 2001..2025 = fim de ano, 2026 = set/2026 (25,75)
+const XS = body.map(r => r[0] === 2026 ? 25.75 : r[0] - 2000);
+const XMAX = 25.75;
+
+const C = { cdi:'#1F3892', ouro:'#C89600', sp:'#D6002A', ibov:'#00A64C', poup:'#9764FF', ipca:'#8B8B8B', usd:'#8B8B8B', dol:'#111111' };
+function S(key, label, column, legendPos, icon, gray=false){ return {key,label,ys:col(column),color:C[key],pos:legendPos,icon,gray}; }
+const P1 = [
+  S('cdi','CDI','selic_cdi_BRL',[0,0],'cdi'), S('ouro','OURO','ouro_BRL',[0,1],'ouro'), S('sp','S&P 500','sp500_BRL',[0,2],'sp'),
+  S('ibov','IBOVESPA','ibovespa_BRL',[1,0],'ibov'), S('poup','POUPANÇA','poupanca_BRL',[1,1],'poup'), S('ipca','INFLAÇÃO','ipca_BRL',[1,2],'ipca',true),
+];
+const P2 = [
+  S('cdi','CDI','selic_cdi_USD',[0,0],'cdi'), S('ouro','OURO','ouro_USD',[0,1],'ouro'), S('sp','S&P 500','sp500_USD',[0,2],'sp'),
+  S('ibov','IBOVESPA','ibovespa_USD',[1,0],'ibov'), S('poup','POUPANÇA','poupanca_USD',[1,1],'poup'), S('usd','US$ PARADO','dolar_parado_USD',[1,2],'usd',true),
+];
+const DOLAR = { key:'dol', ys: col('dolar_BRL'), color: C.dol, icon:'usd' };
+
+// monotone cubic (Fritsch-Carlson) em log10
+function buildSpline(ys){
+  const n = XS.length, y = ys.map(v => Math.log10(v)), x = XS;
+  const d = [], m = new Array(n);
+  for (let i=0;i<n-1;i++) d.push((y[i+1]-y[i])/(x[i+1]-x[i]));
+  m[0]=d[0]; m[n-1]=d[n-2];
+  for (let i=1;i<n-1;i++){ m[i] = (d[i-1]*d[i] <= 0) ? 0 : (d[i-1]+d[i])/2; }
+  for (let i=0;i<n-1;i++){
+    if (d[i]===0){ m[i]=0; m[i+1]=0; continue; }
+    const a=m[i]/d[i], b=m[i+1]/d[i], s=a*a+b*b;
+    if (s>9){ const t=3/Math.sqrt(s); m[i]=t*a*d[i]; m[i+1]=t*b*d[i]; }
+  }
+  return xv => {
+    if (xv<=0) return y[0]; if (xv>=x[n-1]) return y[n-1];
+    let i=0; while (x[i+1] < xv) i++;
+    const h=x[i+1]-x[i], t=(xv-x[i])/h, t2=t*t, t3=t2*t;
+    return (2*t3-3*t2+1)*y[i] + (t3-2*t2+t)*h*m[i] + (-2*t3+3*t2)*y[i+1] + (t3-t2)*h*m[i+1];
+  };
+}
+for (const s of [...P1, ...P2, DOLAR]) s.f = buildSpline(s.ys);
+const FINAL = {1:{poup:593,cdi:1836,ouro:4212,ibov:1222,sp:2468,ipca:456}, 2:{poup:224,cdi:695,ouro:1594,ibov:462,sp:934,usd:100}};
+const valAt = (s, x) => Math.pow(10, s.f(x));
+
+// ---------- images ----------
+const IMG = {};
+function loadImg(n, src){ return new Promise(r => { const i = new Image(); i.onload = () => { IMG[n] = i; r(); }; i.src = src; }); }
+
+// ---------- helpers ----------
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const smooth = t => { t = clamp(t,0,1); return t*t*(3-2*t); };
+const easeOut = t => { t = clamp(t,0,1); return 1-Math.pow(1-t,3); };
+const lerp = (a,b,t) => a + (b-a)*t;
+const fmt = v => Math.round(v).toLocaleString('pt-BR');
+function seg(t, segs){ // segs: [t0,t1,x0,x1,mode]
+  let x = segs[0][2];
+  for (const [t0,t1,x0,x1,mode] of segs){
+    if (t < t0) return x;
+    const p = clamp((t-t0)/(t1-t0),0,1);
+    const e = mode === 'out' ? easeOut(p) : 0.7*p + 0.3*smooth(p);
+    x = lerp(x0,x1,e);
+    if (t <= t1) return x;
+  }
+  return x;
+}
+
+// ---------- timeline ----------
+const P1SEG = [[2,5,0,8],[6,8,8,15],[9,11.5,15,XMAX]];
+const P2SEG = [[20,22,0,8],[22,23.5,8,10],[23.5,24.7,10,15,'out'],[25,27,15,XMAX]];
+const tAtX = (segs, xv) => { for (let t=0;t<40;t+=0.002){ if (seg(t,segs) >= xv) return t; } return 99; };
+const T24 = tAtX(P1SEG, 24), T02 = tAtX(P2SEG, 2), T10 = tAtX(P2SEG, 10), T25 = tAtX(P2SEG, 25);
+
+const REV1 = { start:12.5, order:['poup','ibov','cdi','sp','ouro'], step:0.6, extra:'ipca' };
+const REV2 = { start:28.0, order:['poup','ibov','cdi','sp','ouro'], step:0.5, extra:'usd' };
+
+function state(t){
+  if (t < 16.5){
+    const st = { part:1, series:P1, x: seg(t, P1SEG), header:'[ R$ 100 EM 2000 ]', final:[50,5000], blendFrom:9.5, blendTo:11.5, flashes:[], focus:null, rev:REV1 };
+    if (t < 11.5) st.title = [['QUEM VIROU '],['MAIS',1],['?']];
+    else st.title = [['QUAL FICOU EM '],['1º',1],['?']];
+    if (t < 1.9) st.flashes.push({text:'[ R$ 100 EM 2000 ]', t0:0, t1:1.9});
+    if (t >= 5 && t < 7.7) { st.flashes.push({text:'2008: IBOVESPA -41%', t0:5, t1:7.7}); if (t < 6.2) st.focus='ibov'; }
+    if (t >= 8 && t < 9.4) { st.flashes.push({text:'2015: S&P SÓ PASSA A POUPANÇA DE VEZ', t0:8, t1:9.4}); st.focus2 = ['sp','poup']; }
+    if (t >= T24 && t < Math.min(T24+0.8, 11.6)) st.flashes.push({text:'2024: DÓLAR +28%', t0:T24, t1:Math.min(T24+0.8,11.6)});
+    return st;
+  }
+  if (t < 18.5){
+    const st = { part:'v', series:P1, x:XMAX, header:'[ R$ 100 EM 2000 ]', final:[50,5000], flashes:[], rev:REV1, revealAll:true };
+    st.title2 = [[['E SE A CONTA FOR EM '],['DÓLAR',1],['?']], [['A ORDEM MUDA?']]];
+    st.flashes.push({text:'O DÓLAR SUBIU 164% NESSE PERÍODO', t0:16.5, t1:18.6, big:true});
+    st.dolar = clamp((t-16.6)/0.9, 0, 1);
+    return st;
+  }
+  const st = { part:2, series:P2, x: seg(t, P2SEG), header:'[ US$ 100 EM 2000 ]', final:[30,2000], blendFrom:25.5, blendTo:27, flashes:[], rev:REV2 };
+  if (t < 20) { st.title = [['[ '],['PARTE 2',1],[' ]']]; st.flashes.push({text:'US$ 100 EM 2000', t0:18.5, t1:20}); }
+  else if (t < 27) st.title = [['QUEM VIROU MAIS EM '],['US$',1],['?']];
+  else if (t < 30.5) st.title = [['A ORDEM '],['MUDOU',1],['?']];
+  else st.title2 = [[['MESMA ORDEM,']], [['NÚMEROS '],['MENORES',1]]];
+  if (t >= T02 && t < T02+1.0) { st.flashes.push({text:'IBOVESPA CAI PARA US$ 41', t0:T02, t1:T02+1.0}); st.focus='ibov'; }
+  if (t >= T10 && t < 24.4) st.tag = { key:'ibov', x:10, text:'2010: US$ 533', t0:T10 };
+  if (t >= 24.4 && t < 25.7) { st.flashes.push({text:'2015: IBOVESPA US$ 142 (-73% DESDE 2010)', t0:24.4, t1:25.7}); st.focus='ibov'; }
+  if (t >= T25 && t < Math.min(T25+0.8, 27.6)) { st.flashes.push({text:'OURO: US$ 1.590', t0:T25, t1:Math.min(T25+0.8,27.6)}); }
+  if (t >= 30.5) { st.leia = true; st.flashes.push({text:'US$ 100 PARADOS VALEM US$ 52 HOJE', t0:30.5, t1:99}); }
+  return st;
+}
+
+// ---------- layout constants ----------
+const PX0 = 205, PX1 = 887, PY0 = 560, PY1 = 1280;
+const xpx = x => PX0 + (PX1-PX0) * x / XMAX;
+
+// faixa y dinâmica (log10), suavizada por janela de tempo
+function rawRange(t){
+  const st = state(t);
+  if (st.part === 'v') return [Math.log10(st.final[0]), Math.log10(st.final[1])];
+  let lo = Infinity, hi = -Infinity;
+  const step = 0.1;
+  for (const s of st.series){ for (let x=0; x<=st.x+1e-9; x+=step){ const v=s.f(x); lo=Math.min(lo,v); hi=Math.max(hi,v);} const v=s.f(st.x); lo=Math.min(lo,v); hi=Math.max(hi,v); }
+  let a = Math.min(Math.log10(70), lo + Math.log10(0.85));
+  let b = Math.max(Math.log10(150), hi + Math.log10(1.15));
+  if (st.part === 1 || st.part === 2){
+    const w = smooth((t - st.blendFrom)/(st.blendTo - st.blendFrom));
+    a = lerp(a, Math.log10(st.final[0]), w); b = lerp(b, Math.log10(st.final[1]), w);
+  }
+  return [a,b];
+}
+function yRange(t){
+  const st = state(t); const win = 0.35; let a=0,b=0,n=0;
+  for (let dt=-win; dt<=win+1e-9; dt+=1/FPS){
+    let tt = t+dt;
+    // não misturar partes
+    const p = st.part;
+    if (p === 1) tt = clamp(tt, 0, 16.49);
+    if (p === 'v') tt = clamp(tt, 16.5, 18.49);
+    if (p === 2) tt = clamp(tt, 18.5, DUR);
+    const r = rawRange(tt); a+=r[0]; b+=r[1]; n++;
+  }
+  return [a/n, b/n];
+}
+
+// posições dos ícones (anti-colisão) suavizadas
+function rawIconY(t, ypx){
+  const st = state(t);
+  const items = st.series.map(s => ({key:s.key, y: ypx(s.f(st.x))}));
+  if (st.dolar > 0) items.push({key:'dol', y: ypx(DOLAR.f(XMAX * st.dolar))});
+  items.sort((a,b) => a.y - b.y);
+  const gap = 62, top = PY0 - 20, bot = PY1 + 40;
+  for (let it=0; it<60; it++){
+    for (let i=1;i<items.length;i++){
+      const d = items[i].y - items[i-1].y;
+      if (d < gap){ const m = (gap-d)/2; items[i].y += m; items[i-1].y -= m; }
+    }
+    if (items[0].y < top) items[0].y = top;
+    if (items[items.length-1].y > bot) items[items.length-1].y = bot;
+  }
+  const out = {}; for (const i of items) out[i.key] = i.y; return out;
+}
+
+// ---------- drawing primitives ----------
+function text(s, x, y, font, color, align='left'){ ctx.font = font; ctx.fillStyle = color; ctx.textAlign = align; ctx.textBaseline = 'alphabetic'; ctx.fillText(s, x, y); }
+function tw(s, font){ ctx.font = font; return ctx.measureText(s).width; }
+function drawIcon(name, cx, cy, size, frame=false){
+  const x = cx - size/2, y = cy - size/2;
+  if (frame){ ctx.fillStyle = '#E9FD6E'; ctx.fillRect(x-8, y-8, size+16, size+16); ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.strokeRect(x-8,y-8,size+16,size+16); }
+  if (name === 'usd'){
+    ctx.fillStyle = '#000'; ctx.fillRect(x, y, size, size);
+    const b = size*0.07; ctx.fillStyle = '#8B8B8B'; ctx.fillRect(x+b, y+b, size-2*b, size-2*b);
+    ctx.fillStyle = '#fff'; ctx.font = `800 ${Math.round(size*0.36)}px JB`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('US$', cx, cy+1);
+    ctx.textBaseline='alphabetic';
+    return;
+  }
+  ctx.drawImage(IMG[name], x, y, size, size);
+}
+function flashBox(label, cx, cy, alpha, scale, opts={}){
+  let size = opts.size || 36; let font = `700 ${size}px JB`;
+  while (tw(label, font) > 800 && size > 24){ size -= 1; font = `700 ${size}px JB`; }
+  const w = tw(label, font) + 34, h = size + 22;
+  ctx.save(); ctx.globalAlpha = alpha; ctx.translate(cx, cy); ctx.scale(scale, scale);
+  ctx.fillStyle = opts.bg || '#E9FD6E'; ctx.fillRect(-w/2, -h/2, w, h);
+  ctx.strokeStyle = '#000'; ctx.lineWidth = 3.5; ctx.strokeRect(-w/2, -h/2, w, h);
+  ctx.fillStyle = opts.fg || '#000'; ctx.font = font; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(label, 0, 2);
+  ctx.restore(); ctx.textBaseline = 'alphabetic';
+}
+function titleLine(parts, cy, size){
+  const font = `400 ${size}px AB`;
+  const ws = parts.map(p => tw(p[0], font)); const total = ws.reduce((a,b)=>a+b,0);
+  let x = 540 - total/2;
+  parts.forEach((p,i) => {
+    if (p[1]){ ctx.fillStyle = '#9764FF'; ctx.fillRect(x-2, cy - size*0.62, ws[i]+4, size*1.18); text(p[0], x, cy + size*0.36, font, '#fff'); }
+    else text(p[0], x, cy + size*0.36, font, '#000');
+    x += ws[i];
+  });
+}
+
+// ---------- frame ----------
+function drawScene(t){
+  const st = state(t);
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.fillStyle = '#F2F2F2'; ctx.fillRect(0,0,W,H);
+  // tremor nas batidas fortes
+  let sx = 0, sy = 0;
+  for (const tb of [16.5]){ const d = t - tb; if (d >= 0 && d < 0.35){ const a = 14*(1-d/0.35); sx = a*Math.sin(d*97); sy = a*Math.cos(d*71); } }
+  ctx.setTransform(1,0,0,1,sx,sy);
+
+  // perfil
+  ctx.save(); ctx.beginPath(); ctx.arc(326,224,48,0,Math.PI*2); ctx.clip(); ctx.drawImage(IMG.avatar, 276,174,100,100); ctx.restore();
+  text('Lucas Medeiros', 395, 217, '500 40px JB', '#000');
+  ctx.drawImage(IMG.badge, 735, 177, 50, 50);
+  text('@lucasmedeiros.ai', 395, 262, '500 40px JB', '#000');
+
+  // título
+  if (st.title2){ titleLine(st.title2[0], 296, 38); titleLine(st.title2[1], 340, 38); }
+  else titleLine(st.title, 320, 46);
+
+  // painel
+  ctx.fillStyle = '#9764FF'; ctx.fillRect(100, 371, 890, 1172);
+  ctx.fillStyle = '#fff'; ctx.fillRect(92, 363, 888, 1172);
+  ctx.strokeStyle = '#000'; ctx.lineWidth = 6; ctx.strokeRect(95, 366, 882, 1166);
+
+  // cabeçalho
+  if (st.leia){
+    flashBox('LEIA A LEGENDA', 536, 411, 1, 1, {bg:'#000', fg:'#E9FD6E', size:36});
+  } else {
+    const hf = '500 38px JB';
+    text(st.header, 112, 425, hf, '#000');
+    const hx = 112 + tw(st.header, hf) + 18;
+    ctx.fillStyle = '#000'; ctx.fillRect(hx, 391, 88, 40); text('LOG', hx+44, 424, '700 36px JB', '#fff', 'center');
+    const yr = 2000 + Math.min(26, Math.ceil(st.x - 1e-6));
+    text(String(yr), 962, 432, '400 52px AB', '#000', 'right');
+  }
+
+  // eixo y
+  const [la, lb] = yRange(t);
+  const ypx = lv => PY1 - (PY1-PY0) * (lv - la) / (lb - la);
+  const ppd = (PY1-PY0)/(lb-la);
+  const levels = [[1,2,5],[1,2,3,4,5,6],[1,1.5,2,2.5,3,4,5,6,8]];
+  let ticks = [];
+  for (const lev of levels){
+    const cand = [];
+    for (let e=1; e<=4; e++) for (const m of lev){ const v = m*Math.pow(10,e); const lv=Math.log10(v); if (lv >= la-1e-9 && lv <= lb+1e-9) cand.push(lv); }
+    cand.sort((a,b)=>a-b);
+    let ok = true; for (let i=1;i<cand.length;i++) if ((cand[i]-cand[i-1])*ppd < 58) ok = false;
+    if (ok) ticks = cand;
+  }
+  if (!ticks.length){ for (let e=1;e<=4;e++) for (const m of [1,2,5]){ const lv=Math.log10(m*Math.pow(10,e)); if (lv>=la && lv<=lb) ticks.push(lv);} }
+  const y100 = ypx(2);
+  for (const lv of ticks){
+    const y = ypx(lv); if (Math.abs(lv-2) < 1e-9) continue; if (Math.abs(y - y100) < 44) continue; if (y < PY0-30 || y > PY1+10) continue;
+    ctx.strokeStyle = '#E2E2E2'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(PX0, y); ctx.lineTo(PX1, y); ctx.stroke();
+    text(String(Math.round(Math.pow(10,lv))), 195, y+13, '700 38px JB', '#000', 'right');
+  }
+  ctx.strokeStyle = '#000'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(PX0, y100); ctx.lineTo(PX1, y100); ctx.stroke();
+  ctx.fillStyle = '#000'; ctx.fillRect(112, y100-21, 86, 42); text('100', 155, y100+13, '700 38px JB', '#fff', 'center');
+
+  // eixo x
+  text('2000', xpx(0), 1357, '700 40px JB', '#000', 'center');
+  for (const [xv, lab] of [[5,null],[10,'2010'],[15,null],[20,'2020'],[25,null]]){
+    if (st.x < xv - 0.01) continue;
+    const a = clamp((st.x - xv)/0.6 + 0.3, 0, 1);
+    ctx.globalAlpha = a;
+    if (lab) text(lab, xpx(xv), 1357, '700 40px JB', '#000', 'center');
+    else { ctx.fillStyle = '#000'; ctx.fillRect(xpx(xv)-1.5, 1311, 3, 14); }
+    ctx.globalAlpha = 1;
+  }
+
+  // linhas
+  const dim = st.part === 'v' ? 0.28 : 1;
+  const focusSet = st.focus ? [st.focus] : (st.focus2 || null);
+  const drawLine = (s, xEnd, alpha, width) => {
+    ctx.save(); ctx.beginPath(); ctx.rect(PX0-10, PY0-120, PX1-PX0+20, PY1-PY0+180); ctx.clip();
+    ctx.globalAlpha = alpha; ctx.strokeStyle = s.color; ctx.lineWidth = width; ctx.lineJoin='round'; ctx.lineCap='round';
+    ctx.beginPath();
+    const n = Math.max(2, Math.ceil(xEnd/0.04));
+    for (let i=0;i<=n;i++){ const xv = xEnd*i/n; const X = xpx(xv), Y = ypx(s.f(xv)); if (i===0) ctx.moveTo(X,Y); else ctx.lineTo(X,Y); }
+    ctx.stroke(); ctx.restore();
+  };
+  const order = [...st.series].sort((a,b) => (a.gray?-1:0) - (b.gray?-1:0));
+  for (const s of order){
+    let alpha = dim, w = 5;
+    if (focusSet && st.part !== 'v'){
+      const fp = st.focus ? smooth((t - st.flashes[st.flashes.length-1].t0)/0.2) : 1;
+      if (focusSet.includes(s.key)) w = lerp(5, 8, fp); else alpha = lerp(1, 0.3, fp);
+    }
+    if (st.rev && t >= st.rev.start && st.part !== 'v'){
+      const cur = currentReveal(st, t); if (cur && cur !== s.key && !s.gray) alpha = Math.min(alpha, 0.55);
+      if (cur === s.key) w = 7;
+    }
+    drawLine(s, st.x, alpha, w);
+  }
+  if (st.dolar > 0){ drawLine(DOLAR, XMAX*st.dolar, 1, 8); }
+
+  // ícones
+  const win = 0.3; const acc = {}; let n=0;
+  for (let dt=-win; dt<=win+1e-9; dt+=1/FPS){
+    let tt = t+dt;
+    if (st.part === 1) tt = clamp(tt, 0, 16.49); if (st.part === 'v') tt = clamp(tt,16.5,18.49); if (st.part === 2) tt = clamp(tt,18.5,DUR);
+    const r = rawIconY(tt, ypx); for (const k in r) acc[k] = (acc[k]||0) + r[k]; n++;
+    // chaves ausentes em alguns tempos (dólar) contadas à parte
+  }
+  const iconY = rawIconY(t, ypx);
+  for (const k in iconY){ if (acc[k] !== undefined) iconY[k] = acc[k]/n; }
+  // reaplica espaçamento mínimo depois da média
+  { const its = Object.keys(iconY).map(k => ({k, y: iconY[k]})).sort((p,q) => p.y - q.y);
+    const gap = 62, top = PY0 - 20, bot = PY1 + 40;
+    for (let it=0; it<80; it++){
+      for (let i=1;i<its.length;i++){ const d = its[i].y - its[i-1].y; if (d < gap){ const m=(gap-d)/2; its[i].y+=m; its[i-1].y-=m; } }
+      if (its[0].y < top) its[0].y = top; if (its[its.length-1].y > bot) its[its.length-1].y = bot;
+    }
+    for (const i of its) iconY[i.k] = i.y; }
+  const allIcons = [...st.series.map(s=>({s, x:st.x})), ...(st.dolar>0 ? [{s:DOLAR, x:XMAX*st.dolar}] : [])];
+  const cur = st.rev ? currentReveal(st, t) : null;
+  for (const {s, x} of allIcons){
+    const hx = xpx(x), hy = ypx(s.f(x));
+    const ix = Math.max(hx + 41, PX0 + 41); const iy = iconY[s.key];
+    let a = (s.key==='dol') ? 1 : dim;
+    ctx.globalAlpha = Math.max(a, 0.45);
+    if (Math.abs(iy - hy) > 3 || ix - hx > 20){
+      ctx.strokeStyle = s.color; ctx.lineWidth = 3; ctx.setLineDash([5,5]);
+      ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(ix-28, iy); ctx.stroke(); ctx.setLineDash([]);
+    }
+    const isCur = cur === s.key && st.part !== 'v';
+    const winner = st.part !== 1 && st.part !== 2 ? false : false;
+    drawIcon(s.icon, ix, iy, isCur ? 60 : 56, isCur);
+    ctx.globalAlpha = 1;
+  }
+
+  // etiqueta 2010 (parte 2)
+  if (st.tag){
+    const s = st.series.find(q => q.key === st.tag.key);
+    const X = xpx(st.tag.x), Y = ypx(s.f(st.tag.x));
+    const a = smooth((t - st.tag.t0)/0.2);
+    ctx.globalAlpha = a;
+    ctx.fillStyle = s.color; ctx.beginPath(); ctx.arc(X, Y, 9, 0, Math.PI*2); ctx.fill(); ctx.strokeStyle='#000'; ctx.lineWidth=3; ctx.stroke();
+    const font = '700 32px JB'; const w = tw(st.tag.text, font) + 26, h = 50;
+    const bx = X - w/2 + 20, by = Y + 60;
+    ctx.strokeStyle = '#000'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(X, Y+9); ctx.lineTo(X+10, by); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.fillRect(bx, by, w, h); ctx.strokeStyle = s.color; ctx.lineWidth = 5; ctx.strokeRect(bx, by, w, h);
+    text(st.tag.text, bx + w/2, by + 36, font, '#000', 'center');
+    ctx.globalAlpha = 1;
+  }
+
+  // flashes
+  for (const f of st.flashes){
+    const ain = easeOut((t - f.t0)/0.18), aout = 1 - smooth((t - (f.t1 - 0.15))/0.15);
+    const sc = 0.7 + 0.3*easeOut((t - f.t0)/0.22) + (f.big ? 0.06*Math.sin(clamp((t-f.t0)/0.3,0,1)*Math.PI) : 0);
+    let cy = 492;
+    if (st.leia) cy = 492;
+    if (f.big) cy = 820;
+    flashBox(f.text, 546, cy, Math.min(ain, aout), sc, f.big ? {size:34} : {});
+  }
+
+  // legenda
+  const legY = [1395, 1447, 1499];
+  for (const s of st.series){
+    const [c, r] = s.pos; const cy = legY[r];
+    const ix = c ? 572 : 132, tx = c ? 607 : 167;
+    const rv = revealInfo(st, t, s.key);
+    const isCur = cur === s.key && st.part !== 'v';
+    const keepWin = s.key === 'ouro' && rv && rv.shown && (st.part === 'v' || (st.part === 1 && t >= 14.9) || (st.part === 2 && t >= 30.0));
+    if ((isCur || keepWin) && st.part !== 'v'){
+      const x0 = c ? 542 : 102, x1 = c ? 970 : 530;
+      ctx.fillStyle = '#E9FD6E'; ctx.fillRect(x0, cy-25, x1-x0, 50); ctx.strokeStyle = '#000'; ctx.lineWidth = 3; ctx.strokeRect(x0, cy-25, x1-x0, 50);
+    }
+    drawIcon(s.icon, ix, cy, 44);
+    const colr = s.gray ? '#8B8B8B' : '#000';
+    text(s.label, tx, cy+14, '700 40px JB', colr);
+    if (rv && rv.shown){
+      const fin = FINAL[st.part === 2 ? 2 : 1][s.key];
+      const v = rv.p < 1 ? lerp(100, fin, easeOut(rv.p)) : fin;
+      text(fmt(v), c ? 958 : 517, cy+14, '700 40px JB', colr, 'right');
+    }
+  }
+
+  // rodapé
+  const foot = st.part === 2 ? [
+    'Fonte: BCB, IBGE, B3, S&P DJI, BLS',
+    'base 100 em US$ · escala log · set/2026',
+    'Ibovespa e S&P com dividendos reinvestidos.',
+    'Rentabilidade passada não garante resultado futuro.'] : [
+    'Fonte: BCB, IBGE, B3, S&P DJI, datahub (ouro)',
+    'Base 100 dez/2000 · escala log · até set/2026 · bruto',
+    'Ibovespa e S&P com dividendos reinvestidos.',
+    'Rentabilidade passada não garante resultado futuro.'];
+  foot.forEach((l,i) => text(l, 540, 1572 + i*33, '500 28px JB', '#000', 'center'));
+
+  ctx.setTransform(1,0,0,1,0,0);
+  // flash branco na virada
+  for (const tb of [16.5]){ const d = t - tb; if (d >= 0 && d < 0.18){ ctx.fillStyle = `rgba(255,255,255,${0.75*(1-d/0.18)})`; ctx.fillRect(0,0,W,H); } }
+}
+
+function currentReveal(st, t){
+  const R = st.rev; if (!R || t < R.start) return null;
+  if (st.part === 'v') return null;
+  const i = Math.floor((t - R.start)/R.step);
+  if (i >= R.order.length) return 'ouro';
+  return R.order[i];
+}
+function revealInfo(st, t, key){
+  if (st.revealAll) return {shown:true, p:1};
+  const R = st.rev; if (!R) return null;
+  let tk;
+  if (key === R.extra) tk = R.start; else { const i = R.order.indexOf(key); if (i < 0) return null; tk = R.start + i*R.step; }
+  if (t < tk) return {shown:false};
+  return {shown:true, p: (t - tk)/0.3};
+}
+
+let lastT = -1;
+function render(t){
+  // transição 18,3 a 18,6: corte com flash
+  drawScene(t);
+  if (t >= 18.35 && t < 18.65){
+    const p = (t - 18.35)/0.3; const a = Math.sin(p*Math.PI);
+    ctx.fillStyle = `rgba(242,242,242,${0.9*a})`; ctx.fillRect(0,0,W,H);
+  }
+}
+window.renderFrame = f => { render(f / FPS); return cv.toDataURL('image/png'); };
+window.renderAt = t => { render(t); return cv.toDataURL('image/png'); };
+window.INFO = { NFRAMES, T24, T02, T10, T25 };
+Promise.all([
+  loadImg('avatar','assets/avatar_raw.png'), loadImg('badge','assets/badge.png'),
+  ...['cdi','ouro','sp','ibov','poup','ipca'].map(n => loadImg(n, `assets/${n}.png`)),
+  document.fonts.load('400 40px AB'), document.fonts.load('500 40px JB'), document.fonts.load('700 40px JB'), document.fonts.load('800 40px JB'),
+]).then(() => { window.READY = true; });
+</script></body></html>
