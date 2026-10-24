@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
-import { construir, DUR, T_CONGELA, T_REVELA, T_RANKING, T_VOLTA } from './modelo.mjs';
+import { construir, DUR, T_CONGELA, T_REVELA, T_RANKING, T_VOLTA, LENTO_2008, LENTO_2018 } from './modelo.mjs';
 
 const AQUI = path.dirname(fileURLToPath(import.meta.url));
 const OUT = path.join(AQUI, 'out', 'audio');
@@ -52,7 +52,7 @@ const acordes = [
   { raiz: -21, notas: [-9, -2, 3, 7] },   // C
   { raiz: -17, notas: [-5, 2, 7, 10] },   // Em
 ];
-const lento = (t) => (t >= 5 && t < 6) || (t >= 8.5 && t < 9.5);   // câmera lenta: arpejo em semínimas
+const lento = (t) => [LENTO_2008, LENTO_2018].some(([a, b]) => t >= a && t < b); // câmera lenta: arpejo em semínimas
 const silencioArp = (t) => t >= T_CONGELA && t < T_REVELA;          // suspense: só o pad
 for (let b = 0; b * BAR < DUR; b++) {
   const ac = acordes[b % acordes.length], t0 = b * BAR;

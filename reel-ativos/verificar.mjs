@@ -1,13 +1,16 @@
-// node verificar.mjs
+// node verificar.mjs [--eixo=log|linear]
 // Verificações: valores x planilha, flashes recalculados, ranking, limites, colisões, loop, sincronia, ffprobe e loudness.
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { FPS, N_FRAMES, T_RANKING, T_VOLTA, FLASH_DUR } from './modelo.mjs';
+import { FPS, N_FRAMES, T_RANKING, T_CORRIDA } from './modelo.mjs';
 import { AQUI, carregarPlaywright, servidor, abrir } from './util.mjs';
-import { MP4 } from './render.mjs';
+import { arquivoMp4, pastaQuadros } from './render.mjs';
 
 const OUT = path.join(AQUI, 'out');
+const EIXO = process.argv.find((a) => a.startsWith('--eixo='))?.slice(7) === 'linear' ? 'linear' : 'log';
+const MP4 = arquivoMp4(EIXO);
+console.log(`== eixo ${EIXO} ==`);
 const dados = JSON.parse(fs.readFileSync(path.join(AQUI, 'dados.json'), 'utf8'));
 const rel = { falhas: [], ok: [], avisos: [] };
 const ok = (m) => { rel.ok.push(m); console.log('OK   ', m); };
@@ -17,7 +20,7 @@ const aviso = (m) => { rel.avisos.push(m); console.log('AVISO', m); };
 const { chromium } = carregarPlaywright();
 const { srv, url } = await servidor();
 const browser = await chromium.launch();
-const page = await abrir(browser, url);
+const page = await abrir(browser, url, EIXO);
 const quadros = await page.evaluate((n) => {
   const clips = {};
   document.querySelectorAll('clipPath rect').forEach((r) => {
@@ -132,7 +135,7 @@ const finalDe = (id) => dados.series[id].valores.at(-1);
 
 // 5. loop: último quadro igual ao primeiro (pixels)
 {
-  const a = path.join(OUT, 'frames', 'f_0000.png'), b = path.join(OUT, 'frames', `f_${String(N_FRAMES - 1).padStart(4, '0')}.png`);
+  const a = path.join(pastaQuadros(EIXO), 'f_0000.png'), b = path.join(pastaQuadros(EIXO), `f_${String(N_FRAMES - 1).padStart(4, '0')}.png`);
   const r = spawnSync('ffmpeg', ['-hide_banner', '-i', a, '-i', b, '-lavfi', 'psnr', '-f', 'null', '-'], { encoding: 'utf8' });
   const m = r.stderr.match(/average:(\S+)/);
   const psnr = m ? m[1] : '?';
@@ -144,7 +147,7 @@ const finalDe = (id) => dados.series[id].valores.at(-1);
   const ev = JSON.parse(fs.readFileSync(path.join(OUT, 'audio', 'eventos.json'), 'utf8'));
   let pior = 0;
   for (const tk of ev.ticks) {
-    const q = quadros.find((f) => f.ano >= tk.ano && f.t >= 1.9);
+    const q = quadros.find((f) => f.ano >= tk.ano && f.t >= T_CORRIDA - 0.1);
     pior = Math.max(pior, Math.abs(q.t - tk.t));
   }
   if (pior <= 1 / FPS + 1e-9) ok(`${ev.ticks.length} ticks x troca do ano: pior diferença ${(pior * 1000).toFixed(0)} ms (< 1 quadro)`); else falha(`ticks fora de sincronia: ${(pior * 1000).toFixed(0)} ms`);
@@ -176,6 +179,6 @@ const finalDe = (id) => dados.series[id].valores.at(-1);
   if (Math.abs(parseFloat(m.input_i) + 14) <= 1 && parseFloat(m.input_tp) < -1) ok(`loudness: ${m.input_i} LUFS, true peak ${m.input_tp} dBTP`); else falha(`loudness: ${m.input_i} LUFS, ${m.input_tp} dBTP`);
 }
 
-fs.writeFileSync(path.join(OUT, 'verificacao.json'), JSON.stringify(rel, null, 2));
+fs.writeFileSync(path.join(OUT, `verificacao-${EIXO}.json`), JSON.stringify(rel, null, 2));
 console.log(rel.falhas.length ? `\n${rel.falhas.length} falha(s)` : '\nTudo certo.');
 process.exit(rel.falhas.length ? 1 : 0);

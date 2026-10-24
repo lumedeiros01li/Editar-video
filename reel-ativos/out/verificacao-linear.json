@@ -6,20 +6,20 @@
     "quadro inicial não entrega o ranking (topo: CDI)",
     "\"cerca de 1% ao ano acima da inflação\" confere: 1.02% a.a. em 25.75 anos",
     "flash \"2008: IBOVESPA -41%\" confere com os dados e fica 1.00 s parado na tela",
-    "flash \"2018: S&P PASSA A POUPANÇA\" confere com os dados e fica 1.03 s parado na tela",
+    "flash \"2018: S&P PASSA A POUPANÇA\" confere com os dados e fica 1.00 s parado na tela",
     "flash \"2024: DÓLAR +28%\" confere com os dados e fica 1.00 s parado na tela",
-    "limites: textos entre x 95-985 e y 277-1679 (alvo 176-1678, margem 90)",
+    "limites: textos entre x 92-977 e y 275-1679 (alvo 176-1678, margem 90)",
     "fontes: 40 px ou mais, rodapé em 28 px",
     "colisões: nenhuma entre textos, chips, eixos e rótulos de tipos diferentes",
     "loop: último quadro igual ao primeiro (PSNR inf dB)",
     "26 ticks x troca do ano: pior diferença 33 ms (< 1 quadro)",
     "revelações: som e valor na tela juntos (pior 0 ms)",
     "áudio sem clipping",
-    "ffprobe: 1080x1920, 30/1 fps, h264, yuv420p, 17.40 s, aac 48000 Hz 2 canais",
-    "loudness: -13.90 LUFS, true peak -1.25 dBTP"
+    "ffprobe: 1080x1920, 30/1 fps, h264, yuv420p, 16.40 s, aac 48000 Hz 2 canais",
+    "loudness: -13.87 LUFS, true peak -1.23 dBTP"
   ],
   "avisos": [
     "S&P em R$ já tinha passado a poupança em 2002 e voltou para trás; fica acima de vez a partir de 2018 (382 x 377)",
-    "rótulos se cruzando em ultrapassagens: 26 quadros de 522 (0.87 s)"
+    "rótulos se cruzando em ultrapassagens: 26 quadros de 492 (0.87 s)"
   ]
 }

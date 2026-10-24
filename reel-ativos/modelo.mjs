@@ -1,20 +1,22 @@
 // Modelo de dados e de tempo do Reel "R$ 100 em 2000". Usado por index.html (quadro) e audio.mjs (sons).
 
 export const FPS = 30;
-export const DUR = 17.4;
+export const DUR = 16.4;
 export const N_FRAMES = Math.round(FPS * DUR);
 
 // roteiro (s)
-export const T_CORRIDA = 2;      // começa a corrida
-export const T_CONGELA = 11.5;   // linhas congeladas, "QUAL FICOU EM 1º?"
-export const T_REVELA = 12.5;    // começam as revelações
+export const T_CORRIDA = 1;      // começa a corrida
+export const LENTO_2008 = [4, 5];   // câmera lenta em 2008
+export const LENTO_2018 = [7.5, 8.5];
+export const T_CONGELA = 10.5;   // linhas congeladas, "QUAL FICOU EM 1º?"
+export const T_REVELA = 11.5;    // começam as revelações
 export const PASSO_REVELA = 0.6;
-export const T_RANKING = 15.5;   // ranking parado
-export const T_VOLTA = 17.0;     // rebobina para o primeiro quadro (loop)
-export const T_VOLTA_FIM = 17.3;
+export const T_RANKING = 14.5;   // ranking parado
+export const T_VOLTA = 16.0;     // rebobina para o primeiro quadro (loop)
+export const T_VOLTA_FIM = 16.3;
 export const FLASH_DUR = 1.2;
 
-export const Y_MIN = 60;          // log: abaixo do menor valor da série (S&P 74 em 2009)
+export const Y_MIN = 60;          // abaixo do menor valor da série (S&P 74 em 2009)
 export const TIP_FRAC = 0.85;
 export const TIP_TETO = 0.92;
 export const MAX_LINHAS = 6;
@@ -57,7 +59,8 @@ export function pchip(xs, ys) {
 }
 
 export function construir(dados, opcoes = {}) {
-  const ALTURA = opcoes.altura ?? 848;
+  const ALTURA = opcoes.altura ?? 946;
+  const eixo = opcoes.eixo === 'linear' ? 'linear' : 'log';
   const pos = dados.posicao;
   const P_MAX = pos[pos.length - 1];
   const anoBase = dados.base.ano;
@@ -69,8 +72,9 @@ export function construir(dados, opcoes = {}) {
   const idx = (ano) => dados.anos.indexOf(String(ano)); // índice do ano no vetor
 
   // progresso (anos desde a base) em função do tempo: nós do roteiro, ligados por spline monótona
-  // 2-5 s: 2000 a 2007 | 5-6 s: 2008 em câmera lenta | 6-8,5 s: até 2017 | 8,5-9,5 s: 2018 lento | 9,5-11,5 s: até set/2026
-  const nos = [[0, 0], [T_CORRIDA, 0], [5, idx(2007)], [6, idx(2008)], [8.5, idx(2017)], [9.5, idx(2018)], [T_CONGELA, P_MAX], [T_VOLTA, P_MAX]];
+  // 1-4 s: 2000 a 2007 | 4-5 s: 2008 em câmera lenta | 5-7,5 s: até 2017 | 7,5-8,5 s: 2018 lento | 8,5-10,5 s: até set/2026
+  const nos = [[0, 0], [T_CORRIDA, 0], [LENTO_2008[0], idx(2007)], [LENTO_2008[1], idx(2008)], [LENTO_2018[0], idx(2017)],
+    [LENTO_2018[1], idx(2018)], [T_CONGELA, P_MAX], [T_VOLTA, P_MAX]];
   const curva = pchip(nos.map((n) => n[0]), nos.map((n) => n[1]));
   const ease = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x));
   const progresso = (t) => {
@@ -86,9 +90,9 @@ export function construir(dados, opcoes = {}) {
   };
   const anoNaTela = (p) => anoBase + Math.min(dados.anos.length - 1, Math.max(0, Math.ceil(p - 1e-9)));
 
-  // eixo log
-  const frac = (v, mx) => Math.log(v / Y_MIN) / Math.log(mx / Y_MIN);
-  const maxPara = (v, f) => Y_MIN * Math.pow(v / Y_MIN, 1 / f);
+  // eixo log ou linear: fração da altura útil e máximo que põe um valor numa fração
+  const frac = eixo === 'log' ? (v, mx) => Math.log(v / Y_MIN) / Math.log(mx / Y_MIN) : (v, mx) => (v - Y_MIN) / (mx - Y_MIN);
+  const maxPara = eixo === 'log' ? (v, f) => Y_MIN * Math.pow(v / Y_MIN, 1 / f) : (v, f) => Y_MIN + (v - Y_MIN) / f;
   const lider = (p) => Math.max(...LINHAS.map((id) => valor(id, p)));
   // máximo acumulado do líder: o eixo só cresce na corrida (a queda de 2008 não encolhe a escala)
   const liderAcum = (p) => { let m = 0; for (let q = 0; q < p; q += 0.05) m = Math.max(m, lider(q)); return Math.max(m, lider(p)); };
@@ -119,8 +123,9 @@ export function construir(dados, opcoes = {}) {
   const mult = (s) => ({ nome: `x${s}`, tem: (v) => Math.abs(v / s - Math.round(v / s)) < 1e-9,
     valores: (mx) => { const r = []; for (let v = Math.ceil(Y_MIN / s) * s; v <= mx + 1e-9; v += s) r.push(v); return r; } });
   const d125 = [100, 200, 500, 1000, 2000, 5000, 10000, 20000];
-  const familias = [mult(5), mult(10), mult(20), mult(50), mult(100),
-    { nome: '1-2-5', tem: (v) => d125.includes(v), valores: (mx) => d125.filter((v) => v <= mx + 1e-9) }];
+  const familias = eixo === 'log'
+    ? [mult(5), mult(10), mult(20), mult(50), mult(100), { nome: '1-2-5', tem: (v) => d125.includes(v), valores: (mx) => d125.filter((v) => v <= mx + 1e-9) }]
+    : [mult(5), mult(10), mult(20), mult(50), mult(100), mult(200), mult(500), mult(1000), mult(2000)];
   const viavel = (f, mx) => {
     const vs = f.valores(mx);
     if (vs.length > MAX_LINHAS) return false;
@@ -184,5 +189,5 @@ export function construir(dados, opcoes = {}) {
   for (let k = 0; k < dados.anos.length - 1; k++) ticks.push({ k, ano: anoBase + k + 1, t: tempoDe(k + 1e-9) });
 
   return { ids, serie, valor, final, progresso, tempoDe, anoNaTela, frac, Mt, M, famQ, familias, presenca, candidatos,
-    flashes, revela, ordemFinal, vencedor, acima, ticks, P_MAX, anoBase, lider };
+    flashes, revela, ordemFinal, vencedor, acima, ticks, P_MAX, anoBase, lider, eixo };
 }

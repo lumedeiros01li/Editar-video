@@ -28,11 +28,11 @@ const COR = { POU: '#9966FF', CDI: '#1F3A93', OURO: '#C99700', IBOV: '#00A94F', 
 // ---- geometria: limites definidos pelo Lucas (topo 176, meio 530, base 1678) ----
 const LIM = { topo: 176, meio: 530, base: 1678 };
 const HY = 224;                       // centro da foto (topo = 176)
-const ET = 318;                       // etiqueta
-const TT = 412, TT1 = 384, TT2 = 440; // título em uma linha / em duas linhas
-const YB = 510;                       // ano
-const CARD = { x: 90, y: LIM.meio, w: 892, h: 1006 }; // sombra fecha em 990 x 1544
-const CY = CARD.y + 6 + 34;           // faixa da legenda
+const ET = 316;                       // etiqueta
+const TT = 392, TT1 = 364, TT2 = 412; // título em uma linha / em duas linhas
+const CARD = { x: 90, y: 432, w: 892, h: 1104 }; // gráfico ampliado: o ano foi para a faixa do cartão; sombra fecha em 990 x 1544
+const CY = CARD.y + 6 + 42;           // centro da faixa (legenda à esquerda, ano/CTA à direita)
+const EIXO = new URLSearchParams(location.search).get('eixo') === 'linear' ? 'linear' : 'log';
 const PL = 206, PR = 680, PT = CARD.y + 6 + 84, PB = CARD.y + CARD.h - 6 - 62;
 const PW = PR - PL, PH = PB - PT;
 const SLOT = 24;                      // ponta da linha até o rótulo
@@ -132,8 +132,8 @@ function tabelaRotulos() {
 function estatica() {
   const defs = `<defs>
     <clipPath id="cFoto"><circle cx="326" cy="${HY}" r="48"/></clipPath>
-    <clipPath id="cTit"><rect x="90" y="326" width="900" height="130"/></clipPath>
-    <clipPath id="cAno"><rect x="90" y="452" width="900" height="76"/></clipPath>
+    <clipPath id="cTit"><rect x="90" y="322" width="900" height="106"/></clipPath>
+    <clipPath id="cAno"><rect x="496" y="${CARD.y + 6}" width="480" height="84"/></clipPath>
     <clipPath id="cFlash"><rect x="96" y="${PT + 4}" width="880" height="76"/></clipPath>
     <clipPath id="cPlot"><rect x="${PL - 2}" y="${PT - 30}" width="${PW + 4}" height="${PH + 30}"/></clipPath>
     <clipPath id="cX"><rect x="96" y="${PB + 2}" width="880" height="56"/></clipPath>
@@ -157,14 +157,14 @@ function estatica() {
 }
 
 // fase do título e do slot do ano em função do tempo, com troca por deslocamento (sai para cima, entra por baixo)
-function troca(t, marcos) {
+function troca(t, marcos, amp = 130) {
   let k = -1;
   marcos.forEach((m, i) => { if (t >= m.t) k = i; });
   const antes = k <= 0 ? marcos[0].fase : marcos[k - 1].fase;
   if (k <= 0) return [{ fase: marcos[0].fase, dy: 0, estavel: true }];
   const u = (t - marcos[k].t) * FPS, out = [];
-  if (u < 6) out.push({ fase: antes, dy: -ease(u / 6) * 130, estavel: false });
-  if (u >= 4) out.push({ fase: marcos[k].fase, dy: (1 - ease((u - 4) / 6)) * 130, estavel: u >= 10 });
+  if (u < 6) out.push({ fase: antes, dy: -ease(u / 6) * amp, estavel: false });
+  if (u >= 4) out.push({ fase: marcos[k].fase, dy: (1 - ease((u - 4) / 6)) * amp, estavel: u >= 10 });
   return out;
 }
 
@@ -201,13 +201,13 @@ function seek(t) {
   // ano rodando / CTA
   const ano = M.anoNaTela(p);
   let slot = '';
-  for (const f of troca(t, [{ t: 0, fase: 'ano' }, { t: T_RANKING, fase: 'cta' }, { t: T_VOLTA, fase: 'ano' }])) {
-    if (f.fase === 'ano') slot += txt(540, YB + f.dy, String(ano), { fam: 'arch', fs: 72, tipo: 'ano', id: 'ano', reg: f.estavel });
+  for (const f of troca(t, [{ t: 0, fase: 'ano' }, { t: T_RANKING, fase: 'cta' }, { t: T_VOLTA, fase: 'ano' }], 90)) {
+    if (f.fase === 'ano') slot += txt(962, CY + 20 + f.dy, String(ano), { fam: 'arch', fs: 56, anchor: 'end', tipo: 'ano', id: 'ano', reg: f.estavel });
     if (f.fase === 'cta') {
-      const cta = 'LEIA A LEGENDA', w = larguraArch(cta, 40) + 56;
-      slot += `<rect x="${f1(540 - w / 2)}" y="${f1(462 + f.dy)}" width="${f1(w)}" height="64" fill="#000"/>`;
-      slot += txt(540, 494 + 14.6 + f.dy, cta, { fam: 'arch', fs: 40, fill: LIMAO, reg: false });
-      if (f.estavel) box('cta', 'cta', 540 - w / 2, 462, w, 64);
+      const cta = 'LEIA A LEGENDA', w = larguraArch(cta, 40) + 48;
+      slot += `<rect x="${f1(966 - w)}" y="${f1(CY - 30 + f.dy)}" width="${f1(w)}" height="60" fill="#000"/>`;
+      slot += txt(966 - w / 2, CY + 14.6 + f.dy, cta, { fam: 'arch', fs: 40, fill: LIMAO, reg: false });
+      if (f.estavel) box('cta', 'cta', 966 - w, CY - 30, w, 60);
     }
   }
   s += `<g clip-path="url(#cAno)">${slot}</g>`;
@@ -236,8 +236,10 @@ function seek(t) {
   // legenda da base e do eixo
   s += `<rect x="106" y="${CY - 2}" width="56" height="4" fill="#000"/>` + txt(176, CY + 14.6, `BASE ${base}`, { anchor: 'start', tipo: 'legenda' });
   box('legenda', 'amostra', 106, CY - 4, 56, 8);
-  s += `<rect x="392" y="${CY - 20}" width="88" height="40" fill="#000"/>` + txt(436, CY + 14.6, 'LOG', { fill: '#FFF', reg: false });
-  box('legenda', 'log', 392, CY - 20, 88, 40);
+  if (EIXO === 'log') {
+    s += `<rect x="392" y="${CY - 20}" width="88" height="40" fill="#000"/>` + txt(436, CY + 14.6, 'LOG', { fill: '#FFF', reg: false });
+    box('legenda', 'log', 392, CY - 20, 88, 40);
+  }
 
   // eixo X: marca a cada 5 anos, rótulo a cada 10
   let xl = '', mx5 = '';
@@ -318,7 +320,7 @@ function seek(t) {
   const fim = D.fim.rotulo;
   const rod = [
     'Fonte: BCB, IBGE, B3, Shiller (S&P), datahub (ouro)',
-    `Base ${base} dez/${ano0} · escala log · até ${fim} · bruto`,
+    EIXO === 'log' ? `Base ${base} dez/${ano0} · escala log · até ${fim} · bruto` : `Base ${base} em dez/${ano0} · até ${fim} · valores brutos`,
     '*Sem dividendos. Rentabilidade passada não é',
     'garantia de rentabilidade futura.',
   ];
@@ -330,7 +332,7 @@ function seek(t) {
 
 async function init() {
   D = await (await fetch('dados.json')).json();
-  M = construir(D, { altura: PH });
+  M = construir(D, { altura: PH, eixo: EIXO });
   ctx2d = document.createElement('canvas').getContext('2d');
   await Promise.all([
     document.fonts.load('400 40px "Archivo Black"'), document.fonts.load('400 40px "JetBrains Mono"'),

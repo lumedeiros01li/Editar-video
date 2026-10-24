@@ -1,30 +1,32 @@
 # Reel animado: R$ 100 em 2000 (@lucasmedeiros.ai)
 
-MP4 de 17,4 s (17 s de roteiro + 0,4 s de rebobinagem para o loop), 1080x1920, 30 fps, eixo log. Música e efeitos sintetizados em código.
+Duas versões, `out/reel-r100-em-2000-log.mp4` e `out/reel-r100-em-2000-linear.mp4`: 16,4 s (16 s de roteiro + 0,4 s de rebobinagem para o loop), 1080x1920, 30 fps. Música e efeitos sintetizados em código, iguais nas duas.
 
 ## Como rerodar
 
 ```
 python3 extrair_dados.py   # planilha -> dados.json (confere contra os valores calculados da própria planilha)
-node render.mjs            # quadros + áudio + out/reel-r100-em-2000.mp4
-node verificar.mjs         # valores, flashes, ranking, limites, colisões, loop, sincronia, ffprobe, loudness
-node contato.mjs           # folhas de contato em out/contact-sheets/
+node render.mjs                 # as duas versões (ou --eixo=log / --eixo=linear)
+node verificar.mjs --eixo=log   # valores, flashes, ranking, limites, colisões, loop, sincronia, ffprobe, loudness
+node contato.mjs --eixo=log     # folhas de contato em out/contact-sheets/<eixo>/
 ```
 
 ## Roteiro implementado
 
 | Tempo | Na tela |
 |---|---|
-| 0 a 2 s | `[ R$ 100 EM 2000 ]`, "QUEM VIROU MAIS?", linhas paradas em 100 com os nomes em ordem neutra |
-| 2 a 5 s | corrida até 2007 |
-| 5 a 6 s | 2008 em câmera lenta, flash "2008: IBOVESPA -41%" |
-| 6 a 8,5 s | até 2017 |
-| 8,5 a 9,5 s | 2018 em câmera lenta, flash "2018: S&P PASSA A POUPANÇA" |
-| 9,5 a 11,5 s | até set/2026, flash "2024: DÓLAR +28%" |
-| 11,5 a 12,5 s | congelado, "QUAL FICOU EM 1º?" |
-| 12,5 a 15,5 s | valores do último ao primeiro a cada 0,6 s (inflação em cinza junto com a poupança) |
-| 15,5 a 17 s | ranking parado, "POUPANÇA: CERCA DE 1% AO ANO ACIMA DA INFLAÇÃO" e "LEIA A LEGENDA" |
-| 17 a 17,4 s | rebobina até o quadro 0 (último quadro = primeiro) |
+| 0 a 1 s | `[ R$ 100 EM 2000 ]`, "QUEM VIROU MAIS?", linhas paradas em 100 com os nomes em ordem neutra |
+| 1 a 4 s | corrida até 2007 |
+| 4 a 5 s | 2008 em câmera lenta, flash "2008: IBOVESPA -41%" |
+| 5 a 7,5 s | até 2017 |
+| 7,5 a 8,5 s | 2018 em câmera lenta, flash "2018: S&P PASSA A POUPANÇA" |
+| 8,5 a 10,5 s | até set/2026, flash "2024: DÓLAR +28%" |
+| 10,5 a 11,5 s | congelado, "QUAL FICOU EM 1º?" |
+| 11,5 a 14,5 s | valores do último ao primeiro a cada 0,6 s (inflação em cinza junto com a poupança) |
+| 14,5 a 16 s | ranking parado, "POUPANÇA: CERCA DE 1% AO ANO ACIMA DA INFLAÇÃO" e "LEIA A LEGENDA" |
+| 16 a 16,4 s | rebobina até o quadro 0 (último quadro = primeiro) |
+
+O ano rodando e o "LEIA A LEGENDA" ficam na faixa de cima do cartão, o que deixou o gráfico com 946 px de altura útil.
 
 Todos os números (valores, flashes, ano da ultrapassagem e o "1% ao ano") são calculados do `dados.json`.
 
