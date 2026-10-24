@@ -122,7 +122,9 @@ window.renderFrame = async function (f) {
   const t = f / FPS, k = segAt(t), s = D.segments[k];
   const st = clamp(s.s + (t - s.t), s.s, s.e - 0.001);
   const idx = clamp(Math.floor(st * SRC_FPS + 1e-6) + 1, 1, NFR[s.src]);
-  ctx.drawImage(await srcFrame(s.src, idx), 0, 0, W, H);
+  // light zoom alternating between cuts, centered on the face
+  const z = k % 2 ? 1.06 : 1.0, ax = s.src === 'v1' ? 0.50 : 0.47, ay = s.src === 'v1' ? 0.50 : 0.47;
+  ctx.drawImage(await srcFrame(s.src, idx), ax * W * (1 - z), ay * H * (1 - z), W * z, H * z);
   if (MODE === 'ig') igBox(); else brutalBox();
   drawSubtitle(t);
   return cv.toDataURL('image/jpeg', 0.94);

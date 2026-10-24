@@ -31,3 +31,9 @@ Mesmos cortes de pausas, respirações e erros, sem animações, transições, m
 - Áudio: voz tratada, trilha ambiente mais baixa (~24 dB abaixo da voz), -14 LUFS.
 
 Render: `SCENE='scene2.html?box=brut' node scripts/reel/render2.mjs <raiz> <saida>` (ou `box=ig`).
+
+## Versão final escolhida: brutalista com zoom
+
+- `reel_brutalista_zoom_com_musica.mp4` e `reel_brutalista_zoom_sem_musica.mp4`.
+- Igual à versão limpa brutalista, com zoom leve (100% / 106%) alternando a cada corte, centrado no rosto.
+- A versão sem música tem só a voz tratada, normalizada em -14 LUFS.
