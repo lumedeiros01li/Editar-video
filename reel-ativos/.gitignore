@@ -1,0 +1,4 @@
+out/frames/
+out/audio/
+out/*.log
+node_modules/

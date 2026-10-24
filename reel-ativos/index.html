@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080,height=1920">
+<title>Reel R$ 100 em 2000</title>
+<style>
+@font-face{font-family:'Archivo Black';src:url('fontes/archivo-black-latin-400-normal.woff2') format('woff2');font-weight:400}
+@font-face{font-family:'JetBrains Mono';src:url('fontes/jetbrains-mono-latin-400-normal.woff2') format('woff2');font-weight:400}
+@font-face{font-family:'JetBrains Mono';src:url('fontes/jetbrains-mono-latin-500-normal.woff2') format('woff2');font-weight:500}
+@font-face{font-family:'JetBrains Mono';src:url('fontes/jetbrains-mono-latin-700-normal.woff2') format('woff2');font-weight:700}
+html,body{margin:0;padding:0;background:#F2F2F2;width:1080px;height:1920px;overflow:hidden}
+svg{display:block}
+text{white-space:pre}
+</style>
+</head>
+<body>
+<svg id="root" xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
+<script type="module">
+// Cada quadro é função pura de seek(t). Sem setTimeout, requestAnimationFrame ou transições CSS.
+// As tabelas (escala do eixo e posição dos rótulos) são calculadas uma vez na carga.
+import { construir, FPS, N_FRAMES, T_CORRIDA, T_CONGELA, T_RANKING, T_VOLTA, FLASH_DUR, Y_MIN, LINHAS, ORDEM_NEUTRA } from './modelo.mjs';
+
+const ROXO = '#9966FF', LIMAO = '#EBFF70', PRETO = '#000', GRADE = '#D9D9D9', CINZA_TXT = '#6E6E6E';
+const MONO = "'JetBrains Mono', monospace", ARCH = "'Archivo Black', sans-serif";
+const COR = { POU: '#9966FF', CDI: '#1F3A93', OURO: '#C99700', IBOV: '#00A94F', SPX: '#D6002A', IPCA: '#8C8C8C' };
+
+// ---- geometria: limites definidos pelo Lucas (topo 176, meio 530, base 1678) ----
+const LIM = { topo: 176, meio: 530, base: 1678 };
+const HY = 224;                       // centro da foto (topo = 176)
+const ET = 318;                       // etiqueta
+const TT = 412, TT1 = 384, TT2 = 440; // título em uma linha / em duas linhas
+const YB = 510;                       // ano
+const CARD = { x: 90, y: LIM.meio, w: 892, h: 1006 }; // sombra fecha em 990 x 1544
+const CY = CARD.y + 6 + 34;           // faixa da legenda
+const PL = 206, PR = 680, PT = CARD.y + 6 + 84, PB = CARD.y + CARD.h - 6 - 62;
+const PW = PR - PL, PH = PB - PT;
+const SLOT = 24;                      // ponta da linha até o rótulo
+const ROT_H = 96, ROT_GAP = 8;        // altura reservada por rótulo (nome + valor)
+const TOPO_ROT = PT + 84;             // rótulos nunca sobem na faixa dos flashes
+const FLASH_Y = PT + 8, FLASH_H = 64;
+const RODAPE = [1572, 1605, 1638, 1671];
+
+const ease = (x) => { x = Math.min(Math.max(x, 0), 1); return 1 - Math.pow(1 - x, 3); };
+const f1 = (n) => (Math.round(n * 10) / 10).toString();
+const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const milhar = (n) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+let M, D, boxes, ctx2d, POS;
+
+function larguraArch(s, fs) { ctx2d.font = `${fs}px "Archivo Black"`; return ctx2d.measureText(s).width; }
+function largura(s, fs, fam) { return fam === 'arch' ? larguraArch(s, fs) : s.length * 0.6 * fs; }
+function box(tipo, id, x, y, w, h) { boxes.push({ tipo, id, x, y, w, h }); }
+
+function txt(x, y, s, o = {}) {
+  const { fs = 40, w = 700, fam = 'mono', fill = PRETO, anchor = 'middle', tipo = 'texto', id = '', reg = true, attr = '' } = o;
+  const wd = largura(s, fs, fam);
+  if (reg) {
+    const x0 = anchor === 'middle' ? x - wd / 2 : anchor === 'end' ? x - wd : x;
+    const cap = 0.73 * fs, desc = /[çpqgyj(),;@]/.test(s) ? 0.22 * fs : 0;
+    box(tipo, id || s, x0, y - cap, wd, cap + desc);
+  }
+  return `<text x="${f1(x)}" y="${f1(y)}" font-family="${fam === 'arch' ? ARCH : MONO}" font-weight="${fam === 'arch' ? 400 : w}" font-size="${fs}" fill="${fill}" text-anchor="${anchor}" ${attr}>${esc(s)}</text>`;
+}
+
+// título em partes, com um destaque roxo (texto branco) numa delas
+function titulo(partes, destaque, y, fs, dy, reg, id) {
+  const ws = partes.map((p) => larguraArch(p, fs));
+  const total = ws.reduce((a, b) => a + b, 0);
+  let x = 540 - total / 2, s = '';
+  partes.forEach((p, i) => {
+    if (i === destaque) s += `<rect x="${f1(x - 10)}" y="${f1(y - 0.86 * fs + dy)}" width="${f1(ws[i] + 20)}" height="${f1(1.06 * fs)}" fill="${ROXO}"/>`;
+    s += `<text x="${f1(x)}" y="${f1(y + dy)}" font-family="${ARCH}" font-size="${fs}" fill="${i === destaque ? '#FFF' : '#000'}">${esc(p)}</text>`;
+    x += ws[i];
+  });
+  if (reg) box('titulo', id, 540 - total / 2 - 10, y - 0.86 * fs, total + 20, 1.06 * fs);
+  return s;
+}
+
+// regressão isotônica (PAV)
+function isotonica(y) {
+  const b = [];
+  for (const v of y) {
+    b.push({ s: v, n: 1 });
+    while (b.length > 1 && b[b.length - 2].s / b[b.length - 2].n > b[b.length - 1].s / b[b.length - 1].n) {
+      const q = b.pop(), p = b.pop(); b.push({ s: p.s + q.s, n: p.n + q.n });
+    }
+  }
+  const z = [];
+  for (const q of b) for (let i = 0; i < q.n; i++) z.push(q.s / q.n);
+  return z;
+}
+
+const yDe = (v, mx) => PB - M.frac(v, mx) * PH;
+const xDe = (p) => PL + (p / M.P_MAX) * PW;
+
+// posição vertical (centro) dos rótulos por quadro: ordem pelo valor atual, empurrão mínimo e suavização
+function tabelaRotulos() {
+  const tab = [];
+  let ant = null;
+  for (let i = 0; i <= N_FRAMES; i++) {
+    const t = i / FPS, p = M.progresso(t), mx = M.M[i];
+    const ordem = [...LINHAS].sort((a, b) => (M.valor(a, p) - M.valor(b, p)) || (ORDEM_NEUTRA.indexOf(a) - ORDEM_NEUTRA.indexOf(b)));
+    const alvo = ordem.map((id) => PB - yDe(M.valor(id, p), mx));
+    const o = ordem.map((_, k) => k * (ROT_H + ROT_GAP));
+    let z = isotonica(alvo.map((a, k) => a - o[k]));
+    const lo = ROT_H / 2, hi = (PB - TOPO_ROT) - ROT_H / 2 - o[o.length - 1];
+    z = z.map((v) => Math.min(Math.max(v, lo), Math.max(hi, lo)));
+    const cru = {};
+    ordem.forEach((id, k) => { cru[id] = PB - (z[k] + o[k]); });
+    const suave = t > T_CORRIDA && t < T_VOLTA && ant;
+    const atual = {};
+    for (const id of LINHAS) atual[id] = suave ? ant[id] + 0.35 * (cru[id] - ant[id]) : cru[id];
+    tab.push(atual);
+    ant = atual;
+  }
+  return tab;
+}
+
+function estatica() {
+  const defs = `<defs>
+    <clipPath id="cFoto"><circle cx="326" cy="${HY}" r="48"/></clipPath>
+    <clipPath id="cTit"><rect x="90" y="326" width="900" height="130"/></clipPath>
+    <clipPath id="cAno"><rect x="90" y="452" width="900" height="76"/></clipPath>
+    <clipPath id="cFlash"><rect x="96" y="${PT + 4}" width="880" height="76"/></clipPath>
+    <clipPath id="cPlot"><rect x="${PL - 2}" y="${PT - 30}" width="${PW + 4}" height="${PH + 30}"/></clipPath>
+    <clipPath id="cX"><rect x="96" y="${PB + 2}" width="880" height="56"/></clipPath>
+  </defs>`;
+  const cx = 394 + 14 * 24 + 10 + 20, cy = HY - 22;
+  let pts = '';
+  for (let i = 0; i < 24; i++) {
+    const r = i % 2 ? 17 : 21, a = (Math.PI * 2 * i) / 24;
+    pts += `${f1(cx + r * Math.sin(a))},${f1(cy - r * Math.cos(a))} `;
+  }
+  const selo = `<polygon points="${pts}" fill="${ROXO}"/><path d="M${cx - 8},${cy} l6,7 l11,-13" fill="none" stroke="#FFF" stroke-width="4.5" stroke-linecap="square"/>`;
+  const header =
+    `<image href="assets/foto-perfil.jpg" x="278" y="${HY - 48}" width="96" height="120" preserveAspectRatio="xMidYMin slice" clip-path="url(#cFoto)"/>` +
+    `<circle cx="326" cy="${HY}" r="46" fill="none" stroke="#000" stroke-width="4"/>` +
+    `<text x="394" y="${HY - 8}" font-family="${MONO}" font-weight="700" font-size="40" fill="#000">Lucas Medeiros</text>` + selo +
+    `<text x="394" y="${HY + 38}" font-family="${MONO}" font-weight="500" font-size="40" fill="#000">@lucasmedeiros.ai</text>`;
+  const cartao =
+    `<rect x="${CARD.x + 8}" y="${CARD.y + 8}" width="${CARD.w}" height="${CARD.h}" fill="${ROXO}"/>` +
+    `<rect x="${CARD.x + 3}" y="${CARD.y + 3}" width="${CARD.w - 6}" height="${CARD.h - 6}" fill="#FFF" stroke="#000" stroke-width="6"/>`;
+  return defs + `<rect width="1080" height="1920" fill="#F2F2F2"/>` + header + cartao;
+}
+
+// fase do título e do slot do ano em função do tempo, com troca por deslocamento (sai para cima, entra por baixo)
+function troca(t, marcos) {
+  let k = -1;
+  marcos.forEach((m, i) => { if (t >= m.t) k = i; });
+  const antes = k <= 0 ? marcos[0].fase : marcos[k - 1].fase;
+  if (k <= 0) return [{ fase: marcos[0].fase, dy: 0, estavel: true }];
+  const u = (t - marcos[k].t) * FPS, out = [];
+  if (u < 6) out.push({ fase: antes, dy: -ease(u / 6) * 130, estavel: false });
+  if (u >= 4) out.push({ fase: marcos[k].fase, dy: (1 - ease((u - 4) / 6)) * 130, estavel: u >= 10 });
+  return out;
+}
+
+function seek(t) {
+  boxes = [];
+  const i = Math.min(Math.max(Math.round(t * FPS), 0), N_FRAMES);
+  const p = M.progresso(t), mx = M.M[i];
+  const y = (v) => yDe(v, mx);
+  const base = D.base.valor, ano0 = D.base.ano;
+  let s = '';
+
+  box('header', 'foto', 278, HY - 48, 96, 96);
+  box('header', 'nome', 394, HY - 8 - 29, 14 * 24, 29);
+  box('header', 'selo', 394 + 14 * 24 + 10, HY - 42, 40, 40);
+  box('header', 'handle', 394, HY + 38 - 29, 17 * 24, 38);
+
+  // etiqueta fixa
+  s += txt(540, ET, `[ R$ ${base} EM ${ano0} ]`, { tipo: 'etiqueta' });
+
+  // título: QUEM VIROU MAIS? -> QUAL FICOU EM 1º? -> poupança x inflação -> volta ao primeiro
+  const pctAcima = Math.round(M.acima * 100);
+  const fases = [{ t: 0, fase: 'A' }, { t: T_CONGELA, fase: 'B' }, { t: T_RANKING, fase: 'C' }, { t: T_VOLTA, fase: 'A' }];
+  let tit = '';
+  for (const f of troca(t, fases)) {
+    if (f.fase === 'A') tit += titulo(['QUEM VIROU ', 'MAIS', '?'], 1, TT, 60, f.dy, f.estavel, 'A');
+    if (f.fase === 'B') tit += titulo(['QUAL FICOU EM ', '1º', '?'], 1, TT, 60, f.dy, f.estavel, 'B');
+    if (f.fase === 'C') {
+      tit += titulo(['POUPANÇA: CERCA DE ', `${pctAcima}% AO ANO`], 1, TT1, 40, f.dy, f.estavel, 'C1');
+      tit += titulo(['ACIMA DA INFLAÇÃO'], -1, TT2, 40, f.dy, f.estavel, 'C2');
+    }
+  }
+  s += `<g clip-path="url(#cTit)">${tit}</g>`;
+
+  // ano rodando / CTA
+  const ano = M.anoNaTela(p);
+  let slot = '';
+  for (const f of troca(t, [{ t: 0, fase: 'ano' }, { t: T_RANKING, fase: 'cta' }, { t: T_VOLTA, fase: 'ano' }])) {
+    if (f.fase === 'ano') slot += txt(540, YB + f.dy, String(ano), { fam: 'arch', fs: 72, tipo: 'ano', id: 'ano', reg: f.estavel });
+    if (f.fase === 'cta') {
+      const cta = 'LEIA A LEGENDA', w = larguraArch(cta, 40) + 56;
+      slot += `<rect x="${f1(540 - w / 2)}" y="${f1(462 + f.dy)}" width="${f1(w)}" height="64" fill="#000"/>`;
+      slot += txt(540, 494 + 14.6 + f.dy, cta, { fam: 'arch', fs: 40, fill: LIMAO, reg: false });
+      if (f.estavel) box('cta', 'cta', 540 - w / 2, 462, w, 64);
+    }
+  }
+  s += `<g clip-path="url(#cAno)">${slot}</g>`;
+
+  // ---- gráfico ----
+  let grade = '', rot = '';
+  for (const v of M.candidatos(t)) {
+    if (v === base) continue;
+    const pr = M.presenca(v, t);
+    if (!pr) continue;
+    const yy = y(v);
+    if (yy < PT - 2 || yy > PB + 2) continue;
+    let xa = PL, xb = PR, dx = 0;
+    if (pr.modo === 'entra') { xb = PL + pr.f * PW; dx = -(1 - pr.f) * 8; }
+    if (pr.modo === 'sai') { xa = PL + pr.f * PW; dx = -pr.f * 8; }
+    grade += `<rect x="${f1(xa)}" y="${f1(yy - 1)}" width="${f1(xb - xa)}" height="2" fill="${GRADE}"/>`;
+    if (v !== Y_MIN) rot += txt(PL - 10 + dx, yy + 14.6, String(v), { anchor: 'end', tipo: 'ylabel', id: 'y' + v });
+  }
+  s += grade;
+  const yb = y(base);
+  s += `<rect x="${PL}" y="${f1(yb - 2)}" width="${PW}" height="4" fill="#000"/>`;
+  s += `<rect x="${PL - 92}" y="${f1(yb - 20)}" width="84" height="40" fill="#000"/>`;
+  box('ylabel', 'base', PL - 92, yb - 20, 84, 40);
+  s += `<text x="${PL - 50}" y="${f1(yb + 14.6)}" font-family="${MONO}" font-weight="700" font-size="40" fill="#FFF" text-anchor="middle">${base}</text>`;
+  s += rot;
+  // legenda da base e do eixo
+  s += `<rect x="106" y="${CY - 2}" width="56" height="4" fill="#000"/>` + txt(176, CY + 14.6, `BASE ${base}`, { anchor: 'start', tipo: 'legenda' });
+  box('legenda', 'amostra', 106, CY - 4, 56, 8);
+  s += `<rect x="392" y="${CY - 20}" width="88" height="40" fill="#000"/>` + txt(436, CY + 14.6, 'LOG', { fill: '#FFF', reg: false });
+  box('legenda', 'log', 392, CY - 20, 88, 40);
+
+  // eixo X: marca a cada 5 anos, rótulo a cada 10
+  let xl = '', mx5 = '';
+  for (let k = 0; k <= M.P_MAX; k += 5) {
+    if (p < k - 1e-9 && k > 0) continue;
+    const tk = M.tempoDe(k);
+    const f = k === 0 || t >= T_VOLTA ? 1 : ease((t - tk) / 0.2);
+    if (k > 0) mx5 += `<rect x="${f1(xDe(k) - 2)}" y="${PB + 3}" width="4" height="${f1(12 * f)}" fill="#000"/>`;
+    if (k % 10 === 0) xl += txt(xDe(k), PB + 54 + (1 - f) * 24, String(ano0 + k), { tipo: 'xlabel', id: 'x' + k, reg: f >= 1 });
+  }
+  s += mx5 + `<g clip-path="url(#cX)">${xl}</g>`;
+
+  // linhas
+  let linhas = '';
+  for (const id of LINHAS) {
+    let d = '';
+    for (let q = 0; q < p; q += 0.1) d += `${d ? 'L' : 'M'}${f1(xDe(q))} ${f1(y(M.valor(id, q)))}`;
+    d += `${d ? 'L' : 'M'}${f1(xDe(p))} ${f1(y(M.valor(id, p)))}`;
+    const w = id === 'IPCA' ? 5 : 6;
+    linhas += `<path d="${d}" fill="none" stroke="#FFF" stroke-width="${w + 4}" stroke-linejoin="round"/>`;
+    linhas += `<path d="${d}" fill="none" stroke="${COR[id]}" stroke-width="${w}" stroke-linejoin="round"/>`;
+  }
+  s += `<g clip-path="url(#cPlot)">${linhas}</g>`;
+
+  // rótulos na ponta: nome sempre, valor depois da revelação
+  const xTip = xDe(p), x0 = xTip + SLOT;
+  const valores = {};
+  let guias = '', grupos = '';
+  const ordemDesenho = [...LINHAS].sort((a, b) => POS[i][a] - POS[i][b]);
+  for (const id of ordemDesenho) {
+    const yc = POS[i][id], yt = y(M.valor(id, p));
+    guias += `<path d="M${f1(xTip)} ${f1(yt)} L${f1(x0 - 4)} ${f1(yc - 22)}" stroke="${COR[id]}" stroke-width="3" stroke-dasharray="7 5" fill="none"/>`;
+    const nome = D.series[id].rotulo, cinza = id === 'IPCA';
+    const tR = M.revela[id];
+    const vence = id === M.vencedor && t >= tR && t < T_VOLTA;
+    let g = '';
+    if (vence) g += `<rect x="${f1(x0 - 13)}" y="${f1(yc - 47)}" width="270" height="94" fill="${LIMAO}" stroke="#000" stroke-width="6"/>`;
+    else g += `<rect x="${f1(x0 - 6)}" y="${f1(yc - 44)}" width="258" height="88" fill="#FFF"/>`;
+    g += `<rect x="${f1(x0 + 1.5)}" y="${f1(yc - 32 + 1.5)}" width="17" height="17" fill="${COR[id]}" stroke="#000" stroke-width="3"/>`;
+    g += txt(x0 + 28, yc - 22 + 14.6, nome, { anchor: 'start', fill: cinza ? CINZA_TXT : PRETO, reg: false });
+    // valor: entra deslizando na revelação, sai deslizando na volta
+    let mostra = false, dx = 0;
+    if (t >= tR && t < T_VOLTA + 4 / FPS) {
+      mostra = true;
+      const u = (t - tR) * FPS;
+      dx = -(1 - ease(u / 6)) * 24;
+      if (t >= T_VOLTA) dx = -ease((t - T_VOLTA) * FPS / 4) * 24;
+    }
+    if (mostra) {
+      const val = `R$ ${milhar(M.final(id))}`;
+      valores[id] = val;
+      g += `<text x="${f1(x0 + 28 + dx)}" y="${f1(yc + 22 + 14.6)}" font-family="${MONO}" font-weight="700" font-size="40" fill="${cinza ? CINZA_TXT : PRETO}" data-valor="${id}">${esc(val)}</text>`;
+    }
+    // pulso do vencedor
+    const u = (t - tR) * FPS;
+    const esc1 = vence && u < 8 ? 1 + 0.06 * Math.sin(Math.PI * u / 8) : 1;
+    const cx = x0 + 122, cy = yc;
+    grupos += `<g transform="translate(${f1(cx)} ${f1(cy)}) scale(${esc1.toFixed(4)}) translate(${f1(-cx)} ${f1(-cy)})">${g}</g>`;
+    const bw = (vence ? 270 : 258) * esc1, bh = (vence ? 94 : 88) * esc1;
+    box('rotulo', id, cx - bw / 2 + (vence ? -1 : 0), cy - bh / 2, bw, bh);
+  }
+  s += guias + grupos;
+
+  // flashes (chip limão na faixa superior do gráfico)
+  let fl = '', flashAtivo = null;
+  for (const f of M.flashes) {
+    if (t < f.t || t >= f.t + FLASH_DUR + 6 / FPS) continue;
+    const ent = ease((t - f.t) * FPS / 6), sai = ease((t - f.t - FLASH_DUR) * FPS / 6);
+    const dy = -(1 - ent) * 24 - sai * 80;
+    const w = f.texto.length * 24 + 36, xc = CARD.x + CARD.w / 2;
+    fl += `<rect x="${f1(xc - w / 2 + 3)}" y="${f1(FLASH_Y + 3 + dy)}" width="${w - 6}" height="${FLASH_H - 6}" fill="${LIMAO}" stroke="#000" stroke-width="6"/>`;
+    fl += txt(xc, FLASH_Y + FLASH_H / 2 + 14.6 + dy, f.texto, { reg: false });
+    if (ent >= 1 && sai <= 0) { box('flash', f.texto, xc - w / 2, FLASH_Y, w, FLASH_H); flashAtivo = f.texto; }
+  }
+  s += `<g clip-path="url(#cFlash)">${fl}</g>`;
+
+  // rodapé fixo
+  const fim = D.fim.rotulo;
+  const rod = [
+    'Fonte: BCB, IBGE, B3, Shiller (S&P), datahub (ouro)',
+    `Base ${base} dez/${ano0} · escala log · até ${fim} · bruto`,
+    '*Sem dividendos. Rentabilidade passada não é',
+    'garantia de rentabilidade futura.',
+  ];
+  rod.forEach((l, k) => { s += txt(540, RODAPE[k], l, { fs: 28, w: 500, tipo: 'rodape', id: 'rodape' + k }); });
+
+  document.getElementById('dyn').innerHTML = s;
+  window.__state = { t, p, ano, Mx: mx, valores, boxes, flash: flashAtivo, familia: M.familias[M.famQ[i]].nome };
+}
+
+async function init() {
+  D = await (await fetch('dados.json')).json();
+  M = construir(D, { altura: PH });
+  ctx2d = document.createElement('canvas').getContext('2d');
+  await Promise.all([
+    document.fonts.load('400 40px "Archivo Black"'), document.fonts.load('400 40px "JetBrains Mono"'),
+    document.fonts.load('500 40px "JetBrains Mono"'), document.fonts.load('700 40px "JetBrains Mono"'),
+  ]);
+  await document.fonts.ready;
+  POS = tabelaRotulos();
+  const root = document.getElementById('root');
+  root.innerHTML = estatica() + '<g id="dyn"></g>';
+  await new Promise((res) => { const im = new Image(); im.onload = im.onerror = res; im.src = 'assets/foto-perfil.jpg'; });
+  window.seek = seek;
+  window.__modelo = M;
+  window.__dados = D;
+  seek(0);
+  window.__ready = true;
+}
+init();
+</script>
+</body>
+</html>
