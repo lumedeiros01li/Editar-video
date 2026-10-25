@@ -92,26 +92,24 @@ for n, ch in enumerate(chunks):
 
 # ---------- elementos do topo
 def tstart(p): return min(x["s"] for x in PAL if x["p"] == p)
-SECS = [  # nome, 1a frase
-    ("MODELO 1 · BALAO INSTAGRAM", 0), ("MODELO 2 · AMARELO", 2), ("MODELO 2 · VERDE", 4), ("MODELO 2 · CIANO", 6),
-    ("MODELO 2 · LARANJA", 7), ("MODELO 2 · ROSA", 9), ("BRUTALISTA A · CARTAO", 11), ("BRUTALISTA B · FAIXA", 13), ("BRUTALISTA C · BLOCO", 15)]
-bounds = [0.0] + [max(0.1, tstart(p0) - 0.15) for _, p0 in SECS[1:]] + [TOTAL]
+ROXO, LIMA = ET.ROXO, ET.LIMA
+SECS = [  # 1a frase de cada trecho
+    (0, lambda a, b: put("e0", ET.sticker_ig("Qual é o teste?", "Enviar um vídeo com mais de 30 MB para o Claude Code editar", 170), a, b)),
+    (2, lambda a, b: put("e1", ET.impacto(["Edição *INTERESSANTE*", "só para *TESTAR*"], 150, ROXO), a, b)),
+    (4, lambda a, b: put("e2", ET.brutal_c("arquivo", "vídeo", "x chat", [("vídeo original", "+30 MB", "↑ grande demais", False), ("pelo chat", "30 MB", "não passa", True)]), a, b)),
+    (6, lambda a, b: put("e3", ET.impacto(["Vídeo final de", "*1 MINUTO* pós-edição"], 150, LIMA), a, b)),
+    (7, lambda a, b: put("e4", ET.sticker_ig("Qual é a ideia?", "Testar vários estilos de edição no mesmo vídeo", 170), a, b)),
+    (9, lambda a, b: put("e5", ET.impacto(["Você *SELECIONA*", "os melhores"], 150, ROXO), a, b)),
+    (11, lambda a, b: put("e6", ET.brutal_c("skill", "edição", "padrão", [("edição", "simples", "↑ vira skill", False)]), a, b)),
+    (13, lambda a, b: put("e7", ET.impacto(["Legenda *EMBAIXO*", "texto *NO TOPO*"], 150, LIMA), a, b)),
+    (15, lambda a, b: put("e8", ET.brutal_c("animação", "se pedir", "entra", [("gráfico", "falando", "↑ Claude Code", False)]), a, b)),
+]
+bounds = [0.0] + [max(0.1, tstart(p0) - 0.15) for p0, _ in SECS[1:]] + [TOTAL]
 ELEM = []   # (png, inicio, fim)
 os.makedirs(S + "/el", exist_ok=True)
 def put(name, img, a, b):
     p = f"{S}/el/{name}.png"; img.save(p); ELEM.append((p, a, b))
-for k, (nome, p0) in enumerate(SECS):
-    a, b = bounds[k] + 0.1, bounds[k + 1] - 0.05
-    if k == 0: put("e0", ET.sticker_ig("Qual é o teste?", "Enviar um vídeo com mais de 30 MB para o Claude Code editar", 170), a, b)
-    if k == 1: put("e1", ET.impacto(["Edição *INTERESSANTE*", "só para *TESTAR*"], 150, ET.hexc("#FFD600")), a, b)
-    if k == 2: put("e2", ET.impacto(["Arquivo com mais de", "*30 MB* pelo chat?"], 150, ET.hexc("#7CFF4F")), a, b)
-    if k == 3: put("e3", ET.impacto(["Vídeo final de", "*1 MINUTO* pós-edição"], 150, ET.hexc("#22D3EE")), a, b)
-    if k == 4: put("e4", ET.impacto(["Testando *VÁRIOS*", "*ESTILOS* de edição"], 150, ET.hexc("#FF7A1A")), a, b)
-    if k == 5: put("e5", ET.impacto(["Você *SELECIONA*", "os melhores"], 150, ET.hexc("#FF3D8B")), a, b)
-    if k == 6: put("e6", ET.brutal_card("skill // edição padrão", "escolher os melhores e virar uma skill", "#FF5CA8", 150), a, b)
-    if k == 7: put("e7", ET.brutal_faixa("legenda embaixo + texto no topo", "edição simples", "#C6FF00", 160), a, b)
-    if k == 8: put("e8", ET.brutal_bloco(["SE PEDIR,", "ENTRA", "ANIMAÇÃO"], "#2F5BFF", "#C6FF00", 130), a, b)
-    E(bounds[k], bounds[k + 1], "Tag", f"{{\\alpha&H60&}}{nome}", 2)
+for k, (p0, fn) in enumerate(SECS): fn(bounds[k] + 0.1, bounds[k + 1] - 0.05)
 
 HDR = """[Script Info]
 ScriptType: v4.00+

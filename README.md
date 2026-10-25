@@ -7,16 +7,13 @@
 
 Pipeline em `scripts/`: análise de áudio (Silero VAD + volume + vozeamento), segmentação, máscara da pessoa (MediaPipe selfie segmentation) e renderização 3D (`render.mjs` + `scene.html`).
 
-## video_modelos.mp4
+## video_teste_final.mp4
 
-Vídeo de teste (vertical 1080x1920, 74s). Legenda em caixa arredondada de uma linha, alinhada à fala (fixa em todos os trechos). Elemento do topo por trecho, com etiqueta no canto:
+Teste final com os modelos escolhidos (vertical 1080x1920, 74s), alternando por trecho:
 
-| Trecho | Elemento |
-|---|---|
-| Modelo 1 (escolhido) | Balão de resposta do Instagram |
-| Modelo 2 (escolhido) | Texto de impacto, cor de destaque testada em amarelo, verde, ciano, laranja e rosa |
-| Brutalista A | Cartão com borda preta grossa, sombra dura e cabeçalho mono rosa |
-| Brutalista B | Fita listrada + barra preta mono + etiqueta verde-limão |
-| Brutalista C | Bloco azul chapado com texto gigante e marca-texto verde-limão |
+- Legenda em caixa arredondada, uma linha, alinhada à fala (fixa).
+- Modelo 1: balão de resposta do Instagram.
+- Modelo 2: texto de impacto, destaque roxo (#9B6BFF) ou lima (#E4FF6B).
+- Modelo Brutalista C: painel cinza (#F0F0F0), etiqueta [ TAG ], título preto com bloco roxo, cartão branco com borda preta, sombra roxa e etiquetas lima.
 
 Scripts: `cortes_estilos.py` (cortes), `roteiro_estilos.json` (texto das legendas), `elementos_topo.py` (elementos em PNG) e `build_estilos.py` (alinha legenda à fala com whisper e monta tudo com ffmpeg).
