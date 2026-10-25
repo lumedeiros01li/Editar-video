@@ -1,0 +1,19 @@
+[
+ {"s": 0,  "e": 6,  "t": "Somente para ver se consigo produzir um vídeo com mais de 30 MB e enviar para o Claude Code para ele fazer essa edição."},
+ {"s": 6,  "e": 11, "t": "Então, o intuito vai ser: faça qualquer edição aqui, coloca a legenda, corte as minhas expirações."},
+ {"s": 21, "e": 23, "t": "Porém, a ideia é que é só para testar."},
+ {"s": 23, "e": 34, "t": "Então, coloque uma vez em cima, não sei como vai dar o áudio, mas da ideia central e tente buscar uma edição interessante."},
+ {"s": 34, "e": 40, "t": "E aí, se eu consigo transferir para o Claude Code um arquivo com mais de 30 megabytes."},
+ {"s": 40, "e": 44, "t": "Até pelo chat não consigo. Então, vou ver como vou fazer isso."},
+ {"s": 44, "e": 51, "t": "Esse vídeo deve ter mais ou menos um minuto líquido, pós-edição. Não sei como ele vai fazer."},
+ {"s": 52, "e": 60, "t": "Então, a gente usa esse vídeo aqui, em suma, se eu consigo mandar para ela para testar vários estilos de edição."},
+ {"s": 60, "e": 62, "t": "Então, aqui você testa um."},
+ {"s": 65, "e": 69, "t": "E durante esse vídeo você terá que testar vários estilos de edição."},
+ {"s": 69, "e": 74, "t": "Ele me explica quais estilos estão em cada momento do vídeo."},
+ {"s": 74, "e": 79, "t": "E aí eu seleciono quais vamos usar daqui para a frente."},
+ {"s": 79, "e": 83, "t": "Nós podemos até fazer uma skill para virar uma edição padrão."},
+ {"s": 83, "e": 85, "t": "Mas a ideia é ser uma edição simples."},
+ {"s": 85, "e": 89, "t": "Então, legenda aqui embaixo e alguma coisa aqui em cima."},
+ {"s": 89, "e": 93, "t": "Um texto referente ao conteúdo que eu vou explicar. Alguma coisa assim."},
+ {"s": 93, "e": 99, "t": "Se eu pedir alguma animação, você coloca aqui um gráfico representando o Claude Code falando."}
+]
