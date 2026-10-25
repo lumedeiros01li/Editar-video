@@ -25,6 +25,13 @@ while i < n:
         while j < n and active[j]: j += 1
         runs.append([i, j]); i = j
     else: i += 1
+# histerese: estende cada trecho enquanto o som ainda decai (fim de palavra), ate 0,15s
+low = db > thr - 4
+for r in runs:
+    k = 0
+    while r[1] < n and low[r[1]] and k < 15: r[1] += 1; k += 1
+    k = 0
+    while r[0] > 0 and low[r[0] - 1] and k < 6: r[0] -= 1; k += 1
 m = []
 for r in runs:
     if m and (r[0] - m[-1][1]) * dt <= 0.10: m[-1][1] = r[1]
@@ -43,8 +50,8 @@ for a0, b0 in m:
     seg.append([t[a0], t[b0 - 1]])
 out = []
 for k, (s, e) in enumerate(seg):
-    ps = 0.03 if k == 0 else min(0.03, (s - seg[k - 1][1]) / 2)
-    pe = 0.05 if k == len(seg) - 1 else min(0.05, (seg[k + 1][0] - e) / 2)
+    ps = 0.05 if k == 0 else min(0.05, (s - seg[k - 1][1]) / 2)
+    pe = 0.08 if k == len(seg) - 1 else min(0.08, (seg[k + 1][0] - e) / 2)
     out.append([round(max(0, s - ps), 3), round(e + pe, 3)])
 json.dump(out, open(S + "/keep.json", "w"))
 print("segmentos", len(out), "duracao final", round(sum(e - s for s, e in out), 2), "de", round(t[-1], 2))
