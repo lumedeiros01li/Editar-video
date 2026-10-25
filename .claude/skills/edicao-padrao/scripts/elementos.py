@@ -1,4 +1,4 @@
-"""Gera os elementos do topo como PNG transparente 1080x1920 (Pillow)."""
+"""Elementos do topo (Pillow), como PNG transparente 1080x1920: sticker_ig, impacto, brutal_c."""
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 W, H = 1080, 1920
 FD = "/usr/share/fonts/opentype/inter/"
@@ -66,38 +66,41 @@ def girar(layer, ang, cx, cy):
 
 CINZA = (240, 240, 240, 255); ROXO = (155, 107, 255, 255); LIMA = (228, 255, 107, 255)
 MONOR = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"
-def brutal_c(tag, preto, roxo, linhas=(), y=0):
-    """Painel cinza brutalista: etiqueta [ TAG ], titulo preto + bloco roxo, cartao branco com sombra roxa.
+def brutal_c(tag, preto, roxo, linhas=(), y=0, cores=None):
+    """Painel cinza brutalista com margens: etiqueta [ TAG ], titulo preto + bloco roxo, cartao branco com sombra roxa.
     linhas = [(rotulo, valor, etiqueta, riscado)]"""
+    c = cores or {}; roxo_c = c.get("roxo", ROXO); lima_c = c.get("lima", LIMA)
+    M = 44                                   # margem superior e lateral
     im = canvas(); d = ImageDraw.Draw(im)
     rows = len(linhas); ch = rows * 150; top = 214
     pan_h = (top + ch + 52) if rows else 224
-    d.rectangle((0, y, W, y + pan_h), fill=CINZA); d.rectangle((0, y + pan_h - 6, W, y + pan_h), fill=BLK)
+    px0, px1, py0 = M, W - M, y + M
+    d.rectangle((px0, py0, px1, py0 + pan_h), fill=CINZA, outline=BLK, width=6)
     ft = mono(34); t = f"[ {tag.upper()} ]"; tw_ = tw(d, t, ft) + 56
-    d.rectangle((W / 2 - tw_ / 2, y + 22, W / 2 + tw_ / 2, y + 74), outline=BLK, width=5)
-    d.text((W / 2 - tw_ / 2 + 28, y + 30), t, font=ft, fill=BLK)
+    d.rectangle((W / 2 - tw_ / 2, py0 + 24, W / 2 + tw_ / 2, py0 + 76), outline=BLK, width=5)
+    d.text((W / 2 - tw_ / 2 + 28, py0 + 32), t, font=ft, fill=BLK)
     size = 92
     while True:
         f = inter("Black", size); wa = tw(d, preto.upper() + " ", f); wb = tw(d, roxo.upper(), f) + 44
-        if wa + wb <= W - 90 or size < 50: break
+        if wa + wb <= px1 - px0 - 70 or size < 44: break
         size -= 4
-    x = (W - wa - wb) / 2; ty = y + 92
+    x = (W - wa - wb) / 2; ty = py0 + 94
     d.text((x, ty), preto.upper(), font=f, fill=BLK)
-    bx = x + wa; d.rectangle((bx, ty + 4, bx + wb, ty + size + 14), fill=ROXO)
+    bx = x + wa; d.rectangle((bx, ty + 4, bx + wb, ty + size + 14), fill=roxo_c)
     d.text((bx + 22, ty), roxo.upper(), font=f, fill=WHITE)
     if rows:
-        x0, x1, c0 = 50, W - 50, y + top
-        d.rectangle((x0 + 16, c0 + 16, x1 + 16, c0 + ch + 16), fill=ROXO)
+        x0, x1, c0 = px0 + 40, px1 - 56, py0 + top
+        d.rectangle((x0 + 16, c0 + 16, x1 + 16, c0 + ch + 16), fill=roxo_c)
         d.rectangle((x0, c0, x1, c0 + ch), fill=WHITE, outline=BLK, width=7)
         for r, (rot, val, etq, risc) in enumerate(linhas):
             ry = c0 + r * 150
-            if r: d.line((x0 + 44, ry, x1 - 44, ry), fill=BLK, width=3)
-            d.text((x0 + 44, ry + 56), rot, font=ImageFont.truetype(MONOR, 36), fill=(90, 90, 90, 255))
-            fv = inter("Black", 62); vw = tw(d, val, fv); vx = x1 - 44 - vw
+            if r: d.line((x0 + 40, ry, x1 - 40, ry), fill=BLK, width=3)
+            d.text((x0 + 40, ry + 56), rot, font=ImageFont.truetype(MONOR, 36), fill=(90, 90, 90, 255))
+            fv = inter("Black", 62); vw = tw(d, val, fv); vx = x1 - 40 - vw
             d.text((vx, ry + 10), val, font=fv, fill=BLK)
-            if risc: d.rectangle((vx - 6, ry + 10 + 40, vx + vw + 6, ry + 10 + 52), fill=ROXO)
+            if risc: d.rectangle((vx - 6, ry + 10 + 40, vx + vw + 6, ry + 10 + 52), fill=roxo_c)
             if etq:
-                fe = mono(32); ew = tw(d, etq, fe) + 44; ex = x1 - 44 - ew
-                d.rectangle((ex, ry + 88, x1 - 44, ry + 88 + 46), fill=LIMA if not risc else WHITE, outline=BLK, width=4)
+                fe = mono(32); ew = tw(d, etq, fe) + 44; ex = x1 - 40 - ew
+                d.rectangle((ex, ry + 88, x1 - 40, ry + 88 + 46), fill=lima_c if not risc else WHITE, outline=BLK, width=4)
                 d.text((ex + 22, ry + 88 + 5), etq, font=fe, fill=BLK)
     return im

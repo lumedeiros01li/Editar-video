@@ -7,13 +7,8 @@
 
 Pipeline em `scripts/`: análise de áudio (Silero VAD + volume + vozeamento), segmentação, máscara da pessoa (MediaPipe selfie segmentation) e renderização 3D (`render.mjs` + `scene.html`).
 
-## video_teste_final.mp4
+## Skill `edicao-padrao`
 
-Teste final com os modelos escolhidos (vertical 1080x1920, 74s), alternando por trecho:
+Em `.claude/skills/edicao-padrao/`. Corta pausas, coloca legenda em caixa (uma linha, sincronizada com a fala) e aplica elementos no topo: balão do Instagram, texto de impacto e painel brutalista (cores roxo `#9B6BFF` e lima `#E4FF6B`). Veja `SKILL.md` para o passo a passo e `exemplo/config.json` para o formato.
 
-- Legenda em caixa arredondada, uma linha, alinhada à fala (fixa).
-- Modelo 1: balão de resposta do Instagram.
-- Modelo 2: texto de impacto, destaque roxo (#9B6BFF) ou lima (#E4FF6B).
-- Modelo Brutalista C: painel cinza (#F0F0F0), etiqueta [ TAG ], título preto com bloco roxo, cartão branco com borda preta, sombra roxa e etiquetas lima.
-
-Scripts: `cortes_estilos.py` (cortes), `roteiro_estilos.json` (texto das legendas), `elementos_topo.py` (elementos em PNG) e `build_estilos.py` (alinha legenda à fala com whisper e monta tudo com ffmpeg).
+`video_teste_final.mp4` é o resultado da skill sobre o vídeo de teste (vertical 1080x1920, 74s), gerado com `exemplo/config.json`.

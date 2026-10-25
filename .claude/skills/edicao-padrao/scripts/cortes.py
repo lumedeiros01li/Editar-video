@@ -1,9 +1,12 @@
-"""Analisa o audio, remove pausas/respiracoes (>0,1s) e salva keep.json.palavras.json.
-uso: python3 cortes_estilos.py <a.wav 16k mono> <saida_dir>"""
-import numpy as np, json, sys
-wav, S = sys.argv[1], sys.argv[2]
+"""Detecta fala, remove pausas e respiracoes (>0,1s) e salva <dir>/keep.json com os trechos mantidos.
+uso: python3 cortes.py <video> <dir de trabalho>"""
+import numpy as np, json, sys, os, subprocess
+video, S = sys.argv[1], sys.argv[2]
+os.makedirs(S, exist_ok=True)
+raw = S + "/a.raw"
+subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", video, "-vn", "-ac", "1", "-ar", "16000", "-f", "s16le", raw], check=True)
 sr, hop, win, dt = 16000, 160, 480, 0.01
-a = np.fromfile(wav, dtype=np.int16, offset=44).astype(np.float32) / 32768
+a = np.fromfile(raw, dtype=np.int16).astype(np.float32) / 32768
 n = (len(a) - win) // hop
 fr = np.lib.stride_tricks.sliding_window_view(a, win)[::hop][:n]
 db = 20 * np.log10(np.sqrt((fr ** 2).mean(1)) + 1e-9)
