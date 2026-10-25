@@ -92,31 +92,26 @@ for n, ch in enumerate(chunks):
 
 # ---------- elementos do topo
 def tstart(p): return min(x["s"] for x in PAL if x["p"] == p)
-SECS = [  # nome, 1a frase, ultima frase
-    ("BALAO INSTAGRAM", 0, 2), ("TEXTO IMPACTO", 3, 3), ("SERIFADO", 4, 5), ("ESTATISTICA", 6, 6),
-    ("CHAT", 7, 9), ("MANCHETE", 10, 12), ("CHECKLIST", 13, 15)]
-bounds = [0.0] + [max(0.0, tstart(p0) - 0.15) for _, p0, _ in SECS[1:]] + [TOTAL]
-for k in range(1, len(SECS)): bounds[k] = max(bounds[k], 0.1)
+SECS = [  # nome, 1a frase
+    ("MODELO 1 · BALAO INSTAGRAM", 0), ("MODELO 2 · AMARELO", 2), ("MODELO 2 · VERDE", 4), ("MODELO 2 · CIANO", 6),
+    ("MODELO 2 · LARANJA", 7), ("MODELO 2 · ROSA", 9), ("BRUTALISTA A · CARTAO", 11), ("BRUTALISTA B · FAIXA", 13), ("BRUTALISTA C · BLOCO", 15)]
+bounds = [0.0] + [max(0.1, tstart(p0) - 0.15) for _, p0 in SECS[1:]] + [TOTAL]
 ELEM = []   # (png, inicio, fim)
 os.makedirs(S + "/el", exist_ok=True)
 def put(name, img, a, b):
     p = f"{S}/el/{name}.png"; img.save(p); ELEM.append((p, a, b))
-for k, (nome, p0, p1) in enumerate(SECS):
+for k, (nome, p0) in enumerate(SECS):
     a, b = bounds[k] + 0.1, bounds[k + 1] - 0.05
     if k == 0: put("e0", ET.sticker_ig("Qual é o teste?", "Enviar um vídeo com mais de 30 MB para o Claude Code editar", 170), a, b)
-    if k == 1: put("e1", ET.impacto(["Edição *INTERESSANTE*", "só para *TESTAR*"], 150), a, b)
-    if k == 2: put("e2", ET.serifado([("como enviar um arquivo", "peq"), ("com mais de", "peq"), ("30 MB", "dest"), ("pelo chat?", "norm")], 130), a, b)
-    if k == 3: put("e3", ET.estatistica("1 min", "vídeo final, líquido, pós-edição", 190), a, b)
-    if k == 4:
-        i1, y2 = ET.balao_chat("Quais estilos estão em cada momento do vídeo?", "esq", 170)
-        i2, _ = ET.balao_chat("Vou testar vários e te explicar cada um", "dir", y2 + 26)
-        put("e4a", i1, a, b); put("e4b", i2, a + (b - a) * 0.4, b)
-    if k == 5: put("e5", ET.manchete("Edição padrão", "escolher os melhores e virar uma skill", 170), a, b)
-    if k == 6:
-        itens = ["Legenda embaixo", "Texto no topo", "Animação (opcional)"]
-        ts_ = [a, tstart(14), tstart(15)]
-        for i in range(3): put(f"e6{i}", ET.checklist(itens, i + 1, 150), ts_[i], (ts_[i + 1] - 0.02) if i < 2 else b)
-    E(bounds[k], bounds[k + 1], "Tag", f"{{\\alpha&H60&}}ELEMENTO {k + 1} · {nome}", 2)
+    if k == 1: put("e1", ET.impacto(["Edição *INTERESSANTE*", "só para *TESTAR*"], 150, ET.hexc("#FFD600")), a, b)
+    if k == 2: put("e2", ET.impacto(["Arquivo com mais de", "*30 MB* pelo chat?"], 150, ET.hexc("#7CFF4F")), a, b)
+    if k == 3: put("e3", ET.impacto(["Vídeo final de", "*1 MINUTO* pós-edição"], 150, ET.hexc("#22D3EE")), a, b)
+    if k == 4: put("e4", ET.impacto(["Testando *VÁRIOS*", "*ESTILOS* de edição"], 150, ET.hexc("#FF7A1A")), a, b)
+    if k == 5: put("e5", ET.impacto(["Você *SELECIONA*", "os melhores"], 150, ET.hexc("#FF3D8B")), a, b)
+    if k == 6: put("e6", ET.brutal_card("skill // edição padrão", "escolher os melhores e virar uma skill", "#FF5CA8", 150), a, b)
+    if k == 7: put("e7", ET.brutal_faixa("legenda embaixo + texto no topo", "edição simples", "#C6FF00", 160), a, b)
+    if k == 8: put("e8", ET.brutal_bloco(["SE PEDIR,", "ENTRA", "ANIMAÇÃO"], "#2F5BFF", "#C6FF00", 130), a, b)
+    E(bounds[k], bounds[k + 1], "Tag", f"{{\\alpha&H60&}}{nome}", 2)
 
 HDR = """[Script Info]
 ScriptType: v4.00+
