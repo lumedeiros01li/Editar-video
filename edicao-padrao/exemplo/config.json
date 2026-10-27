@@ -1,0 +1,116 @@
+{
+ "zoom": 1.08,
+ "roteiro": [
+  "Se o seu padrão de vida subiu 10 mil por mês, repara no que sobe junto.",
+  "Se você precisa de uma reserva de emergência de 6 meses, isso aumenta em 60 mil do seu",
+  "valor necessário investido.",
+  "Se você precisa de um seguro de vida para 5 anos, já são 600 mil que aumentam.",
+  "Se você quer se aposentar com esse mesmo padrão, para cada 10 mil que você aumenta",
+  "no seu gasto mensal, são 2 milhões de patrimônio que você precisa a mais e é",
+  "ajustado pela inflação.",
+  "E a gente não sente isso todo dia, o carro novo chega, a escola nova começa,",
+  "e essa conta vai aumentando em silêncio.",
+  "Eu não tô dizendo que não é pra subir o padrão, na verdade isso é bom,",
+  "é pra isso que você trabalha,",
+  "só que cada um desses degraus tem um preço,",
+  "e eles geralmente não aparecem na fatura.",
+  "Se você quer essa conta com o seu padrão dado a sua necessidade,",
+  "já comenta aqui padrão, já aproveita e me segue e curte esse vídeo."
+ ],
+ "cores": {
+  "roxo": "#9B6BFF",
+  "lima": "#E4FF6B"
+ },
+ "elementos": [
+  {
+   "frase": 0,
+   "tipo": "brutalista",
+   "tag": "mais 10 mil",
+   "preto": "padrão",
+   "roxo": "de vida",
+   "linhas": [
+    [
+     "repara no que sobe junto",
+     "📈",
+     "",
+     false
+    ]
+   ]
+  },
+  {
+   "frase": 1,
+   "tipo": "instagram",
+   "titulo": "E a reserva de emergência?",
+   "corpo": "Para 6 meses, sobe 60 mil o valor investido"
+  },
+  {
+   "frase": 3,
+   "tipo": "brutalista",
+   "tag": "seguro de vida",
+   "preto": "5 anos",
+   "roxo": "de cobertura",
+   "linhas": [
+    [
+     "já são",
+     "+600 mil",
+     "↑ que aumentam",
+     false
+    ]
+   ]
+  },
+  {
+   "frase": 4,
+   "tipo": "brutalista",
+   "tag": "aposentadoria",
+   "preto": "mesmo",
+   "roxo": "padrão",
+   "linhas": [
+    [
+     "a cada 10 mil",
+     "+2 milhões",
+     "↑ ajustado pela inflação",
+     false
+    ]
+   ]
+  },
+  {
+   "frase": 7,
+   "tipo": "impacto",
+   "linhas": [
+    "A conta sobe em",
+    "*SILÊNCIO*"
+   ],
+   "cor": "lima"
+  },
+  {
+   "frase": 9,
+   "tipo": "brutalista",
+   "tag": "subir o padrão",
+   "preto": "é bom",
+   "roxo": "trabalha pra isso",
+   "linhas": [
+    [
+     "cada degrau",
+     "tem preço",
+     "↑ fora da fatura",
+     false
+    ]
+   ]
+  },
+  {
+   "frase": 13,
+   "tipo": "brutalista",
+   "tag": "comenta",
+   "preto": "padrão",
+   "roxo": "e me segue",
+   "linhas": [
+    [
+     "quer a conta?",
+     "PADRÃO",
+     "↑ curte o vídeo",
+     false
+    ]
+   ]
+  }
+ ]
+}
