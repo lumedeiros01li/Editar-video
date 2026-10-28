@@ -113,12 +113,14 @@ def lateral(idade, valor, revelado, x, y, w, h, cores=None):
     im = canvas(); d = ImageDraw.Draw(im)
     d.rectangle((x + 16, y + 16, x + w + 16, y + h + 16), fill=roxo_c)
     d.rectangle((x, y, x + w, y + h), fill=WHITE, outline=BLK, width=7)
-    fa = inter("Black", 66)
-    d.text((x + 28, y + 16), idade.upper(), font=fa, fill=BLK)
+    sa = int(h * 0.30)
+    while sa > 30 and tw(d, idade.upper(), inter("Black", sa)) > w - 56: sa -= 2
+    fa = inter("Black", sa)
+    d.text((x + 28, y + 14), idade.upper(), font=fa, fill=BLK)
     ly = y + int(h * 0.42)
     d.line((x + 28, ly, x + w - 28, ly), fill=BLK, width=4)
     by0, by1 = ly + 20, y + h - 22
-    size = 66
+    size = int(h * 0.28)
     while size > 30 and tw(d, valor, inter("Black", size)) > w - 56 - 36: size -= 2
     if revelado:
         d.rectangle((x + 22, by0, x + w - 22, by1), fill=roxo_c)

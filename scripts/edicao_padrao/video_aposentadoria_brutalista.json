@@ -64,11 +64,11 @@
   }
  ],
  "laterais_cfg": {
-  "x": 24,
-  "y": 500,
-  "largura": 336,
-  "altura": 240,
-  "espaco": 28
+  "x": 28,
+  "y": 636,
+  "largura": 356,
+  "altura": 280,
+  "espaco": 36
  },
  "laterais": [
   {
