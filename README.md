@@ -10,7 +10,7 @@ Pipeline em `scripts/`: análise de áudio (Silero VAD + volume + vozeamento), s
 
 ## video_seguro_de_vida.mp4
 
-Reel falado sobre seguro de vida e investimento (88,9s para 72,6s, 1080x1920).
+Reel falado sobre seguro de vida e investimento (88,9s para 70,8s, 1080x1920).
 
 - Respirações, pausas, 1 início falso, 1 virada de cabeça e a fala fora do roteiro cortados.
 - Imagem: redução leve de ruído, contraste, saturação e nitidez, H.264.
