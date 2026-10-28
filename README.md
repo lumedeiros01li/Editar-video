@@ -14,7 +14,7 @@ Reel falado sobre seguro de vida e investimento (88,9s para 72,6s, 1080x1920).
 
 - Respirações, pausas, 1 início falso, 1 virada de cabeça e a fala fora do roteiro cortados.
 - Imagem: redução leve de ruído, contraste, saturação e nitidez, H.264.
-- Caixa de pergunta estilo Instagram, fixa durante todo o vídeo, acima da cabeça.
-- Legenda palavra a palavra (JetBrains Mono, palavra ativa em limão), logo abaixo da caixa.
+- Caixa de pergunta estilo Instagram (cabeçalho escuro com a pergunta, corpo branco com a resposta), fixa durante todo o vídeo, acima da cabeça.
+- Legenda por frase (Inter, branca sobre faixa escura translúcida), abaixo do queixo.
 
 Gerado por `scripts/editar_reel.py ORIGINAL WORKDIR SAIDA scripts/reel_seguro_de_vida.json`.

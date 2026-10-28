@@ -2,17 +2,17 @@
 
 uso: python3 editar_reel.py ORIGINAL.mp4 WORKDIR SAIDA.mp4 CONFIG.json [--rapido]
 """
-import json, math, subprocess, sys, textwrap
+import json, math, subprocess, sys
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
-SRC, WORK, OUT = sys.argv[1:4]
+import os
+SRC, WORK, OUT = (os.path.abspath(a) for a in sys.argv[1:4])
 FAST = "--rapido" in sys.argv
 FPS, SR = 30, 16000
 W, H = 1080, 1920
 
 CFG = json.load(open(sys.argv[4]))
-PERGUNTA = CFG["pergunta"]
 # trechos de fala cortados por serem erros/hesitacoes (segundos no original)
 CORTES_MANUAIS = [tuple(c) for c in CFG.get("cortes", [])]
 # [fim aproximado do trecho, fim maximo]: limita a folga final (ex.: antes de virar a cabeca)
@@ -111,70 +111,98 @@ def peso(w):
     return 3 + 2 * len(p) if p.isdigit() else max(2, len(p))
 
 
-def legenda_ass(q, por, seg):
-    """eventos palavra a palavra no tempo da saida"""
+INTER = "/usr/share/fonts/opentype/inter/Inter-%s.otf"
+SUB_Y = 1640  # centro da legenda (85% da altura, abaixo do queixo)
+SUB_H = 160
+
+
+def fala_em_frases(q, por):
+    """palavras no tempo da saida, agrupadas em frases curtas: [(ini, fim, texto)]"""
     saida, acc = [], 0.0
     for (f0, f1, s, e) in q:
         saida.append(acc); acc += (f1 - f0) / FPS
-    words = []  # (ini, fim, texto) no tempo da saida
+    words = []
     for k, (f0, f1, s, e) in enumerate(q):
         ws = por[k]
         if not ws:
             continue
         tot = sum(peso(w) for _, w in ws)
         t = saida[k] + (s - f0 / FPS)
-        dur = e - s
         for _, w in ws:
-            d = dur * peso(w) / tot
+            d = (e - s) * peso(w) / tot
             words.append((t, t + d, w)); t += d
-    # blocos de ate 3 palavras / 22 caracteres, quebrando em pontuacao e pausas
-    blocos, cur = [], []
+    frases, cur = [], []
     for w in words:
-        if cur and (len(cur) >= 3 or len(" ".join(x[2] for x in cur + [w])) > 22 or cur[-1][2][-1] in ".,?!" or w[0] - cur[-1][1] > 0.25):
-            blocos.append(cur); cur = []
+        txt = " ".join(x[2] for x in cur)
+        if cur and (cur[-1][2][-1] in ".?!" or (cur[-1][2][-1] == "," and len(txt) >= 16) or w[0] - cur[-1][1] > 0.25):
+            frases.append(cur); cur = []
         cur.append(w)
     if cur:
-        blocos.append(cur)
-    BR, LIM = "&H00FFFFFF&", "&H0070FFEB&"
-    ev = []
-    for bi, b in enumerate(blocos):
-        fim_bloco = b[-1][1] + 0.10
-        if bi + 1 < len(blocos):
-            fim_bloco = min(fim_bloco, blocos[bi + 1][0][0])
-        for i, (t0, t1, _) in enumerate(b):
-            ini = t0
-            fim = b[i + 1][0] if i + 1 < len(b) else fim_bloco
-            txt = " ".join(("{\\c%s}" % (LIM if j == i else BR)) + b[j][2] for j in range(len(b)))
-            ev.append((ini, fim, txt))
-    f = lambda x: "%d:%02d:%05.2f" % (x // 3600, (x % 3600) // 60, x % 60)
-    head = f"""[Script Info]
-ScriptType: v4.00+
-PlayResX: {W}
-PlayResY: {H}
-WrapStyle: 2
-ScaledBorderAndShadow: yes
+        frases.append(cur)
+    MAX = 34  # caracteres por linha de legenda
+    out = []
+    for fr in frases:
+        txt = " ".join(x[2] for x in fr)
+        k = math.ceil(len(txt) / MAX)
+        if k > 1:  # divide em partes de tamanho parecido
+            alvo, ac, parte, partes = len(txt) / k, 0, [], []
+            for x in fr:
+                if parte and ac + len(x[2]) / 2 > alvo * (len(partes) + 1) and len(partes) < k - 1:
+                    partes.append(parte); parte = []
+                parte.append(x); ac += len(x[2]) + 1
+            partes.append(parte)
+        else:
+            partes = [fr]
+        for pt in partes:
+            out.append([pt[0][0], pt[-1][1], " ".join(x[2] for x in pt)])
+    for i, ev in enumerate(out):  # cada legenda some quando a proxima entra
+        ev[1] = min(ev[1] + 0.12, out[i + 1][0]) if i + 1 < len(out) else ev[1] + 0.12
+    return out, acc
 
-[V4+ Styles]
-Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Padrao,JetBrains Mono,66,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,1,0,0,0,100,100,0,0,1,8,6,2,60,60,{LEGENDA_MV},1
 
-[Events]
-Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-"""
-    open(f"{WORK}/legenda.ass", "w").write(head + "".join(f"Dialogue: 0,{f(a)},{f(b)},Padrao,,0,0,0,,{x}\n" for a, b, x in ev))
-    return acc, len(blocos)
+def legenda_png(ev, total):
+    """faixas de legenda (texto branco em retangulo escuro translucido) + lista concat com a duracao de cada uma"""
+    S = 2
+    fnt = ImageFont.truetype(INTER % "SemiBold", 50 * S)
+    dr0 = ImageDraw.Draw(Image.new("L", (10, 10)))
+    blank = Image.new("RGBA", (W, SUB_H), (0, 0, 0, 0))
+    blank.save(f"{WORK}/sub_vazia.png")
+    linhas, t_ant = [], 0
+    def trecho(path, ini, fim):  # em quadros, sem acumular erro
+        linhas.append(f"file '{path}'\nduration {(fim - ini) / FPS:.4f}")
+    cursor = 0
+    for i, (a, b, txt) in enumerate(ev):
+        fa, fb = round(a * FPS), round(b * FPS)
+        fa = max(fa, cursor)
+        if fb <= fa:
+            continue
+        if fa > cursor:
+            trecho(f"{WORK}/sub_vazia.png", cursor, fa)
+        w = dr0.textlength(txt, font=fnt) / S
+        bw, bh = w + 64, 92
+        img = Image.new("RGBA", (W * S, SUB_H * S), (0, 0, 0, 0))
+        x0, y0 = (W - bw) / 2, (SUB_H - bh) / 2
+        ImageDraw.Draw(img).rounded_rectangle((x0 * S, y0 * S, (x0 + bw) * S, (y0 + bh) * S), 18 * S, fill=(0, 0, 0, 170))
+        ImageDraw.Draw(img).text((W * S / 2, SUB_H * S / 2 - 2 * S), txt, font=fnt, fill=(255, 255, 255, 255), anchor="mm")
+        img.resize((W, SUB_H), Image.LANCZOS).save(f"{WORK}/sub_{i:03d}.png")
+        trecho(f"{WORK}/sub_{i:03d}.png", fa, fb)
+        cursor = fb
+    trecho(f"{WORK}/sub_vazia.png", cursor, round(total * FPS) + 60)
+    linhas.append(f"file '{WORK}/sub_vazia.png'")
+    open(f"{WORK}/sub.txt", "w").write("\n".join(linhas) + "\n")
 
 
 def caixa_pergunta():
-    """sticker de caixa de perguntas do Instagram, fixo, acima da cabeca"""
-    S = 2  # supersample
-    cw, x0, y0 = 980, 50, 262
-    fb = ImageFont.truetype("/usr/share/fonts/opentype/inter/Inter-Bold.otf", 38 * S)
-    fl = ImageFont.truetype("/usr/share/fonts/opentype/inter/Inter-SemiBold.otf", 24 * S)
+    """sticker de pergunta do Instagram: cabecalho escuro com a pergunta e corpo branco com a resposta. fixo, acima da cabeca"""
+    S = 2
+    x0, y0, cw = 20, 150, W - 40
+    R, HH = 36, 116
+    fh = ImageFont.truetype(INTER % "SemiBold", 46 * S)
+    fb = ImageFont.truetype(INTER % "Medium", 56 * S)
     dr0 = ImageDraw.Draw(Image.new("L", (10, 10)))
-    def quebra(larg):
+    def quebra(txt, larg):
         linhas, cur = [], ""
-        for w in PERGUNTA.split():
+        for w in txt.split():
             t = (cur + " " + w).strip()
             if dr0.textlength(t, font=fb) > larg * S and cur:
                 linhas.append(cur); cur = w
@@ -182,34 +210,36 @@ def caixa_pergunta():
                 cur = t
         return linhas + [cur]
     larg = cw - 70
-    n = len(quebra(larg))
-    while len(quebra(larg - 10)) == n:  # equilibra as linhas, sem palavra sozinha na ultima
+    n = len(quebra(CFG["texto"], larg))
+    while len(quebra(CFG["texto"], larg - 10)) == n:  # linhas equilibradas, sem palavra sozinha na ultima
         larg -= 10
-    linhas = quebra(larg)
-    lh = 48
-    ch = 30 + 28 + 12 + lh * len(linhas) + 28
+    linhas = quebra(CFG["texto"], larg)
+    lh = 68
+    bh = 40 + lh * len(linhas) + 38
+    ch = HH + bh
     img = Image.new("RGBA", (W * S, H * S), (0, 0, 0, 0))
     box = (x0 * S, y0 * S, (x0 + cw) * S, (y0 + ch) * S)
     sh = Image.new("RGBA", img.size, (0, 0, 0, 0))
-    ImageDraw.Draw(sh).rounded_rectangle((box[0], box[1] + 10 * S, box[2], box[3] + 10 * S), 44 * S, fill=(0, 0, 0, 90))
-    img = Image.alpha_composite(img, sh.filter(ImageFilter.GaussianBlur(14 * S)))
+    ImageDraw.Draw(sh).rounded_rectangle((box[0], box[1] + 8 * S, box[2], box[3] + 8 * S), R * S, fill=(0, 0, 0, 80))
+    img = Image.alpha_composite(img, sh.filter(ImageFilter.GaussianBlur(10 * S)))
+    mask = Image.new("L", img.size, 0)
+    ImageDraw.Draw(mask).rounded_rectangle(box, R * S, fill=255)
+    card = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    dc = ImageDraw.Draw(card)
+    dc.rectangle((box[0], box[1], box[2], (y0 + HH) * S), fill=(18, 20, 24, 255))
+    dc.rectangle((box[0], (y0 + HH) * S, box[2], box[3]), fill=(255, 255, 255, 255))
+    card.putalpha(Image.composite(card.getchannel("A"), Image.new("L", img.size, 0), mask))
+    img = Image.alpha_composite(img, card)
     dr = ImageDraw.Draw(img)
-    dr.rounded_rectangle(box, 44 * S, fill=(255, 255, 255, 255))
-    ty = (y0 + 30) * S
-    dr.text((W * S / 2, ty), "Pergunta", font=fl, fill=(142, 142, 142, 255), anchor="mt")
-    ty += (28 + 12) * S
+    dr.text((W * S / 2, (y0 + HH / 2) * S), CFG["cabecalho"], font=fh, fill=(255, 255, 255, 255), anchor="mm")
+    ty = (y0 + HH + 38) * S
     for l in linhas:
-        dr.text((W * S / 2, ty), l, font=fb, fill=(17, 17, 17, 255), anchor="mt")
+        dr.text((W * S / 2, ty), l, font=fb, fill=(38, 38, 38, 255), anchor="mt")
         ty += lh * S
-    img = img.resize((W, H), Image.LANCZOS)
-    img.save(f"{WORK}/pergunta.png")
-    print('linhas da pergunta:', len(linhas))
+    img.resize((W, H), Image.LANCZOS).save(f"{WORK}/pergunta.png")
+    print('linhas do texto:', len(linhas))
     return y0, y0 + ch
 
-
-# legenda logo abaixo da caixa, acima da cabeca (o rosto ocupa a metade de baixo do quadro)
-LEGENDA_BASE = 612
-LEGENDA_MV = H - LEGENDA_BASE
 
 if __name__ == "__main__":
     dur = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", SRC]))
@@ -224,9 +254,12 @@ if __name__ == "__main__":
             print("AVISO trecho sem palavras (ruido?):", round(s, 2), round(e, 2))
     for t0, w in sem:
         print("AVISO palavra sem trecho:", t0, w)
-    total, nb = legenda_ass(q, por, seg)
+    ev, total = fala_em_frases(q, por)
+    legenda_png(ev, total)
     y0, y1 = caixa_pergunta()
-    print(f"{len(q)} trechos, {dur:.1f}s -> {total:.1f}s, {nb} blocos de legenda, caixa y={y0}-{y1}")
+    print(f"{len(q)} trechos, {dur:.1f}s -> {total:.1f}s, {len(ev)} legendas, caixa y={y0}-{y1}")
+    for a_, b_, tx in ev[:6]:
+        print(f"  {a_:5.2f}-{b_:5.2f} {tx}")
     fc = []
     n = len(q)
     fc.append("[0:v]fps=30,scale=in_color_matrix=bt470bg:out_color_matrix=bt709:in_range=full:out_range=tv,format=yuv420p,"
@@ -239,9 +272,10 @@ if __name__ == "__main__":
     fc.append("".join(f"[v{k}][a{k}]" for k in range(n)) + f"concat=n={n}:v=1:a=1[vc][ac]")
     fc.append("[vc]hqdn3d=1.6:1.6:5:5,eq=contrast=1.05:saturation=1.10:gamma=1.04,unsharp=5:5:0.7:5:5:0.0[vo]")
     fc.append("[vo][1:v]overlay=0:0:format=auto[vp]")
-    fc.append(f"[vp]ass={WORK}/legenda.ass[vf]")
+    fc.append("[2:v]fps=30,format=rgba[sb]")
+    fc.append(f"[vp][sb]overlay=0:{SUB_Y - SUB_H // 2}:format=auto:eof_action=pass[vf]")
     open(f"{WORK}/fc.txt", "w").write(";\n".join(fc))
-    cmd = ["ffmpeg", "-v", "error", "-stats", "-y", "-i", SRC, "-i", f"{WORK}/pergunta.png", "-filter_complex_script", f"{WORK}/fc.txt",
+    cmd = ["ffmpeg", "-v", "error", "-stats", "-y", "-i", SRC, "-i", f"{WORK}/pergunta.png", "-f", "concat", "-safe", "0", "-i", f"{WORK}/sub.txt", "-filter_complex_script", f"{WORK}/fc.txt",
            "-map", "[vf]", "-map", "[ac]", "-c:v", "libx264", "-preset", "veryfast" if FAST else "slow", "-crf", "20" if FAST else "20",
            "-pix_fmt", "yuv420p", "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709",
            "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", OUT]
