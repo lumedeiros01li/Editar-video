@@ -8,11 +8,13 @@
 Pipeline em `scripts/`: análise de áudio (Silero VAD + volume + vozeamento), segmentação, máscara da pessoa (MediaPipe selfie segmentation) e renderização 3D (`render.mjs` + `scene.html`).
 
 
-## video_pergunta_legenda.mp4
+## video_seguro_de_vida.mp4
 
-Reel falado "custo de estudar nos EUA" (55,7s para 42,5s, 1080x1920).
+Reel falado sobre seguro de vida e investimento (88,9s para 72,6s, 1080x1920).
 
-- Respirações, silêncios e 2 hesitações cortados (`scripts/editar_reel.py`).
-- Imagem: redução leve de ruído, contraste, saturação e nitidez, H.264 CRF 17.
+- Respirações, pausas, 1 início falso, 1 virada de cabeça e a fala fora do roteiro cortados.
+- Imagem: redução leve de ruído, contraste, saturação e nitidez, H.264.
 - Caixa de pergunta estilo Instagram, fixa durante todo o vídeo, acima da cabeça.
 - Legenda palavra a palavra (JetBrains Mono, palavra ativa em limão), logo abaixo da caixa.
+
+Gerado por `scripts/editar_reel.py ORIGINAL WORKDIR SAIDA scripts/reel_seguro_de_vida.json`.

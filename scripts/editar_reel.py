@@ -1,6 +1,6 @@
 """Edicao de reel falado: corta respiracoes/erros, melhora a imagem, caixa de pergunta fixa e legenda.
 
-uso: python3 editar_reel.py ORIGINAL.mp4 WORKDIR SAIDA.mp4 [--rapido]
+uso: python3 editar_reel.py ORIGINAL.mp4 WORKDIR SAIDA.mp4 CONFIG.json [--rapido]
 """
 import json, math, subprocess, sys, textwrap
 import numpy as np
@@ -11,23 +11,14 @@ FAST = "--rapido" in sys.argv
 FPS, SR = 30, 16000
 W, H = 1080, 1920
 
-PERGUNTA = "Quase 100 mil dólares por ano é o valor pra você mandar o seu filho numa universidade de ponta dos Estados Unidos?"
-
-# trechos de fala cortados por serem vicios/hesitacoes (segundos no original)
-CORTES_MANUAIS = [(19.80, 20.12), (22.30, 22.75)]
-
-# transcricao revisada: (ancora no original em s, palavra). A ancora so decide em qual trecho de fala a palavra cai.
-T = """0.0 Quase|0.86 100|1.16 mil|1.44 dólares|1.96 por|2.18 ano|2.34 é|2.46 o|2.48 valor|2.68 pra|2.96 você|3.18 mandar|3.4 o|3.62 seu|3.94 filho|4.22 numa|4.44 universidade|5.1 de|5.42 ponta|5.7 dos|5.94 Estados|6.22 Unidos.
-7.06 Vem|7.34 ver|7.42 isso|7.6 aqui.
-8.94 Mensalidade,|9.36 54|10.04 mil|10.44 a|10.72 62|11.54 mil|11.82 dólares|12.44 por|12.76 ano,|13.74 só|13.86 de|14.04 mensalidade.
-15.56 Taxas,|16.16 quase|16.4 5|16.7 mil|16.84 dólares.|17.86 Moradia,|19.16 12|19.32 mil|19.56 e|19.58 400.
-21.14 Alimentação,|23.2 7|23.46 mil|23.74 e|24.14 praticamente|24.58 8|24.76 mil.
-25.2 Seguro|26.1 de|26.38 vida,|27.36 necessário|27.58 também.|28.18 Lá,|28.78 bastante|29.06 necessário.|29.92 4|30.0 mil|30.08 e|30.1 120.
-31.62 Transporte,|32.22 4|32.4 mil|32.5 e|32.54 500.|33.94 Livros|34.28 e|34.46 outras|34.64 coisas|34.84 pra|35.02 envolver|35.36 estudo|35.76 aqui.
-36.7 Material.|38.44 Mil|38.64 dólares.|39.86 E|40.0 despesas|40.62 pessoais.|41.78 2|42.1 e|42.18 500.|43.02 Totalizando.
-45.16 Praticamente|46.1 100|46.52 mil|46.78 dólares|47.34 por|47.6 ano.|48.06 E|48.24 ainda|48.42 faltou|48.7 algumas|48.9 coisas|49.14 nessa|49.38 conta.|49.78 Mas|50.5 aí|50.64 me|50.82 conta.
-51.28 Você|51.36 já|51.54 sabia|51.8 quanto|52.1 que|52.24 era|52.34 esse|52.5 valor?|53.28 Já|53.4 tá|53.54 pensando|53.84 em|53.96 mandar|54.12 o|54.3 seu|54.48 filho|54.7 pra|54.8 fora?"""
-PALAVRAS = [(float(a), w) for a, w in (x.split(" ", 1) for x in T.replace("\n", "|").split("|"))]
+CFG = json.load(open(sys.argv[4]))
+PERGUNTA = CFG["pergunta"]
+# trechos de fala cortados por serem erros/hesitacoes (segundos no original)
+CORTES_MANUAIS = [tuple(c) for c in CFG.get("cortes", [])]
+# [fim aproximado do trecho, fim maximo]: limita a folga final (ex.: antes de virar a cabeca)
+FIM_MAX = [tuple(c) for c in CFG.get("fim_max", [])]
+# transcricao revisada: "ancora_no_original palavra|..." (a ancora so decide em qual trecho de fala a palavra cai)
+PALAVRAS = [(float(a), w) for a, w in (x.split(" ", 1) for x in CFG["palavras"].replace("\n", "|").split("|") if x.strip())]
 
 
 def features():
@@ -98,6 +89,9 @@ def quadros(seg, dur):
         f0, f1 = round((s - ps) * FPS), round((e + pe) * FPS)
         if out and f0 < out[-1][1]:
             f0 = out[-1][1]
+        for fe, fm in FIM_MAX:
+            if abs(e - fe) < 0.15:
+                f1 = min(f1, round(fm * FPS))
         out.append((max(0, f0), min(int(dur * FPS), f1), s, e))
     return out
 
@@ -178,14 +172,20 @@ def caixa_pergunta():
     fb = ImageFont.truetype("/usr/share/fonts/opentype/inter/Inter-Bold.otf", 38 * S)
     fl = ImageFont.truetype("/usr/share/fonts/opentype/inter/Inter-SemiBold.otf", 24 * S)
     dr0 = ImageDraw.Draw(Image.new("L", (10, 10)))
-    linhas, cur = [], ""
-    for w in PERGUNTA.split():
-        t = (cur + " " + w).strip()
-        if dr0.textlength(t, font=fb) > (cw - 70) * S and cur:
-            linhas.append(cur); cur = w
-        else:
-            cur = t
-    linhas.append(cur)
+    def quebra(larg):
+        linhas, cur = [], ""
+        for w in PERGUNTA.split():
+            t = (cur + " " + w).strip()
+            if dr0.textlength(t, font=fb) > larg * S and cur:
+                linhas.append(cur); cur = w
+            else:
+                cur = t
+        return linhas + [cur]
+    larg = cw - 70
+    n = len(quebra(larg))
+    while len(quebra(larg - 10)) == n:  # equilibra as linhas, sem palavra sozinha na ultima
+        larg -= 10
+    linhas = quebra(larg)
     lh = 48
     ch = 30 + 28 + 12 + lh * len(linhas) + 28
     img = Image.new("RGBA", (W * S, H * S), (0, 0, 0, 0))
@@ -228,19 +228,21 @@ if __name__ == "__main__":
     y0, y1 = caixa_pergunta()
     print(f"{len(q)} trechos, {dur:.1f}s -> {total:.1f}s, {nb} blocos de legenda, caixa y={y0}-{y1}")
     fc = []
+    n = len(q)
+    fc.append("[0:v]fps=30,scale=in_color_matrix=bt470bg:out_color_matrix=bt709:in_range=full:out_range=tv,format=yuv420p,"
+              f"split={n}" + "".join(f"[s{k}]" for k in range(n)))
     for k, (f0, f1, s, e) in enumerate(q):
         d = (f1 - f0) / FPS
-        fc.append(f"[0:v]trim=start_frame={f0}:end_frame={f1},setpts=PTS-STARTPTS[v{k}];"
+        fc.append(f"[s{k}]trim=start_frame={f0}:end_frame={f1},setpts=PTS-STARTPTS[v{k}];"
                   f"[0:a]atrim=start={f0 / FPS:.4f}:end={f1 / FPS:.4f},asetpts=PTS-STARTPTS,"
                   f"afade=t=in:d=0.012,afade=t=out:st={d - 0.012:.4f}:d=0.012[a{k}]")
-    n = len(q)
     fc.append("".join(f"[v{k}][a{k}]" for k in range(n)) + f"concat=n={n}:v=1:a=1[vc][ac]")
-    fc.append("[vc]fps=30,hqdn3d=1.6:1.6:5:5,eq=contrast=1.05:saturation=1.10:gamma=1.04,unsharp=5:5:0.7:5:5:0.0[vo]")
+    fc.append("[vc]hqdn3d=1.6:1.6:5:5,eq=contrast=1.05:saturation=1.10:gamma=1.04,unsharp=5:5:0.7:5:5:0.0[vo]")
     fc.append("[vo][1:v]overlay=0:0:format=auto[vp]")
     fc.append(f"[vp]ass={WORK}/legenda.ass[vf]")
     open(f"{WORK}/fc.txt", "w").write(";\n".join(fc))
     cmd = ["ffmpeg", "-v", "error", "-stats", "-y", "-i", SRC, "-i", f"{WORK}/pergunta.png", "-filter_complex_script", f"{WORK}/fc.txt",
-           "-map", "[vf]", "-map", "[ac]", "-c:v", "libx264", "-preset", "veryfast" if FAST else "slow", "-crf", "20" if FAST else "17",
+           "-map", "[vf]", "-map", "[ac]", "-c:v", "libx264", "-preset", "veryfast" if FAST else "slow", "-crf", "20" if FAST else "20",
            "-pix_fmt", "yuv420p", "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709",
            "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", OUT]
     subprocess.run(cmd, check=True)
