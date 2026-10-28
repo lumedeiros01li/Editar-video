@@ -22,3 +22,9 @@ Mesmos cortes da edição leve, com:
 - Visual brutalista: blocos amarelo/preto/branco com sombra dura, mono, cantoneiras e timecode, cards idade/valor, slams "QUASE 2X" e "MAIS DE 2X", legenda em caixa que vira amarela na palavra-chave.
 
 Uso: `python3 scripts/brutal_render.py original.mp4 saida.mp4`.
+
+## Edição simples (`video_editado_simples.mp4`)
+
+Mesmos cortes, sem efeitos. Zoom leve (1.00/1.07) alternando só nos cortes, grade discreta, voz tratada (sem hits e whooshes). Visual de cartão claro com borda preta e sombra roxa: título "R$ 10.000 DE RENDA" num cartão no topo (o vídeo desce 210px e o topo ganha fundo desfocado), cards idade/valor e legenda em caixa clara, roxa na palavra-chave.
+
+Uso: `python3 scripts/simples_render.py original.mp4 saida.mp4`.
