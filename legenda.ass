@@ -1,0 +1,139 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,StrikeOut,ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding
+Style: Leg,Inter Black,62,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,9,0,5,60,60,0,1
+Style: HookS,Inter Black,66,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,0,0,0,0,100,100,0,0,1,6,2,5,40,40,0,1
+Style: HookBig,Inter Black,128,&H00000000,&H00000000,&H70FEED,&H00000000,0,0,0,0,100,100,0,0,3,20,0,5,40,40,0,1
+
+[Events]
+Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
+Dialogue: 1,0:00:00.00,0:00:06.84,HookS,,0,0,0,,{\pos(540,330)}{\fad(120,140)\fscx70\fscy70\t(0,220,\fscx100\fscy100)}QUASE
+Dialogue: 0,0:00:00.00,0:00:06.84,HookBig,,0,0,0,,{\pos(540,470)}{\fad(120,140)\fscx60\fscy60\t(0,260,\fscx100\fscy100)}US$ 100.000
+Dialogue: 1,0:00:00.00,0:00:06.84,HookS,,0,0,0,,{\pos(540,600)}{\fad(120,140)\fscx70\fscy70\t(0,220,\fscx100\fscy100)}POR ANO PARA SEU FILHO
+Dialogue: 1,0:00:00.00,0:00:06.84,HookS,,0,0,0,,{\pos(540,675)}{\fad(120,140)\fscx70\fscy70\t(0,220,\fscx100\fscy100)}ESTUDAR NOS EUA
+Dialogue: 2,0:00:00.00,0:00:00.36,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}QUASE{\c&HFFFFFF&} 100 MIL
+Dialogue: 2,0:00:00.36,0:00:00.78,Leg,,0,0,0,,{\pos(540,1740)}QUASE {\c&H70FEED&}100{\c&HFFFFFF&} MIL
+Dialogue: 2,0:00:00.78,0:00:00.96,Leg,,0,0,0,,{\pos(540,1740)}QUASE 100 {\c&H70FEED&}MIL{\c&HFFFFFF&}
+Dialogue: 2,0:00:00.96,0:00:01.50,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}DÓLARES{\c&HFFFFFF&} POR ANO
+Dialogue: 2,0:00:01.50,0:00:01.80,Leg,,0,0,0,,{\pos(540,1740)}DÓLARES {\c&H70FEED&}POR{\c&HFFFFFF&} ANO
+Dialogue: 2,0:00:01.80,0:00:01.98,Leg,,0,0,0,,{\pos(540,1740)}DÓLARES POR {\c&H70FEED&}ANO{\c&HFFFFFF&}
+Dialogue: 2,0:00:01.98,0:00:02.10,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}É{\c&HFFFFFF&} O VALOR
+Dialogue: 2,0:00:02.10,0:00:02.15,Leg,,0,0,0,,{\pos(540,1740)}É {\c&H70FEED&}O{\c&HFFFFFF&} VALOR
+Dialogue: 2,0:00:02.18,0:00:02.26,Leg,,0,0,0,,{\pos(540,1740)}É O {\c&H70FEED&}VALOR{\c&HFFFFFF&}
+Dialogue: 2,0:00:02.26,0:00:02.48,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}PRA{\c&HFFFFFF&} VOCÊ MANDAR
+Dialogue: 2,0:00:02.48,0:00:02.72,Leg,,0,0,0,,{\pos(540,1740)}PRA {\c&H70FEED&}VOCÊ{\c&HFFFFFF&} MANDAR
+Dialogue: 2,0:00:02.72,0:00:03.00,Leg,,0,0,0,,{\pos(540,1740)}PRA VOCÊ {\c&H70FEED&}MANDAR{\c&HFFFFFF&}
+Dialogue: 2,0:00:03.00,0:00:03.20,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}O{\c&HFFFFFF&} SEU FILHO
+Dialogue: 2,0:00:03.20,0:00:03.34,Leg,,0,0,0,,{\pos(540,1740)}O {\c&H70FEED&}SEU{\c&HFFFFFF&} FILHO
+Dialogue: 2,0:00:03.34,0:00:03.80,Leg,,0,0,0,,{\pos(540,1740)}O SEU {\c&H70FEED&}FILHO{\c&HFFFFFF&}
+Dialogue: 2,0:00:03.80,0:00:04.06,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}NUMA{\c&HFFFFFF&} UNIVERSIDADE DE
+Dialogue: 2,0:00:04.06,0:00:04.66,Leg,,0,0,0,,{\pos(540,1740)}NUMA {\c&H70FEED&}UNIVERSIDADE{\c&HFFFFFF&} DE
+Dialogue: 2,0:00:04.66,0:00:04.82,Leg,,0,0,0,,{\pos(540,1740)}NUMA UNIVERSIDADE {\c&H70FEED&}DE{\c&HFFFFFF&}
+Dialogue: 2,0:00:04.82,0:00:05.32,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}PONTA{\c&HFFFFFF&} DOS ESTADOS
+Dialogue: 2,0:00:05.32,0:00:05.46,Leg,,0,0,0,,{\pos(540,1740)}PONTA {\c&H70FEED&}DOS{\c&HFFFFFF&} ESTADOS
+Dialogue: 2,0:00:05.46,0:00:05.72,Leg,,0,0,0,,{\pos(540,1740)}PONTA DOS {\c&H70FEED&}ESTADOS{\c&HFFFFFF&}
+Dialogue: 2,0:00:05.72,0:00:06.10,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}UNIDOS{\c&HFFFFFF&}
+Dialogue: 2,0:00:06.10,0:00:06.23,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}VEM{\c&HFFFFFF&} VER ISSO
+Dialogue: 2,0:00:06.23,0:00:06.49,Leg,,0,0,0,,{\pos(540,1740)}VEM {\c&H70FEED&}VER{\c&HFFFFFF&} ISSO
+Dialogue: 2,0:00:06.49,0:00:06.59,Leg,,0,0,0,,{\pos(540,1740)}VEM VER {\c&H70FEED&}ISSO{\c&HFFFFFF&}
+Dialogue: 2,0:00:06.59,0:00:07.01,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}AQUI{\c&HFFFFFF&}
+Dialogue: 2,0:00:07.01,0:00:07.59,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}MENSALIDADE{\c&HFFFFFF&}
+Dialogue: 2,0:00:07.59,0:00:07.99,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}54{\c&HFFFFFF&} MIL A
+Dialogue: 2,0:00:07.99,0:00:08.51,Leg,,0,0,0,,{\pos(540,1740)}54 {\c&H70FEED&}MIL{\c&HFFFFFF&} A
+Dialogue: 2,0:00:08.51,0:00:08.81,Leg,,0,0,0,,{\pos(540,1740)}54 MIL {\c&H70FEED&}A{\c&HFFFFFF&}
+Dialogue: 2,0:00:08.81,0:00:09.35,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}62{\c&HFFFFFF&} MIL DÓLARES
+Dialogue: 2,0:00:09.35,0:00:09.93,Leg,,0,0,0,,{\pos(540,1740)}62 {\c&H70FEED&}MIL{\c&HFFFFFF&} DÓLARES
+Dialogue: 2,0:00:09.93,0:00:10.39,Leg,,0,0,0,,{\pos(540,1740)}62 MIL {\c&H70FEED&}DÓLARES{\c&HFFFFFF&}
+Dialogue: 2,0:00:10.39,0:00:10.77,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}POR{\c&HFFFFFF&} ANO
+Dialogue: 2,0:00:10.77,0:00:11.31,Leg,,0,0,0,,{\pos(540,1740)}POR {\c&H70FEED&}ANO{\c&HFFFFFF&}
+Dialogue: 2,0:00:11.31,0:00:11.45,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}SÓ{\c&HFFFFFF&} DE MENSALIDADE
+Dialogue: 2,0:00:11.45,0:00:11.59,Leg,,0,0,0,,{\pos(540,1740)}SÓ {\c&H70FEED&}DE{\c&HFFFFFF&} MENSALIDADE
+Dialogue: 2,0:00:11.59,0:00:12.31,Leg,,0,0,0,,{\pos(540,1740)}SÓ DE {\c&H70FEED&}MENSALIDADE{\c&HFFFFFF&}
+Dialogue: 2,0:00:12.31,0:00:13.00,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}TAXAS{\c&HFFFFFF&}
+Dialogue: 2,0:00:13.00,0:00:13.16,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}QUASE{\c&HFFFFFF&} 5 MIL
+Dialogue: 2,0:00:13.16,0:00:13.50,Leg,,0,0,0,,{\pos(540,1740)}QUASE {\c&H70FEED&}5{\c&HFFFFFF&} MIL
+Dialogue: 2,0:00:13.50,0:00:13.68,Leg,,0,0,0,,{\pos(540,1740)}QUASE 5 {\c&H70FEED&}MIL{\c&HFFFFFF&}
+Dialogue: 2,0:00:13.68,0:00:14.50,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}DÓLARES{\c&HFFFFFF&}
+Dialogue: 2,0:00:14.50,0:00:15.39,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}MORADIA{\c&HFFFFFF&}
+Dialogue: 2,0:00:15.39,0:00:15.51,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}12{\c&HFFFFFF&} MIL E
+Dialogue: 2,0:00:15.51,0:00:15.75,Leg,,0,0,0,,{\pos(540,1740)}12 {\c&H70FEED&}MIL{\c&HFFFFFF&} E
+Dialogue: 2,0:00:15.75,0:00:15.87,Leg,,0,0,0,,{\pos(540,1740)}12 MIL {\c&H70FEED&}E{\c&HFFFFFF&}
+Dialogue: 2,0:00:15.87,0:00:16.65,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}400{\c&HFFFFFF&}
+Dialogue: 2,0:00:16.65,0:00:17.54,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}ALIMENTAÇÃO{\c&HFFFFFF&}
+Dialogue: 2,0:00:17.54,0:00:17.64,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}PRECISA{\c&HFFFFFF&} NÉ
+Dialogue: 2,0:00:17.64,0:00:18.02,Leg,,0,0,0,,{\pos(540,1740)}PRECISA {\c&H70FEED&}NÉ{\c&HFFFFFF&}
+Dialogue: 2,0:00:18.02,0:00:18.17,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}7{\c&HFFFFFF&} MIL E
+Dialogue: 2,0:00:18.17,0:00:18.49,Leg,,0,0,0,,{\pos(540,1740)}7 {\c&H70FEED&}MIL{\c&HFFFFFF&} E
+Dialogue: 2,0:00:18.49,0:00:18.77,Leg,,0,0,0,,{\pos(540,1740)}7 MIL {\c&H70FEED&}E{\c&HFFFFFF&}
+Dialogue: 2,0:00:18.77,0:00:19.19,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}PRATICAMENTE{\c&HFFFFFF&} 8 MIL
+Dialogue: 2,0:00:19.19,0:00:19.57,Leg,,0,0,0,,{\pos(540,1740)}PRATICAMENTE {\c&H70FEED&}8{\c&HFFFFFF&} MIL
+Dialogue: 2,0:00:19.57,0:00:19.91,Leg,,0,0,0,,{\pos(540,1740)}PRATICAMENTE 8 {\c&H70FEED&}MIL{\c&HFFFFFF&}
+Dialogue: 2,0:00:19.91,0:00:20.19,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}SEGURO{\c&HFFFFFF&} DE VIDA
+Dialogue: 2,0:00:20.19,0:00:20.39,Leg,,0,0,0,,{\pos(540,1740)}SEGURO {\c&H70FEED&}DE{\c&HFFFFFF&} VIDA
+Dialogue: 2,0:00:20.39,0:00:21.02,Leg,,0,0,0,,{\pos(540,1740)}SEGURO DE {\c&H70FEED&}VIDA{\c&HFFFFFF&}
+Dialogue: 2,0:00:21.02,0:00:21.45,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}NECESSÁRIO{\c&HFFFFFF&} TAMBÉM
+Dialogue: 2,0:00:21.45,0:00:21.77,Leg,,0,0,0,,{\pos(540,1740)}NECESSÁRIO {\c&H70FEED&}TAMBÉM{\c&HFFFFFF&}
+Dialogue: 2,0:00:21.77,0:00:21.99,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}TEM{\c&HFFFFFF&} LÁ BASTANTE
+Dialogue: 2,0:00:21.99,0:00:22.23,Leg,,0,0,0,,{\pos(540,1740)}TEM {\c&H70FEED&}LÁ{\c&HFFFFFF&} BASTANTE
+Dialogue: 2,0:00:22.23,0:00:22.89,Leg,,0,0,0,,{\pos(540,1740)}TEM LÁ {\c&H70FEED&}BASTANTE{\c&HFFFFFF&}
+Dialogue: 2,0:00:22.89,0:00:23.79,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}NECESSÁRIO{\c&HFFFFFF&}
+Dialogue: 2,0:00:23.79,0:00:24.80,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}4.120{\c&HFFFFFF&}
+Dialogue: 2,0:00:24.80,0:00:25.48,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}TRANSPORTE{\c&HFFFFFF&}
+Dialogue: 2,0:00:25.48,0:00:26.33,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}4.500{\c&HFFFFFF&}
+Dialogue: 2,0:00:26.33,0:00:26.84,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}LIVROS{\c&HFFFFFF&} E OUTRAS
+Dialogue: 2,0:00:26.84,0:00:27.02,Leg,,0,0,0,,{\pos(540,1740)}LIVROS {\c&H70FEED&}E{\c&HFFFFFF&} OUTRAS
+Dialogue: 2,0:00:27.02,0:00:27.18,Leg,,0,0,0,,{\pos(540,1740)}LIVROS E {\c&H70FEED&}OUTRAS{\c&HFFFFFF&}
+Dialogue: 2,0:00:27.18,0:00:27.42,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}COISAS{\c&HFFFFFF&} PRA ENVOLVER
+Dialogue: 2,0:00:27.42,0:00:27.56,Leg,,0,0,0,,{\pos(540,1740)}COISAS {\c&H70FEED&}PRA{\c&HFFFFFF&} ENVOLVER
+Dialogue: 2,0:00:27.56,0:00:27.90,Leg,,0,0,0,,{\pos(540,1740)}COISAS PRA {\c&H70FEED&}ENVOLVER{\c&HFFFFFF&}
+Dialogue: 2,0:00:27.90,0:00:28.11,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}ISSO{\c&HFFFFFF&} TUDO AQUI
+Dialogue: 2,0:00:28.11,0:00:28.32,Leg,,0,0,0,,{\pos(540,1740)}ISSO {\c&H70FEED&}TUDO{\c&HFFFFFF&} AQUI
+Dialogue: 2,0:00:28.32,0:00:28.86,Leg,,0,0,0,,{\pos(540,1740)}ISSO TUDO {\c&H70FEED&}AQUI{\c&HFFFFFF&}
+Dialogue: 2,0:00:28.86,0:00:29.62,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}MATERIAL{\c&HFFFFFF&}
+Dialogue: 2,0:00:29.62,0:00:29.85,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}MIL{\c&HFFFFFF&} DÓLARES E
+Dialogue: 2,0:00:29.85,0:00:30.29,Leg,,0,0,0,,{\pos(540,1740)}MIL {\c&H70FEED&}DÓLARES{\c&HFFFFFF&} E
+Dialogue: 2,0:00:30.29,0:00:30.58,Leg,,0,0,0,,{\pos(540,1740)}MIL DÓLARES {\c&H70FEED&}E{\c&HFFFFFF&}
+Dialogue: 2,0:00:30.58,0:00:31.24,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}DESPESAS{\c&HFFFFFF&} PESSOAIS
+Dialogue: 2,0:00:31.24,0:00:32.05,Leg,,0,0,0,,{\pos(540,1740)}DESPESAS {\c&H70FEED&}PESSOAIS{\c&HFFFFFF&}
+Dialogue: 2,0:00:32.05,0:00:32.85,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}2.500{\c&HFFFFFF&}
+Dialogue: 2,0:00:32.85,0:00:33.67,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}TOTALIZANDO{\c&HFFFFFF&}
+Dialogue: 2,0:00:33.67,0:00:33.85,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}PRATICAMENTE{\c&HFFFFFF&} 100 MIL
+Dialogue: 2,0:00:33.85,0:00:34.53,Leg,,0,0,0,,{\pos(540,1740)}PRATICAMENTE {\c&H70FEED&}100{\c&HFFFFFF&} MIL
+Dialogue: 2,0:00:34.53,0:00:34.81,Leg,,0,0,0,,{\pos(540,1740)}PRATICAMENTE 100 {\c&H70FEED&}MIL{\c&HFFFFFF&}
+Dialogue: 2,0:00:34.81,0:00:35.25,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}DÓLARES{\c&HFFFFFF&} POR ANO
+Dialogue: 2,0:00:35.25,0:00:35.55,Leg,,0,0,0,,{\pos(540,1740)}DÓLARES {\c&H70FEED&}POR{\c&HFFFFFF&} ANO
+Dialogue: 2,0:00:35.55,0:00:35.83,Leg,,0,0,0,,{\pos(540,1740)}DÓLARES POR {\c&H70FEED&}ANO{\c&HFFFFFF&}
+Dialogue: 2,0:00:35.83,0:00:36.17,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}E{\c&HFFFFFF&} AINDA FALTOU
+Dialogue: 2,0:00:36.17,0:00:36.31,Leg,,0,0,0,,{\pos(540,1740)}E {\c&H70FEED&}AINDA{\c&HFFFFFF&} FALTOU
+Dialogue: 2,0:00:36.31,0:00:36.65,Leg,,0,0,0,,{\pos(540,1740)}E AINDA {\c&H70FEED&}FALTOU{\c&HFFFFFF&}
+Dialogue: 2,0:00:36.65,0:00:36.87,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}ALGUMAS{\c&HFFFFFF&} COISAS NESSA
+Dialogue: 2,0:00:36.87,0:00:37.09,Leg,,0,0,0,,{\pos(540,1740)}ALGUMAS {\c&H70FEED&}COISAS{\c&HFFFFFF&} NESSA
+Dialogue: 2,0:00:37.09,0:00:37.29,Leg,,0,0,0,,{\pos(540,1740)}ALGUMAS COISAS {\c&H70FEED&}NESSA{\c&HFFFFFF&}
+Dialogue: 2,0:00:37.29,0:00:37.82,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}CONTA{\c&HFFFFFF&}
+Dialogue: 2,0:00:37.82,0:00:38.02,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}MAS{\c&HFFFFFF&} AÍ ME
+Dialogue: 2,0:00:38.02,0:00:38.12,Leg,,0,0,0,,{\pos(540,1740)}MAS {\c&H70FEED&}AÍ{\c&HFFFFFF&} ME
+Dialogue: 2,0:00:38.12,0:00:38.22,Leg,,0,0,0,,{\pos(540,1740)}MAS AÍ {\c&H70FEED&}ME{\c&HFFFFFF&}
+Dialogue: 2,0:00:38.22,0:00:38.72,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}CONTA{\c&HFFFFFF&}
+Dialogue: 2,0:00:38.72,0:00:38.80,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}SE{\c&HFFFFFF&} JÁ SABIA
+Dialogue: 2,0:00:38.80,0:00:38.94,Leg,,0,0,0,,{\pos(540,1740)}SE {\c&H70FEED&}JÁ{\c&HFFFFFF&} SABIA
+Dialogue: 2,0:00:38.94,0:00:39.22,Leg,,0,0,0,,{\pos(540,1740)}SE JÁ {\c&H70FEED&}SABIA{\c&HFFFFFF&}
+Dialogue: 2,0:00:39.22,0:00:39.50,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}QUANTO{\c&HFFFFFF&} QUE ERA
+Dialogue: 2,0:00:39.50,0:00:39.72,Leg,,0,0,0,,{\pos(540,1740)}QUANTO {\c&H70FEED&}QUE{\c&HFFFFFF&} ERA
+Dialogue: 2,0:00:39.72,0:00:39.82,Leg,,0,0,0,,{\pos(540,1740)}QUANTO QUE {\c&H70FEED&}ERA{\c&HFFFFFF&}
+Dialogue: 2,0:00:39.82,0:00:39.98,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}ESSE{\c&HFFFFFF&} VALOR
+Dialogue: 2,0:00:39.98,0:00:40.45,Leg,,0,0,0,,{\pos(540,1740)}ESSE {\c&H70FEED&}VALOR{\c&HFFFFFF&}
+Dialogue: 2,0:00:40.45,0:00:40.58,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}JÁ{\c&HFFFFFF&} TÁ PENSANDO
+Dialogue: 2,0:00:40.58,0:00:40.74,Leg,,0,0,0,,{\pos(540,1740)}JÁ {\c&H70FEED&}TÁ{\c&HFFFFFF&} PENSANDO
+Dialogue: 2,0:00:40.74,0:00:40.96,Leg,,0,0,0,,{\pos(540,1740)}JÁ TÁ {\c&H70FEED&}PENSANDO{\c&HFFFFFF&}
+Dialogue: 2,0:00:40.96,0:00:41.20,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}EM{\c&HFFFFFF&} MANDAR SEU
+Dialogue: 2,0:00:41.20,0:00:41.32,Leg,,0,0,0,,{\pos(540,1740)}EM {\c&H70FEED&}MANDAR{\c&HFFFFFF&} SEU
+Dialogue: 2,0:00:41.32,0:00:41.50,Leg,,0,0,0,,{\pos(540,1740)}EM MANDAR {\c&H70FEED&}SEU{\c&HFFFFFF&}
+Dialogue: 2,0:00:41.50,0:00:41.72,Leg,,0,0,0,,{\pos(540,1740)}{\c&H70FEED&}FILHO{\c&HFFFFFF&} PRA FORA
+Dialogue: 2,0:00:41.72,0:00:41.88,Leg,,0,0,0,,{\pos(540,1740)}FILHO {\c&H70FEED&}PRA{\c&HFFFFFF&} FORA
+Dialogue: 2,0:00:41.88,0:00:42.35,Leg,,0,0,0,,{\pos(540,1740)}FILHO PRA {\c&H70FEED&}FORA{\c&HFFFFFF&}
