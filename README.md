@@ -34,3 +34,7 @@ Uso: `python3 scripts/simples_render.py original.mp4 saida.mp4`.
 Feita com a skill `scripts/edicao_padrao` (cortes de pausa, legenda em caixa de uma linha, elementos no topo trocando por trecho), mais: cartões idade/valor grandes na lateral esquerda (o valor entra quando é falado), topo desfocado para caber os elementos acima da cabeça e voz tratada. Config em `scripts/edicao_padrao/video_aposentadoria.json`, cortes em `video_aposentadoria_keep.json`.
 
 Uso: `python3 -I scripts/edicao_padrao/scripts/build.py montar original.mp4 <dir com keep.json> scripts/edicao_padrao/video_aposentadoria.json saida.mp4`.
+
+## Edição padrão, só brutalista (`video_editado_padrao_brutalista.mp4`)
+
+Mesma edição padrão, com o modelo Brutalista C em todos os elementos do topo. Config em `scripts/edicao_padrao/video_aposentadoria_brutalista.json`.
