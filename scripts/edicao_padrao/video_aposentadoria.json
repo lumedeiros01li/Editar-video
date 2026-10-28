@@ -1,0 +1,26 @@
+{
+ "roteiro": [
+  "Para se aposentar aos 60 anos, com 10 mil de renda, quanto você precisa guardar por mês, de acordo com a sua idade?",
+  "Começando aos 25 anos, você precisa de R$ 3.150,",
+  "Aos 35, você precisa de R$ 5.750 por mês.",
+  "Já aos 45, você precisa de mais de 12 mil reais por mês.",
+  "Repara que começar 10 anos depois quase dobra o valor,",
+  "se esperar mais 10 anos, mais que dobra esse valor.",
+  "Agora me conta, em qual idade você está e qual desses números aqui é o seu?"
+ ],
+ "cores": {"roxo": "#9B6BFF", "lima": "#E4FF6B"},
+ "reenquadrar": 200,
+ "tratar_voz": true,
+ "elementos": [
+  {"frase": 0, "tipo": "brutalista", "tag": "aposentadoria aos 60", "preto": "RENDA DE", "roxo": "R$ 10.000", "linhas": []},
+  {"frase": 1, "tipo": "impacto", "linhas": ["Quanto *GUARDAR*", "por *MÊS?*"], "cor": "lima"},
+  {"frase": 3, "tipo": "instagram", "y": 60, "titulo": "O que muda a cada 10 anos?", "corpo": "O valor quase dobra a cada 10 anos de espera"},
+  {"frase": 6, "tipo": "brutalista", "tag": "e você?", "preto": "QUAL É", "roxo": "O SEU?", "linhas": []}
+ ],
+ "laterais_cfg": {"x": 24, "y": 500, "largura": 336, "altura": 240, "espaco": 28},
+ "laterais": [
+  {"frase": 1, "palavra_idade": "25", "palavra_valor": "R$", "idade": "25 anos", "valor": "R$ 3.150"},
+  {"frase": 2, "palavra_idade": "35", "palavra_valor": "R$", "idade": "35 anos", "valor": "R$ 5.750"},
+  {"frase": 3, "palavra_idade": "45", "palavra_valor": "12", "idade": "45 anos", "valor": "R$ 12.300"}
+ ]
+}

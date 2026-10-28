@@ -28,3 +28,9 @@ Uso: `python3 scripts/brutal_render.py original.mp4 saida.mp4`.
 Mesmos cortes, sem efeitos. Zoom leve (1.00/1.07) alternando só nos cortes, grade discreta, voz tratada (sem hits e whooshes). Visual de cartão claro com borda preta e sombra roxa: título "R$ 10.000 DE RENDA" num cartão no topo (o vídeo desce 210px e o topo ganha fundo desfocado), cards idade/valor e legenda em caixa clara, roxa na palavra-chave.
 
 Uso: `python3 scripts/simples_render.py original.mp4 saida.mp4`.
+
+## Edição padrão (`video_editado_padrao.mp4`)
+
+Feita com a skill `scripts/edicao_padrao` (cortes de pausa, legenda em caixa de uma linha, elementos no topo trocando por trecho), mais: cartões idade/valor grandes na lateral esquerda (o valor entra quando é falado), topo desfocado para caber os elementos acima da cabeça e voz tratada. Config em `scripts/edicao_padrao/video_aposentadoria.json`, cortes em `video_aposentadoria_keep.json`.
+
+Uso: `python3 -I scripts/edicao_padrao/scripts/build.py montar original.mp4 <dir com keep.json> scripts/edicao_padrao/video_aposentadoria.json saida.mp4`.
