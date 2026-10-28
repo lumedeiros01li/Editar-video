@@ -11,5 +11,6 @@ Pipeline em `scripts/`: análise de áudio (Silero VAD + volume + vozeamento), s
 
 - Respirações, pausas e a hesitação em "totalizando praticamente... cem mil" cortadas (55,7s para 42,4s).
 - Gancho acima da cabeça enquanto o fundo é a parede: "QUASE US$ 100.000 POR ANO PARA SEU FILHO ESTUDAR NOS EUA", com o número em destaque lima. Some na troca para o extrato.
+- Tratamento de imagem leve (redução de ruído, contraste, saturação e nitidez), aplicado antes da legenda.
 - Legenda palavra por palavra (palavra atual em lima) no vídeo todo. Arquivo editável em `legenda.ass`.
 - Pipeline em `scripts/corte_legenda/` (transcrição faster-whisper, corte por energia, geração do ASS, filtro ffmpeg).

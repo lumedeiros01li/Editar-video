@@ -46,4 +46,4 @@
 [0:a]atrim=start=47.34:end=49.79,asetpts=PTS-STARTPTS,afade=t=in:d=0.008,afade=t=out:st=2.442:d=0.008[a21];
 [0:a]atrim=start=50.28:end=52.91,asetpts=PTS-STARTPTS,afade=t=in:d=0.008,afade=t=out:st=2.622:d=0.008[a22];
 [0:a]atrim=start=53.17:end=55.07,asetpts=PTS-STARTPTS,afade=t=in:d=0.008,afade=t=out:st=1.892:d=0.008[a23];
-[v0][a0][v1][a1][v2][a2][v3][a3][v4][a4][v5][a5][v6][a6][v7][a7][v8][a8][v9][a9][v10][a10][v11][a11][v12][a12][v13][a13][v14][a14][v15][a15][v16][a16][v17][a17][v18][a18][v19][a19][v20][a20][v21][a21][v22][a22][v23][a23]concat=n=24:v=1:a=1[vc][ac];[vc]ass=sub.ass:fontsdir=/usr/share/fonts/opentype/inter[vout]
+[v0][a0][v1][a1][v2][a2][v3][a3][v4][a4][v5][a5][v6][a6][v7][a7][v8][a8][v9][a9][v10][a10][v11][a11][v12][a12][v13][a13][v14][a14][v15][a15][v16][a16][v17][a17][v18][a18][v19][a19][v20][a20][v21][a21][v22][a22][v23][a23]concat=n=24:v=1:a=1[vc][ac];[vc]hqdn3d=1.6:1.6:5:5,eq=contrast=1.06:saturation=1.10:brightness=0.015:gamma=0.97,unsharp=5:5:0.7:3:3:0.0,ass=sub.ass:fontsdir=/usr/share/fonts/opentype/inter[vout]
