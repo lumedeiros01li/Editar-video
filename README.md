@@ -12,3 +12,13 @@ Pipeline em `scripts/`: análise de áudio (Silero VAD + volume + vozeamento), s
 55,3s para 29,6s. Cortes de respirações e pausas, erros de gravação removidos (início olhando pro lado, frase inicial repetida, tentativa errada do "Já aos 45", "Repara" repetido), legenda palavra a palavra, título no topo com destaque em R$ 10.000 de renda e cards de idade/valor na lateral direita, com o valor aparecendo quando é falado.
 
 Pipeline: `scripts/leve_cortes.py` (pontos de corte), `scripts/leve_render.py` (legenda ASS + ffmpeg). Uso: `python3 scripts/leve_render.py original.mp4 saida.mp4`.
+
+## Edição brutalista (`video_editado_brutalista.mp4`)
+
+Mesmos cortes da edição leve, com:
+- Zooms: punch-in alternando 1.00/1.13/1.04/1.17 a cada corte (reais e virtuais) com push lento, e pulso + tremida nas palavras-chave (60 anos, 10 mil, idades, valores, "dobra").
+- Imagem: denoise, contraste, dessaturação leve, curva em S, sharpen, vinheta, grão e flash de 2 frames nos cortes.
+- Som: denoise, EQ de voz, de-esser, compressor, whooshes nos cortes e hits de sub nas palavras-chave (sintetizados em `brutal_sfx.py`), -14 LUFS e pico abaixo de -1 dBFS.
+- Visual brutalista: blocos amarelo/preto/branco com sombra dura, mono, cantoneiras e timecode, cards idade/valor, slams "QUASE 2X" e "MAIS DE 2X", legenda em caixa que vira amarela na palavra-chave.
+
+Uso: `python3 scripts/brutal_render.py original.mp4 saida.mp4`.
