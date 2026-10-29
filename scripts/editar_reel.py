@@ -63,7 +63,7 @@ def trechos_de_fala(t, db, voi, cen):
         ta, tb = t[a], t[b - 1]
         if any(ta >= c0 - 0.05 and tb <= c1 + 0.05 for c0, c1 in CORTES_MANUAIS):
             log.append(("vicio/hesitacao", ta, tb)); continue
-        if voiced[a:b].sum() < 3:
+        if voiced[a:b].sum() < 3 or (db[a:b].max() < -25 and voiced[a:b].sum() < 0.3 * (b - a)):
             log.append(("sem voz (respiracao/ruido)", ta, tb)); continue
         h = a
         while h < b and breathy[h]:
@@ -114,6 +114,7 @@ def peso(w):
 INTER = "/usr/share/fonts/opentype/inter/Inter-%s.otf"
 SUB_Y = 1640  # centro da legenda (85% da altura, abaixo do queixo)
 SUB_H = 160
+FUNCIONAIS = {"a", "o", "e", "de", "do", "da", "que", "um", "uma", "no", "na", "em", "pra", "pro", "com", "ou", "os", "as", "ao", "se", "eu", "já", "é"}
 
 
 def fala_em_frases(q, por):
@@ -130,11 +131,12 @@ def fala_em_frases(q, por):
         t = saida[k] + (s - f0 / FPS)
         for _, w in ws:
             d = (e - s) * peso(w) / tot
-            words.append((t, t + d, w)); t += d
+            words.append((t, t + d, w, k)); t += d
     frases, cur = [], []
     for w in words:
         txt = " ".join(x[2] for x in cur)
-        if cur and (cur[-1][2][-1] in ".?!" or (cur[-1][2][-1] == "," and len(txt) >= 16) or w[0] - cur[-1][1] > 0.25):
+        if cur and (cur[-1][2][-1] in ".?!" or (cur[-1][2][-1] == "," and len(txt) >= 16) or w[0] - cur[-1][1] > 0.25
+                    or (w[3] != cur[-1][3] and q[w[3]][2] - q[cur[-1][3]][3] >= 0.45)):  # pausa longa cortada = fim de frase
             frases.append(cur); cur = []
         cur.append(w)
     if cur:
@@ -151,6 +153,10 @@ def fala_em_frases(q, por):
                     partes.append(parte); parte = []
                 parte.append(x); ac += len(x[2]) + 1
             partes.append(parte)
+            for i in range(len(partes) - 1):  # nao termina parte em artigo/preposicao
+                while len(partes[i]) > 1 and partes[i][-1][2].lower().strip(",.?!") in FUNCIONAIS and \
+                        len(" ".join(x[2] for x in [partes[i][-1]] + partes[i + 1])) <= 36:
+                    partes[i + 1].insert(0, partes[i].pop())
         else:
             partes = [fr]
         for pt in partes:
@@ -198,9 +204,8 @@ def caixa_pergunta():
     x0, y0, cw = 20, 150, W - 40
     R, HH = 36, 116
     fh = ImageFont.truetype(INTER % "SemiBold", 46 * S)
-    fb = ImageFont.truetype(INTER % "Medium", 56 * S)
     dr0 = ImageDraw.Draw(Image.new("L", (10, 10)))
-    def quebra(txt, larg):
+    def quebra(txt, larg, fb):
         linhas, cur = [], ""
         for w in txt.split():
             t = (cur + " " + w).strip()
@@ -210,10 +215,14 @@ def caixa_pergunta():
                 cur = t
         return linhas + [cur]
     larg = cw - 70
-    n = len(quebra(CFG["texto"], larg))
-    while len(quebra(CFG["texto"], larg - 10)) == n:  # linhas equilibradas, sem palavra sozinha na ultima
+    for tam in (56, 54, 52, 50, 48, 46):  # maior fonte que deixa o corpo em ate 2 linhas
+        fb = ImageFont.truetype(INTER % "Medium", tam * S)
+        if len(quebra(CFG["texto"], larg, fb)) <= 2:
+            break
+    n = len(quebra(CFG["texto"], larg, fb))
+    while len(quebra(CFG["texto"], larg - 10, fb)) == n:  # linhas equilibradas, sem palavra sozinha na ultima
         larg -= 10
-    linhas = quebra(CFG["texto"], larg)
+    linhas = quebra(CFG["texto"], larg, fb)
     lh = 68
     bh = 40 + lh * len(linhas) + 38
     ch = HH + bh
@@ -258,7 +267,7 @@ if __name__ == "__main__":
     legenda_png(ev, total)
     y0, y1 = caixa_pergunta()
     print(f"{len(q)} trechos, {dur:.1f}s -> {total:.1f}s, {len(ev)} legendas, caixa y={y0}-{y1}")
-    for a_, b_, tx in ev[:6]:
+    for a_, b_, tx in ev:
         print(f"  {a_:5.2f}-{b_:5.2f} {tx}")
     fc = []
     n = len(q)
