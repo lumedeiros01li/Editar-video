@@ -17,6 +17,8 @@ CFG = json.load(open(sys.argv[4]))
 CORTES_MANUAIS = [tuple(c) for c in CFG.get("cortes", [])]
 # [fim aproximado do trecho, fim maximo]: limita a folga final (ex.: antes de virar a cabeca)
 FIM_MAX = [tuple(c) for c in CFG.get("fim_max", [])]
+# cortes dentro de uma fala continua (palavra errada, gagueira): [ini, fim] aproximados, encaixados no ponto mais silencioso
+CORTES_INTERNOS = [tuple(c) for c in CFG.get("cortes_internos", [])]
 # transcricao revisada: "ancora_no_original palavra|..." (a ancora so decide em qual trecho de fala a palavra cai)
 PALAVRAS = [(float(a), w) for a, w in (x.split(" ", 1) for x in CFG["palavras"].replace("\n", "|").split("|") if x.strip())]
 
@@ -69,23 +71,40 @@ def trechos_de_fala(t, db, voi, cen):
         while h < b and breathy[h]:
             h += 1
         if (h - a) * dt > 0.10:
-            log.append(("inspiracao", t[a], t[h])); a = h - 4
+            log.append(("inspiracao", t[a], t[h])); a = h - 3
         e = b
         while e > a and breathy[e - 1]:
             e -= 1
         if (b - e) * dt > 0.10:
-            log.append(("expiracao", t[e], t[b - 1])); b = e + 4
-        seg.append([t[a], t[b - 1]])
+            log.append(("expiracao", t[e], t[b - 1])); b = e + 3
+        seg.append([t[a], t[b - 1], False, False])
+    suav = np.convolve(db, np.ones(5) / 5, "same")
+    def vale(alvo, w=0.12):
+        i0, i1 = max(int((alvo - w) / dt), 0), min(int((alvo + w) / dt), len(db))
+        return float(t[i0 + int(np.argmin(suav[i0:i1]))])
+    for ca, cb in CORTES_INTERNOS:
+        a2, b2 = vale(ca), vale(cb)
+        novo = []
+        for sg in seg:
+            if sg[1] <= a2 or sg[0] >= b2:
+                novo.append(sg); continue
+            if sg[0] < a2 - 0.15:
+                novo.append([sg[0], a2, sg[2], True])
+            if sg[1] > b2 + 0.15:
+                novo.append([b2, sg[1], True, sg[3]])
+        seg = novo
+        log.append(("corte interno", a2, b2))
     return seg, log
 
 
 def quadros(seg, dur):
     """trechos finais com folga, em quadros inteiros. retorna [(f0, f1, fala_ini, fala_fim)]"""
-    PRE, POST = 0.05, 0.09
+    PRE, POST = 0.03, 0.06
     out = []
-    for k, (s, e) in enumerate(seg):
-        ps = PRE if k == 0 else min(PRE, (s - seg[k - 1][1]) / 2)
-        pe = POST if k == len(seg) - 1 else min(POST, (seg[k + 1][0] - e) / 2)
+    for k, sg in enumerate(seg):
+        s, e = sg[0], sg[1]
+        ps = 0 if sg[2] else PRE if k == 0 else min(PRE, (s - seg[k - 1][1]) / 2)
+        pe = 0 if sg[3] else POST if k == len(seg) - 1 else min(POST, (seg[k + 1][0] - e) / 2)
         f0, f1 = round((s - ps) * FPS), round((e + pe) * FPS)
         if out and f0 < out[-1][1]:
             f0 = out[-1][1]
@@ -100,7 +119,7 @@ def palavras_por_trecho(seg):
     por = [[] for _ in seg]
     sem = []
     for t0, w in PALAVRAS:
-        d = [max(s - t0, t0 - e, 0) for s, e in seg]
+        d = [max(sg[0] - t0, t0 - sg[1], 0) for sg in seg]
         k = int(np.argmin(d))
         (por[k] if d[k] <= 0.45 else sem).append((t0, w))
     return por, sem
@@ -258,7 +277,8 @@ if __name__ == "__main__":
     por, sem = palavras_por_trecho(seg)
     for l in log:
         print("cortado:", l[0], round(l[1], 2), round(l[2], 2))
-    for k, (s, e) in enumerate(seg):
+    for k, sg in enumerate(seg):
+        s, e = sg[0], sg[1]
         if not por[k]:
             print("AVISO trecho sem palavras (ruido?):", round(s, 2), round(e, 2))
     for t0, w in sem:
@@ -278,7 +298,9 @@ if __name__ == "__main__":
         fc.append(f"[s{k}]trim=start_frame={f0}:end_frame={f1},setpts=PTS-STARTPTS[v{k}];"
                   f"[0:a]atrim=start={f0 / FPS:.4f}:end={f1 / FPS:.4f},asetpts=PTS-STARTPTS,"
                   f"afade=t=in:d=0.012,afade=t=out:st={d - 0.012:.4f}:d=0.012[a{k}]")
-    fc.append("".join(f"[v{k}][a{k}]" for k in range(n)) + f"concat=n={n}:v=1:a=1[vc][ac]")
+    fc.append("".join(f"[v{k}][a{k}]" for k in range(n)) + f"concat=n={n}:v=1:a=1[vc][ac0]")
+    # reduz o que sobrou de respiracao/ruido fraco entre as palavras (abaixo de -42 dB cai ate -24 dB)
+    fc.append("[ac0]agate=threshold=0.008:ratio=8:attack=6:release=150:range=0.06[ac]")
     fc.append("[vc]hqdn3d=1.6:1.6:5:5,eq=contrast=1.05:saturation=1.10:gamma=1.04,unsharp=5:5:0.7:5:5:0.0[vo]")
     fc.append("[vo][1:v]overlay=0:0:format=auto[vp]")
     fc.append("[2:v]fps=30,format=rgba[sb]")

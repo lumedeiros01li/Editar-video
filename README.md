@@ -25,6 +25,6 @@ Mesmo estilo do `video_seguro_de_vida.mp4` (caixa "Perguntas" fixa, legenda por 
 
 | Vídeo | Config | Duração |
 |---|---|---|
-| `video_novo_imposto.mp4` | `reel_novo_imposto.json` | 71,3s para 53,3s |
-| `video_seguro_coberturas.mp4` | `reel_seguro_coberturas.json` | 73,7s para 42,6s |
-| `video_renda_fixa_variavel.mp4` | `reel_renda_fixa_variavel.json` | 55,1s para 39,7s |
+| `video_novo_imposto.mp4` | `reel_novo_imposto.json` | 71,3s para 50,6s |
+| `video_seguro_coberturas.mp4` | `reel_seguro_coberturas.json` | 73,7s para 39,5s |
+| `video_renda_fixa_variavel.mp4` | `reel_renda_fixa_variavel.json` | 55,1s para 38,8s |
