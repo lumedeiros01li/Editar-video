@@ -10,7 +10,7 @@ Pipeline em `scripts/`: análise de áudio (Silero VAD + volume + vozeamento), s
 
 ## video_seguro_de_vida.mp4
 
-Reel falado sobre seguro de vida e investimento (88,9s para 70,8s, 1080x1920).
+Reel falado sobre seguro de vida e investimento (88,9s para 69,4s, 1080x1920).
 
 - Respirações, pausas, 1 início falso, 1 virada de cabeça e a fala fora do roteiro cortados.
 - Imagem: redução leve de ruído, contraste, saturação e nitidez, H.264.
@@ -25,6 +25,8 @@ Mesmo estilo do `video_seguro_de_vida.mp4` (caixa "Perguntas" fixa, legenda por 
 
 | Vídeo | Config | Duração |
 |---|---|---|
-| `video_novo_imposto.mp4` | `reel_novo_imposto.json` | 71,3s para 50,6s |
-| `video_seguro_coberturas.mp4` | `reel_seguro_coberturas.json` | 73,7s para 39,5s |
-| `video_renda_fixa_variavel.mp4` | `reel_renda_fixa_variavel.json` | 55,1s para 38,8s |
+| `video_novo_imposto.mp4` | `reel_novo_imposto.json` | 71,3s para 48,6s |
+| `video_seguro_coberturas.mp4` | `reel_seguro_coberturas.json` | 73,7s para 36,9s |
+| `video_renda_fixa_variavel.mp4` | `reel_renda_fixa_variavel.json` | 55,1s para 38,9s |
+
+Áudio de todos os reels: filtro de graves e chiado, equalização de voz, compressão e normalização em -14 LUFS.

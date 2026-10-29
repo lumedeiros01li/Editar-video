@@ -300,7 +300,12 @@ if __name__ == "__main__":
                   f"afade=t=in:d=0.012,afade=t=out:st={d - 0.012:.4f}:d=0.012[a{k}]")
     fc.append("".join(f"[v{k}][a{k}]" for k in range(n)) + f"concat=n={n}:v=1:a=1[vc][ac0]")
     # reduz o que sobrou de respiracao/ruido fraco entre as palavras (abaixo de -42 dB cai ate -24 dB)
-    fc.append("[ac0]agate=threshold=0.008:ratio=8:attack=6:release=150:range=0.06[ac]")
+    # audio: tira graves de manuseio e chiado, abre a voz, comprime e normaliza para redes sociais (-14 LUFS)
+    fc.append("[ac0]highpass=f=80,afftdn=nr=10:nf=-50,"
+              "agate=threshold=0.008:ratio=8:attack=6:release=150:range=0.06,"
+              "equalizer=f=220:t=q:w=1:g=-2,equalizer=f=3200:t=q:w=1:g=2.5,"
+              "acompressor=threshold=0.1:ratio=3:attack=6:release=90:makeup=2,"
+              "loudnorm=I=-14:TP=-1.5:LRA=9,alimiter=limit=0.89,aresample=48000[ac]")
     fc.append("[vc]hqdn3d=1.6:1.6:5:5,eq=contrast=1.05:saturation=1.10:gamma=1.04,unsharp=5:5:0.7:5:5:0.0[vo]")
     fc.append("[vo][1:v]overlay=0:0:format=auto[vp]")
     fc.append("[2:v]fps=30,format=rgba[sb]")
