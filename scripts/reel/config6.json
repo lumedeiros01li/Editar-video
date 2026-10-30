@@ -1,0 +1,301 @@
+{
+ "roteiro": [
+  "Segue o líder,",
+  "o Brasil pode ter o maior imposto sobre o consumo do mundo.",
+  "Já me segue e vem ver isso aqui.",
+  "Essa semana o TCU calculou o CBS, o novo imposto federal que vai entrar no lugar do PIS e do COFINS a partir de janeiro de 2027.",
+  "A alíquota divulgada foi de 11,3%, sendo que o governo esperava algo em torno de 9%.",
+  "E ainda tem outro, o IBS, que é dos estados e dos municípios, que entra a partir de 2029 substituindo o ICMS e o ISS.",
+  "A alíquota oficial desse ainda não saiu, mas a estimativa é de 18,7%.",
+  "Somando os dois, dá 30%.",
+  "IVA é o nome desse tipo de imposto sobre consumo.",
+  "A Hungria, que tem o maior IVA do planeta, tem 27%.",
+  "A Hungria está no primeiro lugar de um ranking que ninguém quer estar,",
+  "mas fique esperto que já já a gente chega nela.",
+  "Agora olha só, esse número substitui 5 impostos de uma vez.",
+  "IPI, ICMS, ISS, PIS e COFINS.",
+  "Mas tem uma observação, nem todas essas profissões pagam esses 5 impostos.",
+  "Por exemplo, áreas da educação ou da saúde têm um desconto de até 60%.",
+  "E além disso, tem uma trava.",
+  "A lei diz que o imposto não pode passar de 26,5% até 2033.",
+  "Só que tem um detalhe, isso não é um teto.",
+  "Se passar, o governo tem que propor ao Congresso.",
+  "Quem vai decidir no final ainda vai ser o Congresso.",
+  "Só que tem um problema,",
+  "a sua empresa não consegue ficar esperando até o Congresso decidir.",
+  "A nota, o crédito, o cadastro de cada produto, tudo isso faz parte de uma lógica de inteligência tributária.",
+  "E se você quer entender melhor como isso afeta a sua empresa,",
+  "já me chama para conversar."
+ ],
+ "cores": {
+  "roxo": "#9B6BFF",
+  "lima": "#E4FF6B"
+ },
+ "impactos": [
+  {
+   "frase": 1,
+   "dt": 0.9
+  },
+  {
+   "frase": 4,
+   "dt": 1.5
+  },
+  {
+   "frase": 7,
+   "dt": 0.9
+  },
+  {
+   "frase": 9,
+   "dt": 2.0
+  },
+  {
+   "frase": 12,
+   "dt": 1.7
+  },
+  {
+   "frase": 15,
+   "dt": 3.9
+  },
+  {
+   "frase": 17,
+   "dt": 3.0
+  },
+  {
+   "frase": 18,
+   "dt": 1.5
+  },
+  {
+   "frase": 25,
+   "dt": 0.8
+  }
+ ],
+ "elementos": [
+  {
+   "inicio": 0.1,
+   "tipo": "brutalista",
+   "tag": "alerta",
+   "preto": "maior imposto",
+   "roxo": "do mundo?"
+  },
+  {
+   "frase": 3,
+   "dt": 0,
+   "tipo": "brutalista",
+   "tag": "novo imposto",
+   "preto": "cbs",
+   "roxo": "federal",
+   "linhas": [
+    [
+     "substitui",
+     "PIS + COFINS",
+     "a partir de 2027",
+     false
+    ]
+   ]
+  },
+  {
+   "frase": 4,
+   "dt": 0,
+   "tipo": "brutalista",
+   "tag": "cbs",
+   "preto": "alíquota",
+   "roxo": "divulgada",
+   "linhas": [
+    [
+     "divulgada",
+     "11,3%",
+     "governo previa ~9%",
+     false
+    ]
+   ]
+  },
+  {
+   "frase": 5,
+   "dt": 0,
+   "tipo": "brutalista",
+   "tag": "ibs",
+   "preto": "estados",
+   "roxo": "e municípios",
+   "linhas": [
+    [
+     "substitui",
+     "ICMS + ISS",
+     "a partir de 2029",
+     false
+    ]
+   ]
+  },
+  {
+   "frase": 6,
+   "dt": 0,
+   "tipo": "brutalista",
+   "tag": "ibs",
+   "preto": "alíquota",
+   "roxo": "estimada",
+   "linhas": [
+    [
+     "estimativa",
+     "18,7%",
+     "ainda não saiu",
+     false
+    ]
+   ]
+  },
+  {
+   "frase": 7,
+   "dt": 0,
+   "tipo": "brutalista",
+   "tag": "cbs + ibs",
+   "preto": "somando",
+   "roxo": "30%"
+  },
+  {
+   "frase": 8,
+   "dt": 0,
+   "tipo": "brutalista",
+   "tag": "iva",
+   "preto": "imposto",
+   "roxo": "sobre consumo"
+  },
+  {
+   "frase": 9,
+   "dt": 0,
+   "tipo": "brutalista",
+   "tag": "ranking",
+   "preto": "hungria",
+   "roxo": "27%",
+   "linhas": [
+    [
+     "maior IVA",
+     "27%",
+     "do planeta",
+     false
+    ]
+   ]
+  },
+  {
+   "frase": 12,
+   "dt": 0,
+   "tipo": "brutalista",
+   "tag": "esse número",
+   "preto": "substitui",
+   "roxo": "5 impostos"
+  },
+  {
+   "frase": 13,
+   "dt": 0,
+   "tipo": "brutalista",
+   "tag": "substitui",
+   "preto": "5 impostos",
+   "roxo": "de uma vez",
+   "linhas": [
+    [
+     "IPI ICMS ISS PIS COFINS",
+     "5",
+     "impostos",
+     false
+    ]
+   ]
+  },
+  {
+   "frase": 14,
+   "dt": 0,
+   "tipo": "brutalista",
+   "tag": "atenção",
+   "preto": "nem todos",
+   "roxo": "pagam os 5"
+  },
+  {
+   "frase": 15,
+   "dt": 0,
+   "tipo": "brutalista",
+   "tag": "exceção",
+   "preto": "educação",
+   "roxo": "e saúde",
+   "linhas": [
+    [
+     "desconto de até",
+     "60%",
+     "regra especial",
+     false
+    ]
+   ]
+  },
+  {
+   "frase": 16,
+   "dt": 0,
+   "tipo": "brutalista",
+   "tag": "trava",
+   "preto": "teto",
+   "roxo": "26,5%",
+   "linhas": [
+    [
+     "limite da lei",
+     "26,5%",
+     "até 2033",
+     false
+    ]
+   ]
+  },
+  {
+   "frase": 18,
+   "dt": 0,
+   "tipo": "brutalista",
+   "tag": "detalhe",
+   "preto": "não é",
+   "roxo": "um teto"
+  },
+  {
+   "frase": 19,
+   "dt": 0,
+   "tipo": "brutalista",
+   "tag": "se passar",
+   "preto": "o congresso",
+   "roxo": "decide"
+  },
+  {
+   "frase": 21,
+   "dt": 0,
+   "tipo": "brutalista",
+   "tag": "problema",
+   "preto": "sua empresa",
+   "roxo": "não espera"
+  },
+  {
+   "frase": 23,
+   "dt": 0,
+   "tipo": "brutalista",
+   "tag": "controle",
+   "preto": "nota e crédito",
+   "roxo": "+ cadastro"
+  },
+  {
+   "frase": 23,
+   "dt": 3.4,
+   "tipo": "brutalista",
+   "tag": "lógica",
+   "preto": "inteligência",
+   "roxo": "tributária"
+  },
+  {
+   "frase": 24,
+   "dt": 0,
+   "tipo": "brutalista",
+   "tag": "sua empresa",
+   "preto": "como isso",
+   "roxo": "te afeta?"
+  },
+  {
+   "frase": 25,
+   "dt": 0,
+   "tipo": "brutalista",
+   "tag": "fale comigo",
+   "preto": "já me",
+   "roxo": "chama"
+  }
+ ],
+ "luz": {
+  "gamma": 1.45,
+  "ganho": 0.92
+ }
+}
