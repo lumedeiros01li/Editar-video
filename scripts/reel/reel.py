@@ -208,7 +208,7 @@ def sfx_click():
     t = np.arange(int(0.12 * SR)) / SR; return (np.sin(2 * np.pi * 1800 * t) * np.exp(-t * 60) * 0.35).astype(np.float32)
 
 def montar_audio(path):
-    fc = ";".join(f"[0:a]atrim={s}:{e},asetpts=PTS-STARTPTS,aformat=sample_rates={SR}:channel_layouts=mono,apad=whole_dur={Q(e - s):.4f}[a{i}]" for i, (s, e) in enumerate(keep))
+    fc = ";".join(f"[0:a]atrim={s}:{e},asetpts=PTS-STARTPTS,afade=t=in:d=0.012,afade=t=out:st={max(0, e - s - 0.012):.3f}:d=0.012,aformat=sample_rates={SR}:channel_layouts=mono,apad=whole_dur={Q(e - s):.4f}[a{i}]" for i, (s, e) in enumerate(keep))
     fc += ";" + "".join(f"[a{i}]" for i in range(len(keep))) + f"concat=n={len(keep)}:v=0:a=1[o]"
     open(S + "/af2.txt", "w").write(fc)
     raw = subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", SRC, "-filter_complex_script", S + "/af2.txt", "-map", "[o]", "-ar", str(SR), "-ac", "1", "-f", "f32le", "-"],
@@ -250,6 +250,8 @@ def get_frame(idx):
         cur = np.frombuffer(b, np.uint8).reshape(H, W, 3); cur_i += 1
     return cur
 SHARP = CFG.get("nitidez", 0.55)
+LZ = CFG.get("luz", {"gamma": 1.0, "ganho": 1.0})
+LUT = (255 * (np.arange(256) / 255.0) ** LZ["gamma"] * LZ["ganho"]).clip(0, 255).astype(np.uint8)
 Y_T = CFG.get("rosto_y", 800)
 rngs = np.random.default_rng(3)
 n_imp = [int(round(t * FPS)) for t in impactos]
@@ -266,6 +268,7 @@ for fi in range(f0, f1):
             k = (1 - (fi - ni) / 7) * 14; tx += rngs.uniform(-k, k); ty += rngs.uniform(-k, k)
     M = np.float32([[z, 0, -left * z + tx], [0, z, -top * z + ty]])
     out = cv2.warpAffine(fr, M, (W, H), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
+    if LZ["gamma"] != 1.0 or LZ["ganho"] != 1.0: out = cv2.LUT(out, LUT)
     if SHARP:
         bl = cv2.GaussianBlur(out, (0, 0), 1.4); out = cv2.addWeighted(out, 1 + SHARP, bl, -SHARP, 0)
     for ni in n_imp:

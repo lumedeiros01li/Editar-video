@@ -1,0 +1,289 @@
+{
+ "roteiro": [
+  "Segue o líder.",
+  "O Brasil pode ter o maior imposto sobre o consumo do mundo.",
+  "Já me segue e vem ver isso aqui.",
+  "Essa semana o TCU calculou o CBS, o novo imposto federal que vai entrar no lugar do PIS e do COFINS a partir de janeiro de 2027.",
+  "A alíquota divulgada foi de 11,3%, sendo que o governo esperava algo em torno de 9%.",
+  "E ainda tem outro, o IBS, que é dos estados e dos municípios, que entra a partir de 2029 substituindo o ICMS e o ISS.",
+  "A alíquota oficial desse ainda não saiu, mas a estimativa é de 18,7%, somando os dois, dá 30%.",
+  "IVA é o nome desse tipo de imposto sobre consumo.",
+  "A Hungria, que tem o maior IVA do planeta, tem 27%.",
+  "A Hungria tá no primeiro lugar de um ranking que ninguém quer estar, mas fique esperto que já já a gente chega nele.",
+  "Agora olha só, esse número substitui 5 impostos de uma vez.",
+  "IPI, ICMS, ISS, PIS e COFINS.",
+  "Mas tem uma observação, nem todas as profissões pagam esses 5 impostos.",
+  "Por exemplo, áreas da educação ou da saúde têm um desconto de até 60%.",
+  "E além disso, tem uma trava.",
+  "A lei diz que o imposto não pode passar de 26,5% até 2033.",
+  "Só que tem um detalhe, isso não é um teto.",
+  "Se passar, o governo tem que propor ao Congresso.",
+  "Quem vai decidir no final ainda vai ser o Congresso.",
+  "Só que tem um problema.",
+  "A sua empresa não consegue ficar esperando até o Congresso decidir.",
+  "Anota o crédito, o cadastro de cada produto, tudo isso faz parte de uma lógica de inteligência tributária.",
+  "E se você quer entender como isso afeta a sua empresa e como fazer essa otimização tributária, já me chama."
+ ],
+ "cores": {
+  "roxo": "#9B6BFF",
+  "lima": "#E4FF6B"
+ },
+ "impactos": [
+  {
+   "frase": 1,
+   "dt": 0.9
+  },
+  {
+   "frase": 4,
+   "dt": 1.5
+  },
+  {
+   "frase": 6,
+   "dt": 5.7
+  },
+  {
+   "frase": 8,
+   "dt": 2.4
+  },
+  {
+   "frase": 10,
+   "dt": 1.7
+  },
+  {
+   "frase": 13,
+   "dt": 4.0
+  },
+  {
+   "frase": 15,
+   "dt": 2.1
+  },
+  {
+   "frase": 16,
+   "dt": 1.5
+  },
+  {
+   "frase": 22,
+   "dt": 2.1
+  },
+  {
+   "frase": 22,
+   "dt": 6.0
+  }
+ ],
+ "elementos": [
+  {
+   "inicio": 0.1,
+   "tipo": "brutalista",
+   "tag": "alerta",
+   "preto": "maior imposto",
+   "roxo": "do mundo?"
+  },
+  {
+   "tipo": "instagram",
+   "titulo": "Qual é o novo imposto?",
+   "corpo": "CBS: federal, entra no lugar do PIS e do COFINS em 2027",
+   "frase": 3,
+   "dt": 0
+  },
+  {
+   "tipo": "brutalista",
+   "tag": "cbs",
+   "preto": "alíquota",
+   "roxo": "divulgada",
+   "linhas": [
+    [
+     "divulgada",
+     "11,3%",
+     "governo previa ~9%",
+     false
+    ]
+   ],
+   "frase": 4,
+   "dt": 0
+  },
+  {
+   "tipo": "impacto",
+   "linhas": [
+    "Tem outro: o *IBS*",
+    "entra em *2029*"
+   ],
+   "cor": "lima",
+   "frase": 5,
+   "dt": 0
+  },
+  {
+   "tipo": "brutalista",
+   "tag": "ibs",
+   "preto": "alíquota",
+   "roxo": "estimada",
+   "linhas": [
+    [
+     "estimativa",
+     "18,7%",
+     "ainda não saiu",
+     false
+    ]
+   ],
+   "frase": 6,
+   "dt": 0
+  },
+  {
+   "tipo": "numero",
+   "topo": "cbs + ibs",
+   "valor": "30%",
+   "base": "somando os dois",
+   "cor": "roxo",
+   "frase": 6,
+   "dt": 4.5
+  },
+  {
+   "tipo": "instagram",
+   "titulo": "O que é IVA?",
+   "corpo": "O nome desse tipo de imposto sobre consumo",
+   "frase": 7,
+   "dt": 0
+  },
+  {
+   "tipo": "impacto",
+   "linhas": [
+    "*HUNGRIA* tem o",
+    "maior IVA: *27%*"
+   ],
+   "cor": "roxo",
+   "frase": 8,
+   "dt": 0
+  },
+  {
+   "tipo": "faixa",
+   "texto": "ranking que ninguém quer",
+   "cor": "lima",
+   "y": 250,
+   "ang": -4,
+   "frase": 9,
+   "dt": 0
+  },
+  {
+   "tipo": "brutalista",
+   "tag": "esse número",
+   "preto": "substitui",
+   "roxo": "5 impostos",
+   "frase": 10,
+   "dt": 0
+  },
+  {
+   "tipo": "impacto",
+   "linhas": [
+    "*IPI* *ICMS* *ISS*",
+    "*PIS* e *COFINS*"
+   ],
+   "cor": "lima",
+   "frase": 11,
+   "dt": 0
+  },
+  {
+   "tipo": "instagram",
+   "titulo": "Todo mundo paga os 5?",
+   "corpo": "Nem todas as profissões pagam esses impostos",
+   "frase": 12,
+   "dt": 0
+  },
+  {
+   "tipo": "brutalista",
+   "tag": "exceção",
+   "preto": "educação",
+   "roxo": "e saúde",
+   "linhas": [
+    [
+     "desconto de até",
+     "60%",
+     "regra especial",
+     false
+    ]
+   ],
+   "frase": 13,
+   "dt": 0
+  },
+  {
+   "tipo": "faixa",
+   "texto": "tem uma trava",
+   "cor": "roxo",
+   "y": 260,
+   "ang": 3,
+   "frase": 14,
+   "dt": 0
+  },
+  {
+   "tipo": "numero",
+   "topo": "teto até 2033",
+   "valor": "26,5%",
+   "base": "trava da lei",
+   "cor": "lima",
+   "frase": 15,
+   "dt": 0
+  },
+  {
+   "tipo": "impacto",
+   "linhas": [
+    "Só que isso",
+    "*NÃO* é um *TETO*"
+   ],
+   "cor": "roxo",
+   "frase": 16,
+   "dt": 0
+  },
+  {
+   "tipo": "instagram",
+   "titulo": "E se passar?",
+   "corpo": "O governo propõe ao Congresso e quem decide é o Congresso",
+   "frase": 17,
+   "dt": 0
+  },
+  {
+   "tipo": "brutalista",
+   "tag": "problema",
+   "preto": "sua empresa",
+   "roxo": "não espera",
+   "frase": 19,
+   "dt": 0
+  },
+  {
+   "tipo": "impacto",
+   "linhas": [
+    "Anota o *CRÉDITO*",
+    "cada *PRODUTO*"
+   ],
+   "cor": "lima",
+   "frase": 21,
+   "dt": 0
+  },
+  {
+   "tipo": "brutalista",
+   "tag": "resultado",
+   "preto": "inteligência",
+   "roxo": "tributária",
+   "frase": 21,
+   "dt": 3.6
+  },
+  {
+   "tipo": "instagram",
+   "titulo": "Como isso afeta você?",
+   "corpo": "Entenda o impacto na sua empresa e otimize seus impostos",
+   "frase": 22,
+   "dt": 0
+  },
+  {
+   "tipo": "impacto",
+   "linhas": [
+    "Já me *CHAMA*",
+    "e *OTIMIZE*"
+   ],
+   "cor": "roxo",
+   "frase": 22,
+   "dt": 3.3
+  }
+ ],
+ "luz": {
+  "gamma": 1.45,
+  "ganho": 0.92
+ }
+}
