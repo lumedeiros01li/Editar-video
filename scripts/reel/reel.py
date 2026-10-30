@@ -133,7 +133,7 @@ def numero(topo, valor, base_, cor, y, ang=-3):
     return out
 
 els = CFG.get("elementos", [])
-inicio = [e["inicio"] if "inicio" in e else max(0.1, tstart(e["frase"]) - 0.15) for e in els]
+inicio = [e["inicio"] if "inicio" in e else max(0.1, tstart(e["frase"]) - 0.15 + e.get("dt", 0.0)) for e in els]
 ELEM = []
 os.makedirs(S + "/el", exist_ok=True)
 for k, e in enumerate(els):
