@@ -26,7 +26,10 @@ for s, e in rngs:
         if hi - lo >= 0.12: new.append([round(lo, 3), round(hi, 3)])
 json.dump(new, open(OUT + "/keep.json", "w"))
 print(len(new), "trechos, duracao", round(sum(Q(e - s) for s, e in new), 1))
-fc = ";".join(f"[0:a]atrim={s}:{e},asetpts=PTS-STARTPTS,aformat=sample_rates=16000:channel_layouts=mono,apad=whole_dur={Q(e - s):.4f}[a{i}]" for i, (s, e) in enumerate(new))
-fc += ";" + "".join(f"[a{i}]" for i in range(len(new))) + f"concat=n={len(new)}:v=0:a=1[o]"
-open(OUT + "/af.txt", "w").write(fc)
-subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", "master.mp4", "-filter_complex_script", OUT + "/af.txt", "-map", "[o]", "-ar", "16000", "-ac", "1", "-f", "s16le", OUT + "/final.raw"], check=True)
+import numpy as np
+r = np.fromfile("raw16.raw", dtype=np.int16)
+parts = []
+for s0, e0 in new:
+    seg = r[int(round(s0 * 16000)):int(round(e0 * 16000))]
+    n = int(round(Q(e0 - s0) * 16000)); parts.append(np.pad(seg, (0, max(0, n - len(seg))))[:n])
+np.concatenate(parts).astype(np.int16).tofile(OUT + "/final.raw")

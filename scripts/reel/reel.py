@@ -55,11 +55,14 @@ def alinhar():
 PAL = alinhar()
 tstart = lambda p: min(x["s"] for x in PAL if x["p"] == p)
 
+# O mestre tem a faixa de audio deslocada do video (concat de dois arquivos com audio e video de duracoes diferentes).
+# Cortes sao escolhidos no tempo das amostras de audio; o quadro correspondente fica em s + OFF(s) (medido nos arquivos originais).
+OFF = lambda s: 0.094 if s < 189.27 else 0.517
 # ---------------------------------------------------------------- mapa saida -> mestre
 seg_of = []      # por frame de saida: indice do corte
 src_idx = []     # por frame de saida: frame do mestre
 for i, (s, e) in enumerate(keep):
-    n = int(round(Q(e - s) * FPS)); b = int(round(s * FPS))
+    n = int(round(Q(e - s) * FPS)); b = int(round((s + OFF(s)) * FPS))
     for j in range(n): seg_of.append(i); src_idx.append(b + j)
 seg_of = np.array(seg_of[:NF]); src_idx = np.array(src_idx[:NF])
 NF = len(src_idx)
@@ -208,12 +211,14 @@ def sfx_click():
     t = np.arange(int(0.12 * SR)) / SR; return (np.sin(2 * np.pi * 1800 * t) * np.exp(-t * 60) * 0.35).astype(np.float32)
 
 def montar_audio(path):
-    fc = ";".join(f"[0:a]atrim={s}:{e},asetpts=PTS-STARTPTS,afade=t=in:d=0.012,afade=t=out:st={max(0, e - s - 0.012):.3f}:d=0.012,aformat=sample_rates={SR}:channel_layouts=mono,apad=whole_dur={Q(e - s):.4f}[a{i}]" for i, (s, e) in enumerate(keep))
-    fc += ";" + "".join(f"[a{i}]" for i in range(len(keep))) + f"concat=n={len(keep)}:v=0:a=1[o]"
-    open(S + "/af2.txt", "w").write(fc)
-    raw = subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", SRC, "-filter_complex_script", S + "/af2.txt", "-map", "[o]", "-ar", str(SR), "-ac", "1", "-f", "f32le", "-"],
-                         check=True, stdout=subprocess.PIPE).stdout
-    a = np.frombuffer(raw, np.float32).copy()
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", SRC, "-vn", "-ac", "1", "-ar", str(SR), "-f", "f32le", "-"], check=True, stdout=subprocess.PIPE).stdout
+    full = np.frombuffer(raw, np.float32)
+    parts = []; fd = int(0.012 * SR)
+    for s, e in keep:
+        seg = full[int(round(s * SR)):int(round(e * SR))].copy()
+        if len(seg) > 2 * fd: seg[:fd] *= np.linspace(0, 1, fd); seg[-fd:] *= np.linspace(1, 0, fd)
+        n = int(round(Q(e - s) * SR)); parts.append(np.pad(seg, (0, max(0, n - len(seg))))[:n])
+    a = np.concatenate(parts).astype(np.float32)
     a = np.pad(a, (0, max(0, int(TOTAL * SR) - len(a))))[:int(TOTAL * SR)]
     def put(t, s, g=1.0):
         i = int(t * SR); n = min(len(s), len(a) - i)
