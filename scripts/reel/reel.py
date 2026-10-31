@@ -254,6 +254,8 @@ def get_frame(idx):
         if len(b) < FB: break
         cur = np.frombuffer(b, np.uint8).reshape(H, W, 3); cur_i += 1
     return cur
+PB = [(tstart(d["frase"]) - 0.05, max(x["e"] for x in PAL if x["p"] == d["frase"]) + 0.15) for d in CFG.get("pb", [])]
+PB_LUT = (255 * (0.5 + 0.5 * np.tanh((np.arange(256) / 255.0 - 0.5) * 3.2) / np.tanh(1.6) * 1.0)).clip(0, 255).astype(np.uint8)
 SHARP = CFG.get("nitidez", 0.55)
 LZ = CFG.get("luz", {"gamma": 1.0, "ganho": 1.0})
 LUT = (255 * (np.arange(256) / 255.0) ** LZ["gamma"] * LZ["ganho"]).clip(0, 255).astype(np.uint8)
@@ -276,6 +278,8 @@ for fi in range(f0, f1):
     if LZ["gamma"] != 1.0 or LZ["ganho"] != 1.0: out = cv2.LUT(out, LUT)
     if SHARP:
         bl = cv2.GaussianBlur(out, (0, 0), 1.4); out = cv2.addWeighted(out, 1 + SHARP, bl, -SHARP, 0)
+    if any(a <= t < b for a, b in PB):                  # trecho em preto e branco
+        g = cv2.LUT(cv2.cvtColor(out, cv2.COLOR_BGR2GRAY), PB_LUT); out = cv2.cvtColor(g, cv2.COLOR_GRAY2BGR)
     for ni in n_imp:
         j = fi - ni
         if 0 <= j < 6:                                   # separacao RGB

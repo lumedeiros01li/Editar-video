@@ -23,7 +23,7 @@ new = []
 for s, e in rngs:
     for a, b in dil:
         lo, hi = max(a, s), min(b, e)
-        if hi - lo >= 0.12: new.append([round(lo, 3), round(hi, 3)])
+        if hi - lo >= 0.30: new.append([round(lo, 3), round(hi, 3)])
 json.dump(new, open(OUT + "/keep.json", "w"))
 print(len(new), "trechos, duracao", round(sum(Q(e - s) for s, e in new), 1))
 import numpy as np
