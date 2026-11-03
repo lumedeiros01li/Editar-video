@@ -17,3 +17,5 @@ Seis formatos do mesmo roteiro (0 a 3 s, 3 a 5 s em vermelho, 5 a 7 s), sem nada
 Paleta: preto, branco, lima `#EAF56B`, roxo `#9D74FF`. `r7b_a_centralizado.mp4` mostra uma tela por vez, centralizada. `r7b_b_acumulado.mp4` empilha os textos sem sumir nenhum e deixa a chamada da legenda embaixo.
 
 `r7c_agrupado_alto.mp4`: modelo centralizado mais alto (logo abaixo do queixo). O texto da tela 2 permanece e a chamada "LEIA A LEGENDA" entra embaixo dele aos 5 s.
+
+`r7d_estilo_referencia.mp4`: mesmo agrupamento do r7c, no estilo de caixas retas do print de referência (fonte Poppins em `scripts/fonts/`, `scripts/r7_ref.py`).
