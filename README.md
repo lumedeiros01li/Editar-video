@@ -19,3 +19,5 @@ Paleta: preto, branco, lima `#EAF56B`, roxo `#9D74FF`. `r7b_a_centralizado.mp4` 
 `r7c_agrupado_alto.mp4`: modelo centralizado mais alto (logo abaixo do queixo). O texto da tela 2 permanece e a chamada "LEIA A LEGENDA" entra embaixo dele aos 5 s.
 
 `r7d_estilo_referencia.mp4`: mesmo agrupamento do r7c, no estilo de caixas retas do print de referência (fonte Poppins em `scripts/fonts/`, `scripts/r7_ref.py`).
+
+`r7e_estilo_referencia_pb.mp4`: mesma legenda e tempos do r7d, com o vídeo em preto e branco (texto mantém as cores). A versão colorida r7d não foi alterada.

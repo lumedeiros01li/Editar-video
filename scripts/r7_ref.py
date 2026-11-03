@@ -67,4 +67,7 @@ def make_d():
 if __name__ == "__main__":
     video, face, outdir = sys.argv[1:4]
     os.makedirs(outdir, exist_ok=True)
-    render("r7d_estilo_referencia", make_d, video, face, outdir)
+    if "pb" in sys.argv[4:]:
+        render("r7e_estilo_referencia_pb", make_d, video, face, outdir, gray=True)
+    else:
+        render("r7d_estilo_referencia", make_d, video, face, outdir)

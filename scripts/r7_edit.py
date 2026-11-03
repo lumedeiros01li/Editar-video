@@ -372,7 +372,7 @@ def read_frames(path):
         if not ok: break
         yield fr
 
-def render(name, factory, video, face_npz, outdir):
+def render(name, factory, video, face_npz, outdir, gray=False):
     cap_n = int(cv2.VideoCapture(video).get(cv2.CAP_PROP_FRAME_COUNT))
     ctx = Ctx(face_npz, cap_n); f = factory()
     out = os.path.join(outdir, name + ".mp4")
@@ -382,6 +382,10 @@ def render(name, factory, video, face_npz, outdir):
     for i, fr in enumerate(read_frames(video)):
         t = i / FPS
         rgb = cv2.cvtColor(fr, cv2.COLOR_BGR2RGB)
+        if gray:  # P&B com leve contraste, só no vídeo (o texto mantém as cores)
+            g = cv2.cvtColor(rgb, cv2.COLOR_RGB2GRAY).astype(np.float32)
+            g = np.clip((g - 128) * 1.12 + 124, 0, 255).astype(np.uint8)
+            rgb = cv2.cvtColor(g, cv2.COLOR_GRAY2RGB)
         pil = Image.fromarray(rgb)
         ov, zoom = f(i, t, pil, ctx)
         chin = ctx.chin[min(i, len(ctx.chin) - 1)]
