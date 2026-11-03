@@ -112,7 +112,7 @@ def make_b():
 
 def make_c():
     """Modelo centralizado, mais alto (logo abaixo do queixo). O 2º texto fica e a chamada da legenda entra embaixo dele."""
-    size = 94; gap = 6; legend_size = 80
+    size = 94; gap = 6; legend_size = 62
     sc = rows()
     p1 = [pill(r, size, bg, fg) for r, bg, fg in sc[0]]
     p2 = [pill(r, size, bg, fg) for r, bg, fg in sc[1]]
