@@ -11,3 +11,7 @@ Pipeline em `scripts/`: análise de áudio (Silero VAD + volume + vozeamento), s
 ## Testes de edição R7 (`r7_testes/`)
 
 Seis formatos do mesmo roteiro (0 a 3 s, 3 a 5 s em vermelho, 5 a 7 s), sem nada na frente do rosto. Gerados por `scripts/r7_face.py` (rosto + máscara) e `scripts/r7_edit.py` (texto e animações). Cada frame é checado e o texto fica sempre abaixo do queixo.
+
+### R7 tarjas com paleta nova (`scripts/r7_tarjas.py`)
+
+Paleta: preto, branco, lima `#EAF56B`, roxo `#9D74FF`. `r7b_a_centralizado.mp4` mostra uma tela por vez, centralizada. `r7b_b_acumulado.mp4` empilha os textos sem sumir nenhum e deixa a chamada da legenda embaixo.
