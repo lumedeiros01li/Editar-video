@@ -1,9 +1,9 @@
 // Renderiza quadros: node render.cjs <saida> [lista,de,quadros]
 const { chromium } = require('playwright');
 const http = require('http'), fs = require('fs'), path = require('path');
-const ROOT = __dirname, OUT = process.argv[2];
+const ROOT = __dirname, OUT = process.argv[2], PAGE = process.env.PAGE || 'index.html', DURS = Number(process.env.DUR || 62.3);
 const list0 = process.argv[3] ? process.argv[3].split(',').map(Number) : null;
-const workers = Number(process.env.WORKERS || 3), TOTAL = Math.round(62.3 * 30);
+const workers = Number(process.env.WORKERS || 3), TOTAL = Math.round(DURS * 30);
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.jpg': 'image/jpeg', '.png': 'image/png', '.woff2': 'font/woff2' };
 const srv = http.createServer((req, res) => {
   const p = path.join(ROOT, decodeURIComponent(req.url.split('?')[0]));
@@ -20,7 +20,7 @@ const srv = http.createServer((req, res) => {
     const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
     page.on('pageerror', e => console.log('PAGEERR:', e.message));
     page.on('console', m => { if (m.type() === 'error') console.log('PAGE:', m.text()); });
-    await page.goto('http://localhost:8766/index.html');
+    await page.goto('http://localhost:8766/' + PAGE + '');
     await page.waitForFunction(() => window.READY === true, null, { timeout: 120000 });
     while (next < list.length) {
       const f = list[next++];

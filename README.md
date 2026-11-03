@@ -17,3 +17,9 @@ Reedição completa do vídeo do Morning Call de 26/10 (1080x1920, 62,3s), com a
 - Mesma ordem de cenas e textos do original, com cada animação sincronizada ao tempo da palavra narrada.
 
 Pipeline em `brutalista/`: `prep.py` (papel, halftone, recortes), `captions.py` (blocos de legenda), `scene.js` + `index.html` (cenas em canvas), `render.cjs` (render quadro a quadro com Playwright). Depois: `ffmpeg -framerate 30 -i quadros/%05d.jpg -i original.mp4 -map 0:v -map 1:a -c:v libx264 -crf 20 -pix_fmt yuv420p -c:a copy video_brutalista.mp4`.
+
+## `video_brutalista_cores.mp4` (Morning Call 03/11, imagens em cores)
+
+Mesma linguagem Vox colagem + Brutalista, agora com as fotos nas cores originais (Banco Central, Congresso, Esplanada, petróleo, Estreito de Ormuz, petroleiro, Capitólio, Federal Reserve, multidão, retrato). Legendas palavra por palavra, gráfico da Selic redesenhado, ticker de números, rota animada do navio, urna, cartões e confetes. Narração e música originais.
+
+Pipeline: `prep2.py` (cores + adesivos), `captions2.py`, `scene2.js` + `index2.html`, `render.cjs` (`PAGE=index2.html DUR=52.1 node render.cjs quadros/`).
