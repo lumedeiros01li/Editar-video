@@ -6,3 +6,8 @@
 - Edição 3D feita em three.js: palco 3D com abertura voando, objetos metálicos com sombra na parede atrás da pessoa, esferas orbitando, partículas, zooms por corte e 7 transições 3D com whoosh.
 
 Pipeline em `scripts/`: análise de áudio (Silero VAD + volume + vozeamento), segmentação, máscara da pessoa (MediaPipe selfie segmentation) e renderização 3D (`render.mjs` + `scene.html`).
+
+
+## Testes de edição R7 (`r7_testes/`)
+
+Seis formatos do mesmo roteiro (0 a 3 s, 3 a 5 s em vermelho, 5 a 7 s), sem nada na frente do rosto. Gerados por `scripts/r7_face.py` (rosto + máscara) e `scripts/r7_edit.py` (texto e animações). Cada frame é checado e o texto fica sempre abaixo do queixo.
