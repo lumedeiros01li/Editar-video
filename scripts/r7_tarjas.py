@@ -83,11 +83,11 @@ def make_a():
 
 def make_b():
     """Textos se acumulam sem sumir. Sem sobrepor o rosto. Legenda fixa na parte inferior."""
-    size = 70; top = 890; gap = 6
+    size = 64; top = 885; gap = 4
     sc = rows()
     sc[0] = [sc[0][0], sc[0][1], ([T("na conta corrente "), E(EMO)], WHITE, BLACK)]
-    pills = [[pill(r, size, bg, fg) for r, bg, fg in scr] for scr in sc[:2]]
-    legend = pill(sc[2][0][0], 84, BLACK, LIME, outline=LIME)
+    pills = [[pill(r, size, bg, fg, pady=8) for r, bg, fg in scr] for scr in sc[:2]]
+    legend = pill(sc[2][0][0], 76, BLACK, LIME, pady=10, outline=LIME)
     bar_img = bar(legend[0].width - 60, 14)
     # posição (centro y) de cada tarja, empilhadas em ordem
     pos, y = [], top
@@ -95,7 +95,7 @@ def make_b():
         for im, h in scr: pos.append(y + h / 2); y += h + gap
     flat = [(im, h) for scr in pills for im, h in scr]
     starts = [0.05 + n * 0.18 for n in range(len(pills[0]))] + [3.05 + n * 0.18 for n in range(len(pills[1]))]
-    LEG_Y = 1790
+    LEG_Y = 1640
     def f(i, t, frame, ctx):
         ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))
         for (im, h), cy, t0 in zip(flat, pos, starts):
