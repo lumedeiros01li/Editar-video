@@ -110,11 +110,47 @@ def make_b():
         return ov, None
     return f
 
-V = {"r7b_a_centralizado": make_a, "r7b_b_acumulado": make_b}
+def make_c():
+    """Modelo centralizado, mais alto (logo abaixo do queixo). O 2º texto fica e a chamada da legenda entra embaixo dele."""
+    size = 94; gap = 6; legend_size = 80
+    sc = rows()
+    p1 = [pill(r, size, bg, fg) for r, bg, fg in sc[0]]
+    p2 = [pill(r, size, bg, fg) for r, bg, fg in sc[1]]
+    leg, leg_h = pill(sc[2][0][0], legend_size, BLACK, LIME, pady=10, outline=LIME)
+    leg_bar = bar(leg.width - 60, 12)
+    state = {}
+    def tops(ctx):
+        if not state:
+            m = R7.CHIN_MARGIN + 14
+            state["t1"] = float(ctx.chin[:90].max()) + m   # tela 1 (0 a 3 s)
+            state["t2"] = float(ctx.chin[90:].max()) + m   # tela 2 e legenda (3 s em diante)
+        return state["t1"], state["t2"]
+    def stack(ov, pills, y, lt, out):
+        for n, (im, h) in enumerate(pills):
+            u = (lt - n * 0.08) / 0.28
+            if u > 0:
+                place(ov, im, W / 2, y + h / 2 + (1 - ease_out_back(u)) * 90, 1.0, clamp(u * 3) * out)
+            y += h + gap
+        return y
+    def f(i, t, frame, ctx):
+        t1, t2 = tops(ctx); ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        if t < 3.0:
+            stack(ov, p1, t1, t, clamp((3.0 - t) / 0.12))
+        else:
+            y = stack(ov, p2, t2, t - 3.0, 1.0)
+            u = (t - 5.0) / 0.32
+            if u > 0:
+                cy = y + 14 + leg_h / 2 + (1 - ease_out_back(u)) * 70
+                place(ov, leg, W / 2, cy, 1.0, clamp(u * 3))
+                place(ov, leg_bar, W / 2, y + 14 + leg_h + 20, 1.0, clamp((t - 5.25) / 0.2))
+        return ov, None
+    return f
+
+V = {"r7b_a_centralizado": make_a, "r7b_b_acumulado": make_b, "r7c_agrupado_alto": make_c}
 
 if __name__ == "__main__":
     video, face, outdir = sys.argv[1:4]
     os.makedirs(outdir, exist_ok=True)
-    want = sys.argv[4:] or ["a", "b"]
+    want = sys.argv[4:] or list(V)
     for n, fac in V.items():
-        if any(n.startswith("r7b_" + w) for w in want): render(n, fac, video, face, outdir)
+        if any(n.startswith(w) or n.startswith("r7b_" + w) for w in want): render(n, fac, video, face, outdir)
