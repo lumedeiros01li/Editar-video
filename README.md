@@ -21,3 +21,7 @@ Paleta: preto, branco, lima `#EAF56B`, roxo `#9D74FF`. `r7b_a_centralizado.mp4` 
 `r7d_estilo_referencia.mp4`: mesmo agrupamento do r7c, no estilo de caixas retas do print de referência (fonte Poppins em `scripts/fonts/`, `scripts/r7_ref.py`).
 
 `r7e_estilo_referencia_pb.mp4`: mesma legenda e tempos do r7d, com o vídeo em preto e branco (texto mantém as cores). A versão colorida r7d não foi alterada.
+
+## Skill `reels-r7`
+
+Em `.claude/skills/reels-r7/` (carregada automaticamente pelo Claude Code neste repositório) e em `skills/reels-r7.zip` (para enviar em claude.ai, Configurações > Capacidades > Skills). Gera a versão colorida e a P&B do padrão aprovado para qualquer vídeo e roteiro, com detecção facial.
