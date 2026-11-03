@@ -1,0 +1,29 @@
+{
+ "telas": [
+  {
+   "inicio": 0,
+   "fim": 3,
+   "fundo": "branco",
+   "linhas": [
+    "Restaurante fatura",
+    "*R$ 400 mil*",
+    "por mês 🧾"
+   ]
+  },
+  {
+   "inicio": 3,
+   "fim": 5,
+   "fundo": "lima",
+   "linhas": [
+    "Depois de custos,",
+    "folha e imposto,",
+    "o lucro é",
+    "*R$ 28 mil*"
+   ]
+  }
+ ],
+ "chamada": {
+  "inicio": 5,
+  "texto": "LEIA A LEGENDA 👇"
+ }
+}

@@ -1,0 +1,29 @@
+{
+ "telas": [
+  {
+   "inicio": 0,
+   "fim": 3,
+   "fundo": "branco",
+   "linhas": [
+    "Dentista ganha",
+    "em reais e",
+    "sonha em dólar 💵"
+   ]
+  },
+  {
+   "inicio": 3,
+   "fim": 5,
+   "fundo": "lima",
+   "linhas": [
+    "Viagem de US$ 10 mil:",
+    "*R$ 50 mil*",
+    "com o dólar a 5,00,",
+    "*R$ 60 mil a 6,00*"
+   ]
+  }
+ ],
+ "chamada": {
+  "inicio": 5,
+  "texto": "LEIA A LEGENDA 👇"
+ }
+}

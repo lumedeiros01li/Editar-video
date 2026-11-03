@@ -1,0 +1,29 @@
+{
+ "telas": [
+  {
+   "inicio": 0,
+   "fim": 3,
+   "fundo": "branco",
+   "linhas": [
+    "Pagou a faculdade",
+    "do filho, R$ 4 mil",
+    "por mês 🎓"
+   ]
+  },
+  {
+   "inicio": 3,
+   "fim": 5,
+   "fundo": "lima",
+   "linhas": [
+    "A própria",
+    "aposentadoria",
+    "ficou em",
+    "*R$ 0*"
+   ]
+  }
+ ],
+ "chamada": {
+  "inicio": 5,
+  "texto": "LEIA A LEGENDA 👇"
+ }
+}

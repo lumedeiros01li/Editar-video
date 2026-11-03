@@ -1,0 +1,29 @@
+{
+ "telas": [
+  {
+   "inicio": 0,
+   "fim": 3,
+   "fundo": "branco",
+   "linhas": [
+    "Casal tem",
+    "*R$ 5 milhões*",
+    "em patrimônio 🏘️"
+   ]
+  },
+  {
+   "inicio": 3,
+   "fim": 5,
+   "fundo": "lima",
+   "linhas": [
+    "A liquidez é",
+    "*R$ 50 mil,*",
+    "e o inventário pede",
+    "dinheiro antes da venda"
+   ]
+  }
+ ],
+ "chamada": {
+  "inicio": 5,
+  "texto": "LEIA A LEGENDA 👇"
+ }
+}

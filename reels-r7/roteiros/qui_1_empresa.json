@@ -1,0 +1,27 @@
+{
+ "telas": [
+  {
+   "inicio": 0,
+   "fim": 3,
+   "fundo": "branco",
+   "linhas": [
+    "Abriu a empresa",
+    "depois de casar ⚖️"
+   ]
+  },
+  {
+   "inicio": 3,
+   "fim": 5,
+   "fundo": "lima",
+   "linhas": [
+    "A quota é só dele?",
+    "*Depende do*",
+    "*regime de bens*"
+   ]
+  }
+ ],
+ "chamada": {
+  "inicio": 5,
+  "texto": "LEIA A LEGENDA 👇"
+ }
+}

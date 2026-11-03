@@ -1,0 +1,29 @@
+{
+ "telas": [
+  {
+   "inicio": 0,
+   "fim": 3,
+   "fundo": "branco",
+   "linhas": [
+    "Diretor tem o",
+    "melhor plano",
+    "de saúde 🏥"
+   ]
+  },
+  {
+   "inicio": 3,
+   "fim": 5,
+   "fundo": "lima",
+   "linhas": [
+    "Afastado 6 meses,",
+    "a conta da casa é",
+    "*R$ 228 mil*",
+    "e o plano não paga"
+   ]
+  }
+ ],
+ "chamada": {
+  "inicio": 5,
+  "texto": "LEIA A LEGENDA 👇"
+ }
+}

@@ -1,0 +1,12 @@
+ter_1_empresaria VID_205711 cor
+ter_2_advogado VID_205743 pb
+qua_1_casal VID_210003 cor
+qua_2_diretor VID_205759 pb
+qui_1_empresa VID_205822 pb
+qui_2_restaurante VID_205849 cor
+sex_1_patrimonio VID_205944 cor
+sex_2_gerente VID_205723 pb
+sab_1_casamento VID_210037 pb
+sab_2_dentista VID_210114 cor
+dom_1_faculdade VID_205901 cor
+dom_2_renda VID_205836 pb

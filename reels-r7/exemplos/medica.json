@@ -1,0 +1,9 @@
+{
+  "telas": [
+    {"inicio": 0, "fim": 3, "fundo": "branco",
+     "linhas": ["Médica deixa", "*R$ 300 mil*", "na conta", "corrente 🏦"]},
+    {"inicio": 3, "fim": 5, "fundo": "lima",
+     "linhas": ["A inflação", "de 4,5% ao ano", "*pede R$ 13.500*", "só para empatar"]}
+  ],
+  "chamada": {"inicio": 5, "texto": "LEIA A LEGENDA 👇"}
+}

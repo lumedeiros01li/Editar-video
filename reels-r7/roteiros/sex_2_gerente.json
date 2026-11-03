@@ -1,0 +1,30 @@
+{
+ "telas": [
+  {
+   "inicio": 0,
+   "fim": 3,
+   "fundo": "branco",
+   "linhas": [
+    "Empresário recebe",
+    "a ligação do gerente",
+    "com uma",
+    "oportunidade 📞"
+   ]
+  },
+  {
+   "inicio": 3,
+   "fim": 5,
+   "fundo": "lima",
+   "linhas": [
+    "A pergunta que vem",
+    "antes de qualquer",
+    "oferta:",
+    "*para qual objetivo?*"
+   ]
+  }
+ ],
+ "chamada": {
+  "inicio": 5,
+  "texto": "LEIA A LEGENDA 👇"
+ }
+}
