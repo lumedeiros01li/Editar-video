@@ -1,0 +1,996 @@
+<title>Playbook @lucasmedeiros.ai</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: coluna única de leitura, estilo Swiss Noite e Limão do brand kit. Barra de 12px no topo, etiquetas mono, canto reto, limão como único sinal. */
+:root{
+  --bg:#0A0A0A; --bg-alt:#151515; --ink:#FFFFFF; --ink-soft:#B5B5B5; --line:#FFFFFF; --rule:#2B2B2B;
+  --accent:#D4FF3A; --on-accent:#0A0A0A; --hl-border:#D4FF3A; --hl-bg:transparent; --hl-ink:inherit;
+  --bad:#FF6B5E; --ok:#3ED598; --warn:#F2C14E;
+  --font-grotesk:"Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#F2F2F2; --bg-alt:#FFFFFF; --ink:#0A0A0A; --ink-soft:#4D4D4D; --line:#0A0A0A; --rule:#D3D3D3;
+    --accent:#D4FF3A; --on-accent:#0A0A0A; --hl-border:transparent; --hl-bg:#D4FF3A; --hl-ink:#0A0A0A;
+    --bad:#B42318; --ok:#00875F; --warn:#9A6B00; color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#F2F2F2; --bg-alt:#FFFFFF; --ink:#0A0A0A; --ink-soft:#4D4D4D; --line:#0A0A0A; --rule:#D3D3D3;
+  --accent:#D4FF3A; --on-accent:#0A0A0A; --hl-border:transparent; --hl-bg:#D4FF3A; --hl-ink:#0A0A0A;
+  --bad:#B42318; --ok:#00875F; --warn:#9A6B00; color-scheme:light;
+}
+:root[data-theme="dark"]{
+  --bg:#0A0A0A; --bg-alt:#151515; --ink:#FFFFFF; --ink-soft:#B5B5B5; --line:#FFFFFF; --rule:#2B2B2B;
+  --accent:#D4FF3A; --on-accent:#0A0A0A; --hl-border:#D4FF3A; --hl-bg:transparent; --hl-ink:inherit;
+  --bad:#FF6B5E; --ok:#3ED598; --warn:#F2C14E; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-grotesk);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.barra{height:12px;background:var(--line)}
+a{color:inherit;text-underline-offset:3px}
+.mono,.tag,.label{font-family:var(--font-mono)}
+.tag{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+h1,h2,h3,h4{font-weight:800;letter-spacing:-.03em;line-height:.98;text-wrap:balance;margin:0}
+h1{font-size:clamp(40px,8vw,92px)}
+h2{font-size:clamp(30px,4.6vw,52px)}
+h3{font-size:clamp(21px,2.6vw,28px);line-height:1.08}
+h4{font-size:18px;letter-spacing:-.01em;line-height:1.2}
+p{margin:0;max-width:68ch}
+.hl{display:inline;border-bottom:.09em solid var(--hl-border);background:var(--hl-bg);color:var(--hl-ink);padding:0 .06em}
+.soft{color:var(--ink-soft)}
+.bad{color:var(--bad)}
+.stack{display:flex;flex-direction:column;gap:16px}
+.stack-lg{display:flex;flex-direction:column;gap:28px}
+
+/* topo */
+header.top{padding-block:36px 40px;display:flex;flex-direction:column;gap:22px}
+.top-row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.lede{font-size:clamp(18px,2.2vw,22px);line-height:1.4;max-width:60ch}
+
+/* navegação */
+nav.idx{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);border-top:3px solid var(--line);border-bottom:1px solid var(--rule)}
+nav.idx .wrap{overflow-x:auto;scrollbar-width:none}
+nav.idx ol{list-style:none;display:flex;gap:4px;margin:0;padding:10px 0;white-space:nowrap}
+nav.idx a{display:block;padding:6px 10px;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;color:var(--ink-soft)}
+nav.idx a:hover,nav.idx a:focus-visible{color:var(--ink);outline:none;background:var(--bg-alt)}
+
+section.sec{padding-block:56px;border-bottom:1px solid var(--rule);scroll-margin-top:60px}
+.sec-head{display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
+
+/* números de abertura */
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:0;border:3px solid var(--line)}
+.fact{padding:20px 22px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);display:flex;flex-direction:column;gap:8px;min-width:0}
+.fact b{font-size:clamp(34px,4.4vw,48px);font-weight:800;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.fact span{font-size:14px;color:var(--ink-soft);line-height:1.4}
+.fact.signal{background:var(--accent);color:var(--on-accent)}
+.fact.signal span{color:var(--on-accent)}
+
+.summary{counter-reset:s;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.summary li{display:grid;grid-template-columns:44px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--rule);font-size:17px}
+.summary li::before{counter-increment:s;content:counter(s);font-family:var(--font-mono);font-size:13px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:var(--accent);color:var(--on-accent)}
+
+/* checklist */
+.prog{display:flex;align-items:center;gap:14px;font-family:var(--font-mono);font-size:13px}
+.prog-bar{flex:1;max-width:320px;height:10px;border:2px solid var(--line);position:relative}
+.prog-bar i{position:absolute;inset:0 auto 0 0;background:var(--accent);width:0;transition:width .2s}
+.checks{list-style:none;margin:0;padding:0;border-top:3px solid var(--line)}
+.checks li{border-bottom:1px solid var(--rule)}
+.checks label{display:grid;grid-template-columns:28px 1fr auto;gap:14px;align-items:start;padding:14px 0;cursor:pointer}
+.checks input{appearance:none;width:22px;height:22px;border:2px solid var(--line);margin:2px 0 0;display:grid;place-content:center;cursor:pointer}
+.checks input:checked{background:var(--accent);border-color:var(--accent)}
+.checks input:checked::after{content:"";width:10px;height:6px;border-left:3px solid var(--on-accent);border-bottom:3px solid var(--on-accent);transform:rotate(-45deg) translate(1px,-1px)}
+.checks input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.checks .t{display:flex;flex-direction:column;gap:3px;min-width:0}
+.checks .t strong{font-weight:700}
+.checks .t small{color:var(--ink-soft);font-size:14px;line-height:1.45}
+.checks .min{font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);white-space:nowrap;padding-top:3px}
+.checks li.done .t strong{text-decoration:line-through;color:var(--ink-soft)}
+.when{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:18px 0 8px;color:var(--ink)}
+
+/* tabelas */
+.tbl{overflow-x:auto;border-top:3px solid var(--line)}
+table{border-collapse:collapse;width:100%;font-size:15px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;vertical-align:top;padding:12px 14px 12px 0;border-bottom:1px solid var(--rule)}
+th{font-family:var(--font-mono);font-weight:500;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+td.num,th.num{text-align:right;white-space:nowrap}
+td .pill{display:inline-block;font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border:1.5px solid currentColor;white-space:nowrap}
+.pill.bad{color:var(--bad)} .pill.ok{color:var(--ok)} .pill.warn{color:var(--warn)}
+
+/* blocos de copiar */
+.copy{border:3px solid var(--line);background:var(--bg-alt)}
+.copy-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--rule)}
+.copy pre{margin:0;padding:16px 14px;font-family:var(--font-grotesk);font-size:17px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+.copy.rec{border-color:var(--accent)}
+.copy.rec .copy-head{background:var(--accent);color:var(--on-accent);border-bottom-color:var(--accent)}
+.copy.rec .copy-head .tag{color:var(--on-accent)}
+button{font:inherit;cursor:pointer}
+.btn{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;background:transparent;color:inherit;border:1.5px solid currentColor;padding:5px 10px}
+.btn:hover{background:var(--ink);color:var(--bg)}
+.copy.rec .btn:hover{background:var(--on-accent);color:var(--accent)}
+.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.grid2>*,.grid3>*{min-width:0}
+.box{border:1px solid var(--rule);padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.box.strong{border:3px solid var(--line)}
+.analysis{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:15px}
+.analysis li{display:grid;grid-template-columns:18px 1fr;gap:8px}
+.analysis li::before{content:"";width:10px;height:10px;margin-top:7px;background:var(--ink-soft)}
+.analysis li.plus::before{background:var(--ok)}
+.analysis li.minus::before{background:var(--bad)}
+
+/* modelos */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.filters button{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:8px 12px;border:1.5px solid var(--line);background:transparent;color:var(--ink)}
+.filters button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.filters button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.models{display:flex;flex-direction:column;gap:28px}
+.model{border:3px solid var(--line);background:var(--bg);scroll-margin-top:70px}
+.model-head{display:grid;grid-template-columns:auto 1fr;gap:16px;padding:18px 20px;border-bottom:1px solid var(--rule);align-items:start}
+.mcode{font-family:var(--font-mono);font-size:13px;font-weight:500;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--accent);color:var(--on-accent)}
+.model-head .meta{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.model-body{padding:20px;display:flex;flex-direction:column;gap:22px}
+.evid{border-left:6px solid var(--accent);padding:4px 0 4px 14px;font-size:15px}
+.timeline{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+.timeline li{display:grid;grid-template-columns:86px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid var(--rule);font-size:15px}
+.timeline li span{font-family:var(--font-mono);font-size:12.5px;color:var(--ink-soft);padding-top:2px}
+.tpl{font-size:clamp(18px,2.2vw,22px);font-weight:700;letter-spacing:-.01em;line-height:1.3}
+.tpl em{font-style:normal;color:var(--ink-soft);font-weight:500}
+.ex{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;border-top:1px solid var(--rule)}
+.ex li{padding:11px 0;border-bottom:1px solid var(--rule);display:flex;flex-direction:column;gap:3px}
+.ex li b{font-weight:700}
+.ex li small{color:var(--ink-soft);font-size:13.5px}
+details.script{border:1px solid var(--rule)}
+details.script summary{cursor:pointer;padding:12px 14px;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.script summary::-webkit-details-marker{display:none}
+details.script summary::after{content:"+";font-size:16px}
+details.script[open] summary::after{content:"−"}
+details.script summary:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+.script-body{padding:4px 14px 18px;display:flex;flex-direction:column;gap:14px}
+.fala{display:flex;flex-direction:column;gap:10px;font-size:16.5px;line-height:1.6}
+.fala p{max-width:none}
+.fala .b{font-family:var(--font-mono);font-size:12px;display:inline-block;min-width:26px;padding:1px 6px;margin-right:8px;border:1.5px solid var(--line);text-align:center}
+.mk{font-family:var(--font-mono);font-size:.82em;color:var(--ink-soft)}
+.screens{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.screen{aspect-ratio:9/16;max-width:100%;border:3px solid var(--line);padding:14px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;background:var(--bg-alt)}
+.screen .tag{font-size:10.5px}
+.screen p{font-weight:800;letter-spacing:-.02em;line-height:1.05;font-size:clamp(17px,2vw,21px)}
+.screen.red p{color:var(--bad)}
+.screen .chip{align-self:flex-start;background:var(--accent);color:var(--on-accent);font-weight:800;font-size:12px;padding:6px 10px;text-transform:uppercase}
+.slides{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.slide{border:3px solid var(--line);aspect-ratio:4/5;max-width:100%;padding:14px;display:flex;flex-direction:column;justify-content:space-between;gap:8px;min-width:0;overflow:hidden}
+.slide.noite{background:var(--bg-alt)}
+.slide.claro{background:var(--bg)}
+.slide.limao{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.slide.limao .tag{color:var(--on-accent)}
+.slide h4{font-size:clamp(15px,1.7vw,18px);line-height:1.12;letter-spacing:-.02em}
+.slide p{font-size:13px;line-height:1.4}
+.strike{text-decoration:line-through}
+
+/* calendário */
+.cal td:first-child{white-space:nowrap;font-family:var(--font-mono);font-size:13px}
+.cal td small{display:block;color:var(--ink-soft);font-size:13px}
+.cal tr.week td{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding-top:22px;color:var(--ink)}
+.cal input{width:20px;height:20px;accent-color:var(--accent)}
+.fmt{font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;padding:2px 6px;border:1.5px solid var(--ink-soft);color:var(--ink-soft);margin-right:6px;white-space:nowrap}
+.fmt.f{border-color:var(--ink);color:var(--ink)}
+.fmt.g{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+
+footer{padding-block:40px 64px;color:var(--ink-soft);font-size:14px}
+footer p{max-width:80ch}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--accent);color:var(--on-accent);font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:10px 16px;z-index:20}
+@media (max-width:560px){
+  .checks label{grid-template-columns:28px 1fr}
+  .checks .min{grid-column:2;padding-top:0}
+  .model-head{grid-template-columns:1fr}
+  .timeline li{grid-template-columns:70px 1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+</style>
+
+<div class="barra" role="presentation"></div>
+<div class="wrap">
+  <header class="top">
+    <div class="top-row">
+      <span class="tag">Playbook · Instagram · 08/11/2026</span>
+      <span class="tag">@lucasmedeiros.ai · 170 seguidores</span>
+    </div>
+    <h1>Playbook <span class="hl">@lucasmedeiros.ai</span></h1>
+    <p class="lede">O que fazer nas próximas 48 horas e nos próximos 14 dias para tirar o perfil de 88 plays por Reel. Bio pronta para colar, 12 modelos de produção e calendário até 22/11, tudo com base no seu painel, nos 150 Reels coletados no Apify e nas três referências.</p>
+  </header>
+</div>
+
+<nav class="idx" aria-label="Seções">
+  <div class="wrap">
+    <ol>
+      <li><a href="#resumo">Resumo</a></li>
+      <li><a href="#acoes">48 horas</a></li>
+      <li><a href="#perfil">Perfil e bio</a></li>
+      <li><a href="#modelos">Modelos</a></li>
+      <li><a href="#calendario">14 dias</a></li>
+      <li><a href="#regua">Régua</a></li>
+      <li><a href="#compliance">Compliance</a></li>
+    </ol>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- RESUMO -->
+<section class="sec" id="resumo">
+  <div class="sec-head">
+    <span class="tag">01 · Resumo</span>
+    <h2>O primeiro segundo decide. O resto vem depois.</h2>
+  </div>
+  <div class="stack-lg">
+    <div class="facts">
+      <div class="fact signal"><b>1.514</b><span>views de mediana nos Reels com pulo abaixo de 55%. Acima de 70% de pulo, a mediana é 76.</span></div>
+      <div class="fact"><b>51 · 15</b><span>envios e seguidores do falado "10 mil de renda aos 60". É a peça que mais converte no perfil.</span></div>
+      <div class="fact"><b>0</b><span>comentários com CONTA, usada em todos os Reels do período.</span></div>
+      <div class="fact"><b>2,5%</b><span>das visitas ao perfil tocam no link. 1 toque por semana em 36 a 42 visitas.</span></div>
+    </div>
+    <ol class="summary">
+      <li>A taxa de pulo explica as views: nos 38 Reels do painel com esse dado, a correlação é de 0,76. O trabalho principal é o gancho e o primeiro quadro.</li>
+      <li>O Reel de gráfico fez os 3 maiores resultados do perfil e saiu do feed em 31/10. Ele volta, 3 por semana.</li>
+      <li>O falado sentado com conta é o que traz seguidor. O R7 tem views infladas por replay (824 views de 157 pessoas no Reel dos sócios) e passa a ser teste, não volume.</li>
+      <li>O perfil não converte visita em contato. Nome, bio, fixados, destaques e a primeira tela do Typebot mudam esta semana.</li>
+      <li>A chamada muda de "comenta CONTA" para uma pergunta que a pessoa responde em uma palavra. A cadência cai para 2 peças por dia, com gravação em lote.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- AÇÕES 48H -->
+<section class="sec" id="acoes">
+  <div class="sec-head">
+    <span class="tag">02 · Próximas 48 horas</span>
+    <h2>Checklist de execução</h2>
+    <div class="prog" aria-live="polite"><span id="prog-txt">0 de 12 feitos</span><div class="prog-bar" aria-hidden="true"><i id="prog-fill"></i></div></div>
+    <p class="soft">As marcações ficam salvas só neste navegador.</p>
+  </div>
+  <ul class="checks" id="checks">
+    <li class="when">Hoje, domingo 08/11 (40 min)</li>
+    <li><label><input type="checkbox" id="c-fixar" data-check><span class="t"><strong>Fixar os 3 posts</strong><small>Inflação de 7 países, "10 mil de renda aos 60" e o carrossel "A primeira reunião comigo". Detalhes na seção Perfil.</small></span><span class="min">5 min</span></label></li>
+    <li><label><input type="checkbox" id="c-nome" data-check><span class="t"><strong>Trocar o campo de nome</strong><small>"Lucas Medeiros | Assessor de Investimentos". Tira "Investidor profissional", que é categoria regulada.</small></span><span class="min">2 min</span></label></li>
+    <li><label><input type="checkbox" id="c-bio" data-check><span class="t"><strong>Trocar a bio pela V1</strong><small>Mandar antes para o compliance aprovar a linha de identificação. Enquanto não aprovam, pelo menos tirar "AI" e "Maior Escritório XP do Brasil".</small></span><span class="min">5 min</span></label></li>
+    <li><label><input type="checkbox" id="c-seguindo" data-check><span class="t"><strong>Revisar quem você segue</strong><small>386 seguindo para 170 seguidores passa leitura de perfil pessoal. Deixe contas do nicho e de clientes possíveis.</small></span><span class="min">20 min</span></label></li>
+    <li><label><input type="checkbox" id="c-selo" data-check><span class="t"><strong>Tirar o selo azul dos modelos de carrossel</strong><small>A conta não é verificada. O selo desenhado no cabeçalho é risco de reputação e de compliance.</small></span><span class="min">5 min</span></label></li>
+    <li class="when">Segunda 09/11 (3 h)</li>
+    <li><label><input type="checkbox" id="c-typebot" data-check><span class="t"><strong>Reescrever a primeira tela do Typebot</strong><small>Texto pronto na seção Perfil. Ela repete a promessa da bio e faz 4 perguntas.</small></span><span class="min">30 min</span></label></li>
+    <li><label><input type="checkbox" id="c-destaques" data-check><span class="t"><strong>Criar 4 destaques</strong><small>Comece aqui, Diagnóstico, Contas e Proteção. Capas no padrão Noite, sem emoji.</small></span><span class="min">40 min</span></label></li>
+    <li><label><input type="checkbox" id="c-sessao1" data-check><span class="t"><strong>Sessão de gravação 1: 4 falados</strong><small>Quitar ou render, dentista de 180 mil, barco e imóvel. Os 4 roteiros estão prontos na seção Modelos.</small></span><span class="min">1h30</span></label></li>
+    <li><label><input type="checkbox" id="c-grafico" data-check><span class="t"><strong>Produzir 2 Reels de gráfico</strong><small>Carro de 250 mil contra 250 mil aplicados e 100 mil de 2010 em dólar. Conferir os números marcados antes.</small></span><span class="min">40 min</span></label></li>
+    <li><label><input type="checkbox" id="c-post1" data-check><span class="t"><strong>Publicar o gráfico às 12h e o falado do quitar às 17h30</strong><small>Legenda de 3 linhas e chamada "Comenta QUITO ou RENDE". Responder todo comentário na primeira hora.</small></span><span class="min">15 min</span></label></li>
+    <li class="when">Terça 10/11 (20 min)</li>
+    <li><label><input type="checkbox" id="c-medir" data-check><span class="t"><strong>Anotar os números de segunda</strong><small>Taxa de pulo, pessoas alcançadas, envios e seguidores de cada peça. Views só como referência.</small></span><span class="min">10 min</span></label></li>
+    <li><label><input type="checkbox" id="c-interacao" data-check><span class="t"><strong>Começar a rodada de interação diária</strong><small>20 min antes de postar: 5 contas grandes do seu público, 3 pares do seu tamanho, 2 clientes possíveis. Comentário de verdade, nunca venda.</small></span><span class="min">20 min</span></label></li>
+  </ul>
+</section>
+
+<!-- PERFIL -->
+<section class="sec" id="perfil">
+  <div class="sec-head">
+    <span class="tag">03 · Perfil e bio</span>
+    <h2>O perfil é a tela onde a pessoa decide</h2>
+    <p class="soft">Quem chega de um Reel tem uns 3 segundos para responder duas perguntas: isso é para mim, e o que eu faço agora? Hoje o perfil não responde nenhuma das duas.</p>
+  </div>
+
+  <div class="stack-lg">
+    <div class="stack">
+      <h3>O funil hoje</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Semana</th><th class="num">Alcance</th><th class="num">Visitas ao perfil</th><th class="num">Toques no link</th><th class="num">Contatos</th><th>Leitura</th></tr></thead>
+        <tbody>
+          <tr><td>18 a 24/10</td><td class="num">3.902</td><td class="num">36 (0,9%)</td><td class="num">1 (2,8%)</td><td class="num">0</td><td>+64 seguidores, só 2 atribuídos aos posts</td></tr>
+          <tr><td>26/10 a 01/11</td><td class="num">2.156</td><td class="num">42 (1,9%)</td><td class="num">1 (2,4%)</td><td class="num">sem dado</td><td>+16 seguidores, 15 vieram de um Reel</td></tr>
+        </tbody>
+      </table></div>
+      <p class="soft">Fonte: Insights enviados ao painel. Alcance da semana 2 é visualizadores.</p>
+    </div>
+
+    <div class="stack">
+      <h3>Diagnóstico linha a linha</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Item</th><th>Como está</th><th>Problema</th><th>Correção</th></tr></thead>
+        <tbody>
+          <tr><td>Nome</td><td>Lucas Medeiros | Investidor profissional</td><td>"Investidor profissional" é categoria da CVM (mais de R$ 10 milhões aplicados). Ninguém busca esse termo atrás de assessor.</td><td><span class="pill ok">trocar</span> Assessor de Investimentos</td></tr>
+          <tr><td>Bio, linha 1</td><td>Construo e desenvolvo seu planejamento financeiro, sucessório e tributário PJ e PF</td><td>82 caracteres de lista de serviço, dois verbos com o mesmo sentido, nenhum público. "PJ e PF" é jargão.</td><td><span class="pill ok">trocar</span> Público e promessa</td></tr>
+          <tr><td>Bio, linha 2</td><td>AI no Maior Escritório XP do Brasil</td><td>"AI" lê como inteligência artificial, ainda mais com o .ai do @. Superlativo sem fonte aprovada é risco de compliance.</td><td><span class="pill ok">trocar</span> Identificação simples</td></tr>
+          <tr><td>Bio, linha 3</td><td>Comece pelo diagnóstico 👇</td><td>Funciona. Diz o que fazer.</td><td><span class="pill warn">manter</span> "gratuito" se for</td></tr>
+          <tr><td>Link</td><td>typebot.co/lucasmedeirosai</td><td>1 toque por semana. A bio não promete nada que o link entregue, então ninguém clica.</td><td><span class="pill ok">ajustar</span> Primeira tela</td></tr>
+          <tr><td>Fixados</td><td>Nenhum</td><td>O topo da grade é o que saiu por último, hoje R7 de 50 a 136 plays.</td><td><span class="pill ok">fixar</span> 3 posts</td></tr>
+          <tr><td>Destaques</td><td>Não vistos na coleta</td><td>Sem como avaliar. Se não existem, a pessoa não tem onde entender a oferta.</td><td><span class="pill ok">criar</span> 4 destaques</td></tr>
+          <tr><td>@</td><td>lucasmedeiros.ai</td><td>Legível, mas o .ai confunde com inteligência artificial. Trocar custa links e menções.</td><td><span class="pill warn">depois</span> Não é prioridade</td></tr>
+          <tr><td>Seguindo</td><td>386 para 170 seguidores</td><td>As referências seguem de 6 a 66. Pesa na leitura de autoridade.</td><td><span class="pill ok">limpar</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="stack">
+      <h3>Campo de nome</h3>
+      <p>O nome em negrito entra na busca do Instagram. Use o termo que o cliente digita.</p>
+      <div class="grid3">
+        <div class="copy rec"><div class="copy-head"><span class="tag">Recomendado · 42 caracteres</span><button class="btn" data-copy="n1">Copiar</button></div><pre id="n1">Lucas Medeiros | Assessor de Investimentos</pre></div>
+        <div class="copy"><div class="copy-head"><span class="tag">Opção B · 40</span><button class="btn" data-copy="n2">Copiar</button></div><pre id="n2">Lucas Medeiros | Planejamento Financeiro</pre></div>
+        <div class="copy"><div class="copy-head"><span class="tag">Opção C · 38</span><button class="btn" data-copy="n3">Copiar</button></div><pre id="n3">Lucas Medeiros | Patrimônio e Proteção</pre></div>
+      </div>
+      <p class="soft">A recomendada é a única que diz a profissão regulada, e é o que dá confiança a quem não te conhece. A B pega mais busca genérica. A C diferencia, mas ninguém busca "patrimônio e proteção".</p>
+    </div>
+
+    <div class="stack">
+      <h3>Bio completa: 3 versões analisadas</h3>
+      <p>Cada linha tem um trabalho. Linha 1: para quem é e o que muda. Linha 2: quem é você e a instituição (exigência da Resolução CVM 178). Linha 3: o que fazer agora. A do Pedro, a melhor das referências, segue essa ordem e tem 118 caracteres.</p>
+
+      <div class="grid2">
+        <div class="stack">
+          <div class="copy rec"><div class="copy-head"><span class="tag">V1 · Recomendada · 144 caracteres</span><button class="btn" data-copy="b1">Copiar</button></div><pre id="b1">Tem empresa ou renda alta? Faço a conta do seu patrimônio
+Proteção, sucessão e investimentos | Assessor InvestSmart XP
+Comece pelo diagnóstico 👇</pre></div>
+          <ul class="analysis">
+            <li class="plus">Linha 1 nomeia o público em forma de pergunta. Quem é, se reconhece em 1 segundo.</li>
+            <li class="plus">"Faço a conta" é o seu diferencial, o mesmo dos Reels. Nenhuma referência promete mostrar a conta.</li>
+            <li class="plus">Linha 2 junta os 3 pilares com a identificação exigida.</li>
+            <li class="minus">Sem diferencial de preço como o "fee fixo" do Pedro. Se o modelo fee based de pessoa física puder ser dito, ele entra aqui depois do compliance.</li>
+          </ul>
+        </div>
+        <div class="stack">
+          <div class="copy"><div class="copy-head"><span class="tag">V2 · Posicionamento · 136</span><button class="btn" data-copy="b2">Copiar</button></div><pre id="b2">Proteção antes de rentabilidade pra quem tem empresa e família
+Assessor de investimentos CNPI | InvestSmart XP
+Comece pelo diagnóstico 👇</pre></div>
+          <ul class="analysis">
+            <li class="plus">Linha 1 é a tese do brand kit. Diferencia de quem fala só de rendimento.</li>
+            <li class="plus">CNPI é credencial que nenhuma das três referências mostra.</li>
+            <li class="minus">"Empresa e família" é menos específico que "renda alta". Atrai também quem não tem patrimônio.</li>
+            <li class="minus">Não diz o que a pessoa ganha. Fala de você, não dela.</li>
+          </ul>
+        </div>
+        <div class="stack">
+          <div class="copy"><div class="copy-head"><span class="tag">V3 · Metáfora · 124</span><button class="btn" data-copy="b3">Copiar</button></div><pre id="b3">O CFO da vida financeira de quem ganha bem
+Patrimônio, proteção e sucessão | Assessor InvestSmart XP
+Diagnóstico de 40 min 👇</pre></div>
+          <ul class="analysis">
+            <li class="plus">Curta e memorável. Empresário entende CFO na hora.</li>
+            <li class="plus">"40 min" tira o medo de compromisso longo.</li>
+            <li class="minus">Metáfora pede um segundo de interpretação. Iniciante não sabe o que é CFO.</li>
+            <li class="minus">"CFO" pode soar como cargo. Confirme com o compliance.</li>
+          </ul>
+        </div>
+        <div class="box strong">
+          <span class="tag">Como decidir</span>
+          <p>Comece pela V1. Ela é a mais clara para quem chega de um Reel, e clareza é o que falta hoje (1 toque no link por semana).</p>
+          <p>Em 22/11, compare os toques no link das semanas 18/10 a 01/11 (1 por semana) com as semanas da V1. Se não passar de 3 por semana, teste a V2 por mais 14 dias.</p>
+          <p class="soft">Se o diagnóstico for gratuito, troque a linha 3 por "Diagnóstico gratuito 👇". É o gatilho que o Pedro usa.</p>
+          <p class="soft">[REVISAR COMPLIANCE] na linha de identificação de todas as versões.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stack">
+      <h3>Primeira tela do Typebot</h3>
+      <p>Ela repete a promessa da bio, faz 4 perguntas de clique e termina em agendamento. O filtro de patrimônio do seu funil (a partir de R$ 100 mil) entra na pergunta 2, em faixa, nunca com valor exato.</p>
+      <div class="copy"><div class="copy-head"><span class="tag">Roteiro do Typebot</span><button class="btn" data-copy="tb">Copiar</button></div><pre id="tb">Tela 1
+Oi, aqui é o Lucas. Eu faço a conta do seu patrimônio antes de falar de investimento.
+Em 4 perguntas eu vejo se o diagnóstico faz sentido pra você.
+[Começar]
+
+Pergunta 1. Hoje você é:
+( ) Dono de empresa ou sócio
+( ) Profissional liberal (médico, dentista, advogado...)
+( ) Executivo ou CLT de renda alta
+( ) Outro
+
+Pergunta 2. Quanto você tem investido hoje, mais ou menos?
+( ) Até R$ 100 mil
+( ) De R$ 100 mil a R$ 500 mil
+( ) De R$ 500 mil a R$ 2 milhões
+( ) Acima de R$ 2 milhões
+
+Pergunta 3. O que mais te preocupa agora?
+( ) Proteger a família se a renda parar
+( ) Sucessão e herança
+( ) Imposto
+( ) Fazer o dinheiro render melhor
+( ) Organizar o orçamento
+
+Pergunta 4. Como prefere conversar?
+( ) WhatsApp
+( ) Direct do Instagram
+
+Final, a partir de R$ 100 mil
+Perfeito. O diagnóstico leva de 40 a 50 minutos, online ou em Campo Grande.
+[Escolher horário]
+
+Final, até R$ 100 mil
+Obrigado. Nessa fase, o que mais ajuda é organizar reserva e proteção.
+Os Reels de conta do perfil foram feitos pra isso.
+[Voltar ao Instagram]</pre></div>
+      <p class="soft">Nunca pedir CPF, saldo exato, senha ou declaração de IR. Documento só na reunião.</p>
+    </div>
+
+    <div class="stack">
+      <h3>Os 3 fixados</h3>
+      <p>Três posts, três funções: provar alcance, mostrar você convertendo, explicar a oferta. Escolhidos pelos números do painel.</p>
+      <div class="grid3">
+        <div class="box strong"><span class="tag">Fixado 1 · Prova</span><h4>"O que custava 100 em 2000 custa 425 no Brasil e 111 no Japão"</h4><p class="soft">2.473 views, 37,5% de pulo, o menor do perfil. Mostra o que o perfil faz: a conta com dado.</p><p><b>Capa:</b> "100 em 2000. 425 hoje."</p></div>
+        <div class="box strong"><span class="tag">Fixado 2 · Você</span><h4>"10 mil de renda aos 60"</h4><p class="soft">51 envios e 15 seguidores, 88% dos envios da semana. É você falando sentado, com a conta. Substitui o ITCMD que eu indiquei antes, porque converte mais.</p><p><b>Capa:</b> "Quanto guardar pra ter 10 mil?"</p></div>
+        <div class="box strong"><span class="tag">Fixado 3 · Oferta</span><h4>"A primeira reunião comigo quase não tem investimento. Tem pergunta"</h4><p class="soft">Carrossel de 23/10. Explica o diagnóstico. Em 15/11, troque pelo carrossel novo do modelo C2.</p><p><b>Capa:</b> "Como funciona o diagnóstico"</p></div>
+      </div>
+    </div>
+
+    <div class="stack">
+      <h3>Destaques e grade</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Destaque</th><th>O que entra</th><th>Stories</th></tr></thead>
+        <tbody>
+          <tr><td>Comece aqui</td><td>Quem é você, para quem fala, o que faz e o que não faz (não indica investimento em público)</td><td class="num">3</td></tr>
+          <tr><td>Diagnóstico</td><td>Como funciona, quanto tempo (40 a 50 min), o que levar, link do Typebot</td><td class="num">4</td></tr>
+          <tr><td>Contas</td><td>Repost dos 5 Reels de conta com mais envios</td><td class="num">5</td></tr>
+          <tr><td>Proteção</td><td>Seguro de vida, afastamento e sucessão, com a conta de cada um</td><td class="num">4</td></tr>
+        </tbody>
+      </table></div>
+      <p><b>Grade:</b> toda capa de Reel com até 6 palavras, no padrão Noite do brand kit, e a série em etiqueta mono no topo (EXTRATO, DILEMA, GRÁFICO). Assim as 9 primeiras capas dizem do que a conta trata sem nenhum toque.</p>
+    </div>
+
+    <div class="stack">
+      <h3>Nota do perfil, antes e depois</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>Item da rubrica</th><th class="num">Hoje</th><th class="num">Depois</th><th>O que muda</th></tr></thead>
+        <tbody>
+          <tr><td>Campo de nome</td><td class="num">5/12</td><td class="num">10/12</td><td>Termo que o cliente busca</td></tr>
+          <tr><td>Bio, linha 1</td><td class="num">4/12</td><td class="num">10/12</td><td>Público e promessa</td></tr>
+          <tr><td>Resto da bio</td><td class="num">3/8</td><td class="num">6/8</td><td>Sem superlativo, com pilares</td></tr>
+          <tr><td>Três fixados</td><td class="num">0/10</td><td class="num">9/10</td><td>Prova, você, oferta</td></tr>
+          <tr><td>Link</td><td class="num">6/8</td><td class="num">7/8</td><td>Primeira tela alinhada à bio</td></tr>
+          <tr><td>@, categoria, atividade</td><td class="num">16/22</td><td class="num">18/22</td><td>Postagem diária e respostas</td></tr>
+          <tr><td><b>Total verificável</b></td><td class="num"><b>34/74</b></td><td class="num"><b>60/74</b></td><td>De 46% para 81%</td></tr>
+        </tbody>
+      </table></div>
+      <p class="soft">Os 26 pontos que faltam (destaques, grade, foto e stories) dependem de print. Mande o topo do perfil depois das trocas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MODELOS -->
+<section class="sec" id="modelos">
+  <div class="sec-head">
+    <span class="tag">04 · Coleção de modelos</span>
+    <h2>12 modelos para produzir</h2>
+    <p class="soft">Cada modelo tem a evidência, a estrutura por segundo, o gancho para preencher e exemplos. Os roteiros completos abrem no botão de cada um. Valores de personagem são simulação.</p>
+  </div>
+
+  <div class="stack" style="margin-bottom:28px">
+    <h3>Regras que valem para todos</h3>
+    <div class="grid2">
+      <ul class="analysis">
+        <li>Gancho com até 8 palavras faladas e número na primeira ou segunda palavra.</li>
+        <li>Fale com quem assiste ("seu", "você"). Terceira pessoa ("Um casal...") fez mediana de 54 plays.</li>
+        <li>Primeiro quadro em movimento, com o texto do gancho já na tela.</li>
+        <li>Nada de lei, artigo ou número de processo no gancho e na legenda. Fonte vai no rodapé do vídeo.</li>
+      </ul>
+      <ul class="analysis">
+        <li>Legenda de 3 linhas: gancho com valor, número de tensão, chamada.</li>
+        <li>Chamada pela resposta: duas palavras opostas (QUITO ou RENDE) ou um palpite.</li>
+        <li>Palavra-chave para o direct só em 1 de cada 3 Reels, nos de conta pessoal.</li>
+        <li>"Simulação" fixo no canto sempre que o número for de personagem.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="filters" role="group" aria-label="Filtrar modelos">
+    <button type="button" data-filter="all" aria-pressed="true">Todos · 12</button>
+    <button type="button" data-filter="falado" aria-pressed="false">Falado · 6</button>
+    <button type="button" data-filter="grafico" aria-pressed="false">Gráfico · 2</button>
+    <button type="button" data-filter="r7" aria-pressed="false">R7 · 2</button>
+    <button type="button" data-filter="carrossel" aria-pressed="false">Carrossel · 2</button>
+  </div>
+
+  <div class="models" id="models">
+
+  <!-- F1 -->
+  <article class="model" data-kind="falado" id="f1">
+    <div class="model-head"><span class="mcode">F1</span><div><h3>Extrato do personagem</h3><div class="meta"><span class="tag">Falado · 40 a 45 s</span><span class="tag">3 por semana</span><span class="tag">Chamada: palpite</span></div></div></div>
+    <div class="model-body">
+      <p class="evid">Artur, ortodontista com 4 clínicas: 3.866 plays e 27 comentários (3,7x a mediana dele). Pedro, custo de vida de um juiz: 4.052 (1,6x). O mesmo tema no seu R7 de 7 s fez 0,3x. O que muda é o formato.</p>
+      <ol class="timeline">
+        <li><span>0 a 3 s</span>Gancho com profissão, valor e o pedido de palpite</li>
+        <li><span>3 a 8 s</span>Personagem em uma frase e "chuta nos comentários antes de eu mostrar"</li>
+        <li><span>8 a 30 s</span>Linhas do extrato com âncora repetida ("Só de escola, 11 mil.")</li>
+        <li><span>30 a 40 s</span>Linha final e a virada em vermelho (o custo que não para, a falta)</li>
+        <li><span>40 a 45 s</span>Pergunta-espelho para quem assiste</li>
+      </ol>
+      <div class="stack"><span class="tag">Gancho para preencher</span><p class="tpl">[Profissão] fatura [valor]. <em>Chuta quanto sobra.</em></p></div>
+      <ul class="ex">
+        <li><b>Fatura 180 mil. Chuta quanto sobra.</b><small>Dentista com 2 clínicas · roteiro completo abaixo</small></li>
+        <li><b>Gasta 110 mil por mês. Chuta quanto é viagem.</b><small>Construtor · do seu banco de ideias, 09/11</small></li>
+        <li><b>Ganha 62 mil e vive com 15. Onde está o resto?</b><small>Médico plantonista · do seu banco, 10/11</small></li>
+      </ul>
+      <details class="script"><summary>Roteiro completo: dentista de 180 mil</summary>
+        <div class="script-body">
+          <p class="soft">Energia firme · Topo fixo: "Sua clínica fatura R$ 180 mil? Chuta o que sobra" (nota 81 no hookscore)</p>
+          <div class="fala">
+            <p><span class="b">①</span>Fatura 180 mil. / Chuta quanto sobra. <span class="mk">//</span> Imagina uma dentista com duas clínicas. / 180 mil de faturamento por mês. / Antes de eu mostrar, / chuta nos comentários.</p>
+            <p><span class="b">②</span>Vamos lá. / Equipe, 48 mil. / Aluguel das duas, 18. / Material e laboratório, 27. / Impostos, uns 25. / Outros custos, 12.</p>
+            <p><span class="b">③</span>Linha final: <span class="mk">//</span> <b>50 mil</b>. / Uns 28%. / Bom, né? / Agora repara. / Desses custos, 78 mil não param se ela parar. / Três meses de afastamento: <span class="mk">//</span> 234 mil.</p>
+            <p><span class="b">④</span>O faturamento some. / O custo fica. <span class="mk">//</span> Faturar alto não protege. / Caixa e cobertura protegem. <span class="mk">[olhar]</span> Se ela parar três meses, / de onde vêm os 234 mil?</p>
+          </div>
+          <p><b>Tela:</b> Faturamento R$ 180.000 · Equipe −48.000 · Aluguel −18.000 · Material −27.000 · Impostos −25.000 · Outros −12.000 · Sobra R$ 50.000 (28%) · em vermelho: Fixo que não para R$ 78.000/mês · 3 meses R$ 234.000. Rodapé: "Exemplo ilustrativo. Proteção conforme as coberturas contratadas."</p>
+          <div class="copy"><div class="copy-head"><span class="tag">Legenda</span><button class="btn" data-copy="l-f1">Copiar</button></div><pre id="l-f1">Dentista com 2 clínicas fatura R$ 180 mil por mês. Quanto sobra?
+R$ 78 mil de custo não param se ela parar de atender.
+Chuta nos comentários quanto sobra antes de ver a conta.</pre></div>
+        </div>
+      </details>
+    </div>
+  </article>
+
+  <!-- F2 -->
+  <article class="model" data-kind="falado" id="f2">
+    <div class="model-head"><span class="mcode">F2</span><div><h3>Dilema de dois lados</h3><div class="meta"><span class="tag">Falado · 40 a 50 s</span><span class="tag">2 por semana</span><span class="tag">Chamada: escolha entre duas palavras</span></div></div></div>
+    <div class="model-body">
+      <p class="evid">Pedro, "Empresto R$ 1 milhão pro meu filho?": 7.839 plays e 21 comentários (3,2x). Bernardo, "Faria esse acordo?": 11.786 e 84 comentários. Os dois lados precisam ser defensáveis. Se a conta tem resposta óbvia, não é dilema.</p>
+      <ol class="timeline">
+        <li><span>0 a 3 s</span>A decisão com o valor</li>
+        <li><span>3 a 10 s</span>Personagem hipotético e contexto</li>
+        <li><span>10 a 30 s</span>A conta dos dois lados, com "tira"</li>
+        <li><span>30 a 40 s</span>O detalhe que muda a decisão (liquidez, prazo, risco)</li>
+        <li><span>40 a 45 s</span>"Você [faria]?"</li>
+      </ol>
+      <div class="stack"><span class="tag">Gancho para preencher</span><p class="tpl">[Valor] [situação]. <em>Você [decisão]?</em></p></div>
+      <ul class="ex">
+        <li><b>600 mil investidos. Você quitaria o apartamento?</b><small>Roteiro completo abaixo · QUITO ou RENDE</small></li>
+        <li><b>Bônus de 100 mil. Quita o carro ou começa a reserva?</b><small>Do banco: "Recebo bônus anual. Onde coloco primeiro?" · CARRO ou RESERVA</small></li>
+        <li><b>Apartamento de 1,2 milhão. Vende e vai de aluguel?</b><small>Use o aluguel médio do FipeZAP contra o CDI · VENDO ou FICO</small></li>
+      </ul>
+      <details class="script"><summary>Roteiro completo: quitar ou deixar rendendo</summary>
+        <div class="script-body">
+          <p class="soft">Energia firme · Topo fixo: "R$ 600 mil investidos ou quitar?" (nota 84)</p>
+          <div class="fala">
+            <p><span class="b">①</span>600 mil investidos. / Você quitaria o apartamento? <span class="mk">//</span> Imagina um médico com 600 mil investidos / e 600 mil de saldo no financiamento. / Quito ou deixo rendendo?</p>
+            <p><span class="b">②</span>Deixa eu fazer essa conta com você. / O financiamento custa uns 12 ao ano. / Mais TR. / Mais seguro. <span class="mk">//</span> O investimento a 100% do CDI rende uns 13,6. / Tira 15% de imposto. / Sobram <b>11,6</b>.</p>
+            <p><span class="b">③</span>Na conta seca, / quitar ganha. <span class="mk">//</span> Por meio ponto. / Mas repara no dia seguinte. / Ele tem zero na conta. / Clínica parada três meses. / Quem paga os <b>60 mil</b> da casa?</p>
+            <p><span class="b">④</span>Dívida a 12 com reserva é uma coisa. / Imóvel quitado sem caixa é outra. <span class="mk">//</span> E se o contrato for de 9 ao ano, / a conta vira. <span class="mk">[olhar]</span> Você quitaria?</p>
+          </div>
+          <p><b>Tela:</b> Saldo R$ 600 mil · Investido R$ 600 mil · Financiamento 12% a.a. + TR + seguro · CDI 13,65% a.a. · Líquido 11,6% a.a. · Custo da casa R$ 20 mil/mês. Rodapé: "Simulação. Selic 13,75%, Copom de 04/11/2026. Não é recomendação."</p>
+          <p class="soft">[CONFERIR: taxa média de financiamento imobiliário no Banco Central]</p>
+          <div class="copy"><div class="copy-head"><span class="tag">Legenda</span><button class="btn" data-copy="l-f2">Copiar</button></div><pre id="l-f2">R$ 600 mil investidos e R$ 600 mil de financiamento. Quita?
+Na conta seca, quitar ganha por meio ponto. No dia seguinte, sobra zero de reserva.
+Você quitaria? Comenta QUITO ou RENDE.</pre></div>
+        </div>
+      </details>
+    </div>
+  </article>
+
+  <!-- F3 -->
+  <article class="model" data-kind="falado" id="f3">
+    <div class="model-head"><span class="mcode">F3</span><div><h3>Preço em patrimônio</h3><div class="meta"><span class="tag">Falado · 40 a 45 s</span><span class="tag">1 a 2 por semana</span><span class="tag">Chamada: SIM ou NÃO</span></div></div></div>
+    <div class="model-body">
+      <p class="evid">Artur, preço do luxo: mediana de 2,7x. Cavalo de hipismo 12.845 plays e 85 comentários, helicóptero 10.275, marina 5.703. A sua versão liga o luxo ao seu nicho: quanto patrimônio a pessoa precisa para bancar aquilo sem mexer no principal.</p>
+      <ol class="timeline">
+        <li><span>0 a 3 s</span>"X milhões só pra manter [coisa]"</li>
+        <li><span>3 a 12 s</span>O custo mensal, item por item</li>
+        <li><span>12 a 30 s</span>A conta do patrimônio em 3 faixas de custo</li>
+        <li><span>30 a 40 s</span>Concessão: "não tô dizendo que você não pode ter"</li>
+        <li><span>40 a 45 s</span>"Você bancaria?"</li>
+      </ol>
+      <div class="stack"><span class="tag">Fórmula</span><p class="tpl">Patrimônio = custo mensal × 313,7 <em>(12 ÷ 4,5% real ÷ 0,85 de imposto)</em></p><p class="soft">Mesma premissa do "10 mil de renda aos 60", que você já publicou.</p></div>
+      <ul class="ex">
+        <li><b>9 milhões só pra manter o seu barco.</b><small>Custo de 30 mil por mês · roteiro completo abaixo · [CONFERIR custo real]</small></li>
+        <li><b>1 milhão parado pra manter a casa de praia.</b><small>Do banco: R$ 3.270 por mês, R$ 1,03 milhão de patrimônio</small></li>
+        <li><b>3,8 milhões pra pagar a escola internacional.</b><small>2 filhos, R$ 12 mil por mês · [CONFERIR mensalidade real]</small></li>
+      </ul>
+      <details class="script"><summary>Roteiro completo: o barco</summary>
+        <div class="script-body">
+          <p class="soft">Energia leve · Topo fixo: "R$ 9 milhões só pra manter seu barco" (nota 87, a melhor da coleção)</p>
+          <div class="fala">
+            <p><span class="b">①</span>9 milhões / só pra manter o seu barco. <span class="mk">//</span> Não pra comprar. / Pra manter. / Imagina um barco que custa 30 mil por mês.</p>
+            <p><span class="b">②</span>Marina, / marinheiro, / manutenção, / combustível, / seguro. <span class="mk">//</span> E você quer pagar sem mexer no principal. / Deixa eu fazer a conta.</p>
+            <p><span class="b">③</span>Patrimônio rendendo 4,5 acima da inflação. / Tira 15% de imposto do rendimento. <span class="mk">//</span> Pra sobrar 30 mil, / são <b>9 milhões e 400</b>. / Se o barco custa 15 mil, / 4 milhões e 700. / Se custa 50, / quase 16 milhões.</p>
+            <p><span class="b">④</span>Não tô dizendo que você não pode ter o barco. / Tô dizendo que ele custa 9 milhões parados. <span class="mk">[olhar]</span> Você bancaria esse barco?</p>
+          </div>
+          <p><b>Tela:</b> Custo mensal R$ 30.000 · Retorno hipotético 4,5% a.a. acima da inflação · IR 15% · R$ 15 mil → R$ 4,7 mi · R$ 30 mil → R$ 9,4 mi · R$ 50 mil → R$ 15,7 mi. Rodapé: "Exemplo ilustrativo, não é promessa de resultado." Sem marca de barco ou marina.</p>
+          <div class="copy"><div class="copy-head"><span class="tag">Legenda</span><button class="btn" data-copy="l-f3">Copiar</button></div><pre id="l-f3">Barco de R$ 30 mil por mês pede R$ 9,4 milhões investidos.
+Isso só para manter, sem tocar no principal.
+Você bancaria esse barco? Comenta SIM ou NÃO.</pre></div>
+        </div>
+      </details>
+    </div>
+  </article>
+
+  <!-- F4 -->
+  <article class="model" data-kind="falado" id="f4">
+    <div class="model-head"><span class="mcode">F4</span><div><h3>Escada de cenários</h3><div class="meta"><span class="tag">Falado · 35 a 45 s</span><span class="tag">1 a 2 por semana</span><span class="tag">Chamada: o seu degrau</span></div></div></div>
+    <div class="model-body">
+      <p class="evid">É o molde do seu melhor Reel em conversão: "10 mil de renda aos 60" (aos 25, 35 e 45 anos) trouxe 51 envios e 15 seguidores, 20 seguidores a cada mil views. A revisão do painel de 02/11 já pedia repetir com outra idade e outro valor.</p>
+      <ol class="timeline">
+        <li><span>0 a 3 s</span>Pergunta com os 3 valores</li>
+        <li><span>3 a 8 s</span>A premissa, em uma frase</li>
+        <li><span>8 a 30 s</span>Mesmo molde, só um número muda ("Gasta 20? 120 mil.")</li>
+        <li><span>30 a 40 s</span>O salto entre os degraus</li>
+        <li><span>40 a 45 s</span>"Em qual degrau você está?"</li>
+      </ol>
+      <div class="stack"><span class="tag">Gancho para preencher</span><p class="tpl">[Valor A], [B] ou [C]? <em>[O que muda] tem um número.</em></p></div>
+      <ul class="ex">
+        <li><b>Gasta 20, 30 ou 50 mil? Sua reserva tem um número.</b><small>Roteiro completo abaixo</small></li>
+        <li><b>10 mil aos 65: começando aos 30, 40 ou 50?</b><small>R$ 3.144, R$ 5.749 e R$ 12.327 por mês. Mesmas premissas do Reel original</small></li>
+        <li><b>3 mil por mês a partir dos 25, 35 ou 45.</b><small>Do banco (G11). Funciona também como gráfico</small></li>
+      </ul>
+      <details class="script"><summary>Roteiro completo: reserva por padrão de vida</summary>
+        <div class="script-body">
+          <p class="soft">Energia firme · Topo fixo: "Gasta R$ 20, 30 ou 50 mil? Sua reserva é esta"</p>
+          <div class="fala">
+            <p><span class="b">①</span>Gasta 20, 30 ou 50 mil por mês? / A sua reserva tem um número. <span class="mk">//</span> Deixa eu fazer a conta com você.</p>
+            <p><span class="b">②</span>A regra que eu uso: / seis meses do custo da casa. / Não do salário. / Do custo.</p>
+            <p><span class="b">③</span>Gasta 20? / 120 mil. <span class="mk">//</span> Gasta 30? / 180 mil. <span class="mk">//</span> Gasta 50? / <b>300 mil</b>.</p>
+            <p><span class="b">④</span>E quem tem renda variável, / ou é dono de empresa, / eu levo pra 12 meses. / Aí vira 240, / 360 / e 600 mil.</p>
+            <p><span class="b">⑤</span>Repara que a reserva não cresce com o salário. / Cresce com o padrão de vida. <span class="mk">[olhar]</span> Em qual degrau você está?</p>
+          </div>
+          <p><b>Tela:</b> escada de 3 degraus, 6 meses e 12 meses: R$ 20 mil → 120 / 240 mil · R$ 30 mil → 180 / 360 mil · R$ 50 mil → 300 / 600 mil. Rodapé: "Critério de exemplo. A reserva certa depende do seu caso."</p>
+          <div class="copy"><div class="copy-head"><span class="tag">Legenda</span><button class="btn" data-copy="l-f4">Copiar</button></div><pre id="l-f4">Gasta R$ 20, 30 ou 50 mil por mês? A reserva vai de R$ 120 mil a R$ 600 mil.
+Ela cresce com o padrão de vida, não com o salário.
+Em qual degrau você está? Comenta 20, 30 ou 50.</pre></div>
+        </div>
+      </details>
+    </div>
+  </article>
+
+  <!-- F5 -->
+  <article class="model" data-kind="falado" id="f5">
+    <div class="model-head"><span class="mcode">F5</span><div><h3>Ouço em reunião</h3><div class="meta"><span class="tag">Falado · 40 a 45 s</span><span class="tag">1 a 2 por semana</span><span class="tag">Chamada: escolha</span></div></div></div>
+    <div class="model-body">
+      <p class="evid">Seus Reels de primeira pessoa em setembro fizeram de 2x a 2,7x a mediana: "Em conversa de sucessão, a pergunta sobre os filhos..." (439), "Fiz a conta que quase ninguém faz... cinco mentiras" (378), "Essa frase vende preguiça como se fosse esperteza" (340). Só com frase que você ouve de fato.</p>
+      <ol class="timeline">
+        <li><span>0 a 3 s</span>A frase que as pessoas dizem, ou o comentário real com o nome</li>
+        <li><span>3 a 6 s</span>Concessão: "em parte, tem razão"</li>
+        <li><span>6 a 30 s</span>A conta</li>
+        <li><span>30 a 40 s</span>O outro lado, honesto</li>
+        <li><span>40 a 45 s</span>Pergunta de escolha</li>
+      </ol>
+      <div class="stack"><span class="tag">Gancho para preencher</span><p class="tpl">[Resultado da conta em número]. <em>Todo mundo me fala: "[crença]".</em></p></div>
+      <ul class="ex">
+        <li><b>Seu imóvel de 1 milhão rende só 5 mil.</b><small>"Imóvel é o mais seguro" · roteiro completo abaixo</small></li>
+        <li><b>"Já tenho seguro pela empresa." Cobre quantos meses?</b><small>Do banco, 07/11 · validar condições gerais</small></li>
+        <li><b>"Seguro de vida é dinheiro jogado fora." Em parte, é.</b><small>Refaça o "balde alugado" de 70 s em 40 s</small></li>
+      </ul>
+      <details class="script"><summary>Roteiro completo: imóvel contra CDI</summary>
+        <div class="script-body">
+          <p class="soft">Energia calma · Topo fixo: "Seu imóvel de R$ 1 milhão rende só R$ 5 mil" (nota 73)</p>
+          <div class="fala">
+            <p><span class="b">①</span>Seu imóvel de 1 milhão / rende só 5 mil. <span class="mk">//</span> Todo mundo me fala: / "imóvel é o mais seguro". / Em parte, tem razão. / Imóvel não some.</p>
+            <p><span class="b">②</span>Mas olha a conta. / O aluguel médio paga uns 6% ao ano. / Em 1 milhão, / uns 5 mil por mês. <span class="mk">//</span> Bruto. / Antes de imposto, IPTU e mês vazio.</p>
+            <p><span class="b">③</span>O mesmo milhão no CDI / rende uns 10 mil e 700. / Tira o imposto: / uns 9 mil. <span class="mk">//</span> <b>Quase o dobro.</b> / Sem inquilino.</p>
+            <p><span class="b">④</span>Agora o outro lado. / O imóvel valoriza. / O aluguel reajusta. / O CDI não tem isso. <span class="mk">//</span> Então a pergunta não é imóvel ou CDI. <span class="mk">[olhar]</span> Você trocaria 1 milhão por 5 mil?</p>
+          </div>
+          <p><b>Tela:</b> Aluguel médio 6,13% a.a. bruto (FipeZAP, set/2026) · R$ 1 milhão → R$ 5.108/mês · CDI 13,65% → R$ 10.720 bruto · Líquido R$ 9.112. Rodapé: "Simulação. Rentabilidade bruta do aluguel. Não é recomendação."</p>
+          <p class="soft">[CONFERIR: relatório oficial FipeZAP de outubro/2026]</p>
+          <div class="copy"><div class="copy-head"><span class="tag">Legenda</span><button class="btn" data-copy="l-f5">Copiar</button></div><pre id="l-f5">Imóvel de R$ 1 milhão rende uns R$ 5 mil de aluguel por mês.
+O mesmo milhão no CDI rende quase o dobro, já com imposto.
+Você trocaria? Comenta IMÓVEL ou CDI.</pre></div>
+        </div>
+      </details>
+    </div>
+  </article>
+
+  <!-- F6 -->
+  <article class="model" data-kind="falado" id="f6">
+    <div class="model-head"><span class="mcode">F6</span><div><h3>Notícia com número</h3><div class="meta"><span class="tag">Falado · 35 a 45 s</span><span class="tag">No dia do evento</span><span class="tag">Validade: 24 h</span></div></div></div>
+    <div class="model-body">
+      <p class="evid">Sua eleição "51,8% a 48,2%": 1.324 views e 5 envios, publicada no dia seguinte ao resultado. Pedro, "O Copom decidiu: Selic mantida": 3.359. Entra no lugar do falado do dia, nunca a mais.</p>
+      <ol class="timeline">
+        <li><span>0 a 3 s</span>O fato e o valor da pessoa ("Copom decidiu. E os seus 2 milhões?")</li>
+        <li><span>3 a 20 s</span>A conta do impacto em reais</li>
+        <li><span>20 a 30 s</span>O que acontece se mudar 1 ponto</li>
+        <li><span>30 a 40 s</span>Ironia leve contra previsão</li>
+        <li><span>40 a 45 s</span>A pergunta certa</li>
+      </ol>
+      <div class="stack"><span class="tag">Próxima data</span><p class="tpl">Copom em 8 e 9/12/2026. <em>Grave os blocos ③ e ④ antes, ① e ② na noite do dia 9.</em></p></div>
+      <div class="tbl"><table>
+        <thead><tr><th>Selic</th><th class="num">Bruto por mês em R$ 2 mi</th><th class="num">Líquido (IR 15%)</th></tr></thead>
+        <tbody>
+          <tr><td>13,75%</td><td class="num">R$ 21.440</td><td class="num">R$ 18.224</td></tr>
+          <tr><td>12,75%</td><td class="num">R$ 19.951</td><td class="num">R$ 16.959</td></tr>
+          <tr><td>12,25%</td><td class="num">R$ 19.203</td><td class="num">R$ 16.322</td></tr>
+        </tbody>
+      </table></div>
+      <details class="script"><summary>Roteiro modelo: Copom de 9/12</summary>
+        <div class="script-body">
+          <div class="fala">
+            <p><span class="b">①</span>Copom decidiu. / E os seus 2 milhões? <span class="mk">//</span> A Selic ficou em [X]%. / Deixa eu fazer a conta com 2 milhões.</p>
+            <p><span class="b">②</span>A 100% do CDI, / uns [X] mil por mês. / Bruto. / Tira o imposto: uns [X] mil. <span class="mk">//</span> Linha final.</p>
+            <p><span class="b">③</span>Se a Selic cair 1 ponto, / essa linha perde uns 1.300 por mês. <span class="mk">//</span> Ninguém sabe o próximo passo do Copom. / Nem eu. / Nem quem posta previsão.</p>
+            <p><span class="b">④</span>A pergunta é outra. / Quanto do seu custo de vida depende dessa taxa? <span class="mk">[olhar]</span> Se ela cair, / os seus 2 milhões ainda pagam a sua vida?</p>
+          </div>
+          <p class="soft">Sem previsão de juros e sem nome de autoridade. Decisão real no site do Banco Central.</p>
+        </div>
+      </details>
+    </div>
+  </article>
+
+  <!-- G1 -->
+  <article class="model" data-kind="grafico" id="g1">
+    <div class="model-head"><span class="mcode">G1</span><div><h3>Mesma base, destinos opostos</h3><div class="meta"><span class="tag">Gráfico · 20 a 35 s</span><span class="tag">2 por semana</span><span class="tag">Chamada: envio</span></div></div></div>
+    <div class="model-body">
+      <p class="evid">Os dois maiores Reels do perfil. Inflação de 7 países: 2.473 views e 37,5% de pulo, o menor do perfil. R$ 100 em 2000 em 5 ativos: 1.514 views e 42,5% de pulo. Quando o gancho era só uma lista de nomes ("Nasdaq, Ibovespa, Nikkei, DAX e mais 4"), fez 67 views.</p>
+      <ol class="timeline">
+        <li><span>0 a 2 s</span>Os dois extremos já na tela e na fala (o contraste)</li>
+        <li><span>2 a 20 s</span>Barras ou linhas crescendo, ano a ano</li>
+        <li><span>20 a 28 s</span>Rótulo final com os valores</li>
+        <li><span>28 a 32 s</span>A pergunta ou o "manda pra quem..."</li>
+      </ol>
+      <div class="stack"><span class="tag">Gancho para preencher</span><p class="tpl">[Mesma base] virou [A] [aqui] e [B] [ali].</p><p class="soft">Regra: o gancho precisa ter os dois números. Sem contraste, não sai.</p></div>
+      <ul class="ex">
+        <li><b>100 mil de 2010 viraram 18 mil dólares.</b><small>Roteiro abaixo · [CONFERIR poupança e CDI na Calculadora do Cidadão]</small></li>
+        <li><b>Carro de 250 mil ou 250 mil aplicados: 5 anos depois.</b><small>Do banco (G04) · simulação, premissa no rodapé</small></li>
+        <li><b>1.000 por mês viram 685 mil ou 245 mil, conforme a idade.</b><small>Do banco (P04) · gráfico do molde que mais converte</small></li>
+      </ul>
+      <details class="script"><summary>Roteiro completo: 100 mil de 2010 em dólar</summary>
+        <div class="script-body">
+          <p class="soft">Energia calma · Topo fixo: "Seus R$ 100 mil de 2010 compram só 18 mil dólares" (nota 81)</p>
+          <div class="fala">
+            <p><span class="b">①</span>100 mil de 2010 / viraram 18 mil dólares. <span class="mk">//</span> Em 2010, / 100 mil reais compravam uns 57 mil dólares. / Hoje, / os mesmos 100 mil compram uns 18.</p>
+            <p><span class="b">②</span>Dois terços foram embora. <span class="mk">//</span> Isso se o dinheiro ficou parado na conta. / Agora repara / no mesmo dinheiro em três lugares.</p>
+            <p><span class="b">③</span>Na poupança, / virou [X]. / Em dólar, [X]. <span class="mk">//</span> No CDI, / virou [X]. / Em dólar, <b>[X]</b>.</p>
+            <p><span class="b">④</span>Não é que o real é ruim. / É que dinheiro parado em real / paga a conta do câmbio sozinho. <span class="mk">[olhar]</span> Quanto do seu patrimônio está numa moeda só?</p>
+          </div>
+          <p><b>Tela:</b> 3 barras em reais e 3 em dólar. Rodapé: "Dólar médio de 2010 (R$ 1,76) e de 26/10/2026 (R$ 5,50). Valores brutos. Rentabilidade passada não é garantia de rentabilidade futura."</p>
+          <p class="soft">Ajuste o veredito ao resultado da Calculadora do Cidadão. Se o CDI em dólar tiver ficado perto de 57 mil, o bloco ④ vira "Juro alto ajudou. Mas só no CDI."</p>
+          <div class="copy"><div class="copy-head"><span class="tag">Legenda</span><button class="btn" data-copy="l-g1">Copiar</button></div><pre id="l-g1">R$ 100 mil em 2010 compravam 57 mil dólares. Hoje, 18 mil.
+Na poupança e no CDI, a conta muda. Os valores estão no vídeo.
+Manda pra quem deixa tudo numa moeda só.</pre></div>
+        </div>
+      </details>
+    </div>
+  </article>
+
+  <!-- G2 -->
+  <article class="model" data-kind="grafico" id="g2">
+    <div class="model-head"><span class="mcode">G2</span><div><h3>Ranking com contraste</h3><div class="meta"><span class="tag">Gráfico · 20 a 30 s</span><span class="tag">1 por semana</span><span class="tag">Chamada: pergunta</span></div></div></div>
+    <div class="model-body">
+      <p class="evid">Mesma lógica do G1, mas com categorias no lugar do tempo. O Pedro fez "R$ 100 mil na conta corrente rendem R$ 0. Na LCI, R$ 12.375": 1.922 plays. O ranking abre pelo maior e pelo menor, nunca pela ordem alfabética.</p>
+      <ol class="timeline">
+        <li><span>0 a 2 s</span>O primeiro e o último do ranking no gancho</li>
+        <li><span>2 a 18 s</span>As barras entram do menor para o maior</li>
+        <li><span>18 a 25 s</span>A diferença em reais entre os extremos</li>
+        <li><span>25 a 30 s</span>"Onde está o seu?"</li>
+      </ol>
+      <div class="stack"><span class="tag">Gancho para preencher</span><p class="tpl">[Mesmo valor]: de [mínimo] a [máximo], <em>conforme [categoria].</em></p></div>
+      <ul class="ex">
+        <li><b>Herança de 2 milhões: de 80 a 160 mil de imposto.</b><small>Conforme o estado · [CONFERIR alíquotas nas leis estaduais]</small></li>
+        <li><b>300 mil na poupança ou no CDI: 22 mil por ano de diferença.</b><small>Do banco (R03) · conferir CDI e regra da poupança no dia</small></li>
+        <li><b>100 mil de 2016 a 2026: o que renderam a cada ano.</b><small>Do banco (G09) · dados do Banco Central</small></li>
+      </ul>
+    </div>
+  </article>
+
+  <!-- R1 -->
+  <article class="model" data-kind="r7" id="r1">
+    <div class="model-head"><span class="mcode">R1</span><div><h3>R7 de personagem e virada</h3><div class="meta"><span class="tag">R7 · 7 s</span><span class="tag">Só como teste e porta</span><span class="tag">Chamada: na legenda</span></div></div></div>
+    <div class="model-body">
+      <p class="evid">Nos últimos 11 dias, o R7 fez mediana perto de 60 plays. As views dele são infladas por replay: o Reel dos sócios teve 824 views de 157 pessoas, 5,2 por pessoa, e 0 seguidores. Por isso o R7 sai do volume e vira teste.</p>
+      <div class="screens">
+        <div class="screen"><span class="tag">0 a 3 s · Tela 1</span><p>Casa de praia: 15 dias de uso por ano</p><span class="tag">Simulação</span></div>
+        <div class="screen red"><span class="tag">3 a 5 s · Tela 2</span><p>R$ 3.200 por dia de uso</p><span class="tag">A virada</span></div>
+        <div class="screen"><span class="tag">5 a 7 s · Tela 3</span><p>A conta está na legenda</p><span class="chip">Leia a legenda</span></div>
+      </div>
+      <div class="copy"><div class="copy-head"><span class="tag">Legenda do exemplo</span><button class="btn" data-copy="l-r1">Copiar</button></div><pre id="l-r1">Casa de praia de R$ 800 mil, usada 15 dias por ano.
+R$ 4 mil por mês dão R$ 48 mil por ano, R$ 3.200 por dia de uso.
+Você manteria? Comenta SIM ou NÃO.
+
+Simulação. Custo com IPTU, condomínio, caseiro e manutenção.</pre></div>
+      <ul class="ex">
+        <li><b>Médica deixa 300 mil na conta corrente → a inflação pede 13.500 por ano</b><small>Do banco (A16)</small></li>
+        <li><b>Dono de clínica jura que gasta 30 mil → o extrato mostra 41 mil</b><small>Do banco (A19)</small></li>
+      </ul>
+    </div>
+  </article>
+
+  <!-- R2 -->
+  <article class="model" data-kind="r7" id="r2">
+    <div class="model-head"><span class="mcode">R2</span><div><h3>R7 de teste pareado</h3><div class="meta"><span class="tag">R7 · 7 s</span><span class="tag">Dia seguinte ao falado</span><span class="tag">14 dias</span></div></div></div>
+    <div class="model-body">
+      <p class="evid">Seus dados não separam formato de tema, porque o R7 e o falado saíram em semanas diferentes. O par resolve: mesmo tema, mesma pergunta final, formatos diferentes.</p>
+      <ol class="timeline">
+        <li><span>Dia 1</span>Falado do tema X às 17h30</li>
+        <li><span>Dia 2</span>R7 do mesmo tema X às 12h, com a mesma chamada</li>
+        <li><span>Se puder</span>Use Reels de teste no R7, que vai primeiro só para quem não segue</li>
+        <li><span>Compare</span>Pulo, envios e seguidores por mil pessoas alcançadas. Nunca por views</li>
+        <li><span>Decisão</span>Falado ganha em 5 de 7 pares: o R7 sai do calendário</li>
+      </ol>
+    </div>
+  </article>
+
+  <!-- C1 -->
+  <article class="model" data-kind="carrossel" id="c1">
+    <div class="model-head"><span class="mcode">C1</span><div><h3>Conta passo a passo</h3><div class="meta"><span class="tag">Carrossel · 6 slides</span><span class="tag">1 a cada 2 semanas</span><span class="tag">Para salvar</span></div></div></div>
+    <div class="model-body">
+      <p class="evid">9 carrosséis de 20 a 28/10: mediana de 99 views, 0 envios e 0 salvos. Carrossel não traz gente nova. Ele fica para quem já segue, alternado com o C2, e é julgado por salvos, não por views.</p>
+      <div class="slides">
+        <div class="slide noite"><span class="tag">Orçamento · Capa</span><h4>Ganha bem e não sobra nada?</h4><span class="tag">@lucasmedeiros.ai</span></div>
+        <div class="slide claro"><span class="tag">02 / 06 · Afirmação</span><h4>Renda alta não vira patrimônio sozinha.</h4><p>O gasto sobe junto com cada aumento.</p></div>
+        <div class="slide noite"><span class="tag">03 / 06 · Conta</span><h4>Renda 40 mil. Sobra 2 mil.</h4><p>Casa e escola 17 · Carro e contas 8 · Viagens e lazer 9 · Outros 4. Simulação.</p></div>
+        <div class="slide limao"><span class="tag">04 / 06 · Mito x fato</span><h4><span class="strike">Quando eu ganhar mais, eu guardo.</span></h4><p>Cada aumento já chega com um gasto novo esperando.</p></div>
+        <div class="slide claro"><span class="tag">05 / 06 · Lista</span><h4>5 vazamentos</h4><p>1 Guardar o que sobra · 2 Padrão subindo com o aumento · 3 Bônus sem destino · 4 Dinheiro parado na conta · 5 Renda sem proteção</p></div>
+        <div class="slide noite"><span class="tag">06 / 06 · CTA</span><h4>Qual desses é o seu?</h4><p>Comenta o número.</p></div>
+      </div>
+      <div class="copy"><div class="copy-head"><span class="tag">Legenda</span><button class="btn" data-copy="l-c1">Copiar</button></div><pre id="l-c1">Ganha R$ 40 mil e sobram R$ 2 mil? Não é falta de renda.
+São 5 vazamentos, e o primeiro é guardar o que sobra.
+Qual deles é o seu? Comenta de 1 a 5.</pre></div>
+      <p class="soft">Sequência e ritmo de fundos do brand kit: Noite, Claro, Noite, Limão, Claro, Noite.</p>
+    </div>
+  </article>
+
+  <!-- C2 -->
+  <article class="model" data-kind="carrossel" id="c2">
+    <div class="model-head"><span class="mcode">C2</span><div><h3>Como funciona o diagnóstico</h3><div class="meta"><span class="tag">Carrossel · 6 slides</span><span class="tag">1 a cada 2 semanas</span><span class="tag">Oferta · vai para os fixados</span></div></div></div>
+    <div class="model-body">
+      <p class="evid">É a peça que responde "o que eu faço agora?" para quem chega ao perfil. Hoje são 36 a 42 visitas por semana e 1 toque no link. Do seu banco (CR08).</p>
+      <div class="slides">
+        <div class="slide noite"><span class="tag">Diagnóstico · Capa</span><h4>O que acontece na primeira reunião?</h4><span class="tag">@lucasmedeiros.ai</span></div>
+        <div class="slide claro"><span class="tag">02 / 06 · Afirmação</span><h4>A primeira reunião quase não tem investimento.</h4><p>Tem pergunta.</p></div>
+        <div class="slide noite"><span class="tag">03 / 06 · O que eu pergunto</span><h4>4 perguntas</h4><p>Quem depende da sua renda · Quanto custa a casa por mês · O que você tem e onde está · O que você quer em 10 anos</p></div>
+        <div class="slide limao"><span class="tag">04 / 06 · Mito x fato</span><h4><span class="strike">Assessor só quer te oferecer investimento.</span></h4><p>Sem conhecer o seu perfil, ninguém pode recomendar nada.</p></div>
+        <div class="slide claro"><span class="tag">05 / 06 · Lista</span><h4>O que você leva e o que sai</h4><p>Leva: extrato, apólices, custo da casa. Sai: o mapa do patrimônio e o que está descoberto.</p></div>
+        <div class="slide noite"><span class="tag">06 / 06 · CTA</span><h4>Quer ver a sua conta?</h4><p>Link na bio · 40 a 50 min</p></div>
+      </div>
+      <div class="copy"><div class="copy-head"><span class="tag">Legenda</span><button class="btn" data-copy="l-c2">Copiar</button></div><pre id="l-c2">A primeira reunião comigo quase não tem investimento. Tem pergunta.
+São 4, e elas definem tudo o que eu olho depois.
+Quer ver a sua conta? O diagnóstico começa no link da bio.</pre></div>
+      <p class="soft">[CONFIRMAR] o que sai da reunião e se o diagnóstico é gratuito. O slide 4 vem da Resolução CVM 30 (conhecer o perfil antes de recomendar).</p>
+    </div>
+  </article>
+
+  </div>
+</section>
+
+<!-- CALENDÁRIO -->
+<section class="sec" id="calendario">
+  <div class="sec-head">
+    <span class="tag">05 · Calendário de 14 dias</span>
+    <h2>09 a 22/11</h2>
+    <p class="soft">2 peças por dia. 7 falados, 3 gráficos, 3 R7 e 1 carrossel por semana. Falados gravados em 4 sessões de 1h30. Uma notícia relevante entra no lugar do falado do dia.</p>
+  </div>
+  <div class="tbl"><table class="cal">
+    <thead><tr><th>Dia</th><th>12h</th><th>17h30</th><th>Gravação</th><th>Feito</th></tr></thead>
+    <tbody>
+      <tr class="week"><td colspan="5">Semana 1</td></tr>
+      <tr><td>Seg 09</td><td><span class="fmt g">G1</span>Carro de 250 mil ou 250 mil aplicados</td><td><span class="fmt f">F2</span>600 mil investidos. Você quitaria?<small>Roteiro pronto</small></td><td>Sessão 1 de manhã: quitar, dentista, barco, imóvel</td><td><input type="checkbox" id="d09" data-check aria-label="Seg 09 feito"></td></tr>
+      <tr><td>Ter 10</td><td><span class="fmt">R2</span>Teste do quitar</td><td><span class="fmt f">F1</span>Fatura 180 mil. Chuta quanto sobra.<small>Roteiro pronto</small></td><td></td><td><input type="checkbox" id="d10" data-check aria-label="Ter 10 feito"></td></tr>
+      <tr><td>Qua 11</td><td><span class="fmt g">G1</span>100 mil de 2010 viraram 18 mil dólares</td><td><span class="fmt f">F3</span>9 milhões só pra manter o seu barco<small>Roteiro pronto</small></td><td></td><td><input type="checkbox" id="d11" data-check aria-label="Qua 11 feito"></td></tr>
+      <tr><td>Qui 12</td><td><span class="fmt">R2</span>Teste do dentista</td><td><span class="fmt f">F5</span>Seu imóvel de 1 milhão rende só 5 mil<small>Roteiro pronto</small></td><td>Sessão 2: reserva, construtor, 10 mil aos 65, bônus</td><td><input type="checkbox" id="d12" data-check aria-label="Qui 12 feito"></td></tr>
+      <tr><td>Sex 13</td><td><span class="fmt g">G2</span>Herança de 2 milhões: de 80 a 160 mil</td><td><span class="fmt f">F4</span>Gasta 20, 30 ou 50 mil? Sua reserva<small>Roteiro pronto</small></td><td></td><td><input type="checkbox" id="d13" data-check aria-label="Sex 13 feito"></td></tr>
+      <tr><td>Sáb 14</td><td><span class="fmt">R2</span>Teste do barco</td><td><span class="fmt f">F1</span>Gasta 110 mil por mês. Chuta quanto é viagem.<small>Construtor, do banco</small></td><td></td><td><input type="checkbox" id="d14" data-check aria-label="Sáb 14 feito"></td></tr>
+      <tr><td>Dom 15</td><td><span class="fmt">C2</span>Como funciona o diagnóstico<small>Vai para os fixados</small></td><td><span class="fmt f">F4</span>10 mil aos 65: começando aos 30, 40 ou 50?<small>Repete o vencedor</small></td><td></td><td><input type="checkbox" id="d15" data-check aria-label="Dom 15 feito"></td></tr>
+      <tr class="week"><td colspan="5">Semana 2</td></tr>
+      <tr><td>Seg 16</td><td><span class="fmt g">G1</span>1.000 por mês viram 685 mil ou 245 mil</td><td><span class="fmt f">F2</span>Bônus de 100 mil. Quita o carro ou começa a reserva?</td><td>Sessão 3: casa de praia, plantonista, seguro da empresa, vender o apê</td><td><input type="checkbox" id="d16" data-check aria-label="Seg 16 feito"></td></tr>
+      <tr><td>Ter 17</td><td><span class="fmt">R2</span>Teste do imóvel</td><td><span class="fmt f">F3</span>1 milhão parado pra manter a casa de praia</td><td></td><td><input type="checkbox" id="d17" data-check aria-label="Ter 17 feito"></td></tr>
+      <tr><td>Qua 18</td><td><span class="fmt g">G2</span>300 mil na poupança ou no CDI</td><td><span class="fmt f">F1</span>Ganha 62 mil e vive com 15. Onde está o resto?</td><td></td><td><input type="checkbox" id="d18" data-check aria-label="Qua 18 feito"></td></tr>
+      <tr><td>Qui 19</td><td><span class="fmt">R2</span>Teste da reserva</td><td><span class="fmt f">F5</span>"Já tenho seguro pela empresa." Cobre quantos meses?</td><td>Sessão 4: advogado, escola internacional e 2 falados de reserva</td><td><input type="checkbox" id="d19" data-check aria-label="Qui 19 feito"></td></tr>
+      <tr><td>Sex 20</td><td><span class="fmt g">G1</span>100 mil de 2016 a 2026, ano a ano</td><td><span class="fmt f">F2</span>Apartamento de 1,2 milhão. Vende e vai de aluguel?</td><td></td><td><input type="checkbox" id="d20" data-check aria-label="Sex 20 feito"></td></tr>
+      <tr><td>Sáb 21</td><td><span class="fmt">R1</span>Casa de praia: 15 dias de uso por ano</td><td><span class="fmt f">F1</span>Advogado de 68 mil: a faculdade custa 13,8<small>Do banco</small></td><td></td><td><input type="checkbox" id="d21" data-check aria-label="Sáb 21 feito"></td></tr>
+      <tr><td>Dom 22</td><td><span class="fmt">C1</span>Ganha bem e não sobra nada?</td><td><span class="fmt f">F3</span>3,8 milhões pra pagar a escola internacional<small>Revisão de 14 dias à noite</small></td><td></td><td><input type="checkbox" id="d22" data-check aria-label="Dom 22 feito"></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- RÉGUA -->
+<section class="sec" id="regua">
+  <div class="sec-head">
+    <span class="tag">06 · Régua de decisão</span>
+    <h2>O que medir e quando cortar</h2>
+  </div>
+  <div class="stack-lg">
+    <div class="tbl"><table>
+      <thead><tr><th>Métrica</th><th>Onde ver</th><th>Meta</th><th>Por quê</th></tr></thead>
+      <tbody>
+        <tr><td>Taxa de pulo</td><td>Insights do Reel</td><td>Abaixo de 55%</td><td>Explica as views com correlação de 0,76. É a nota do gancho.</td></tr>
+        <tr><td>Envios por mil views</td><td>Insights</td><td>Acima de 10</td><td>O "10 mil aos 60" fez 69. Envio é alguém pondo o próprio nome no post.</td></tr>
+        <tr><td>Seguidores por mil views</td><td>Insights</td><td>Acima de 5</td><td>O mesmo Reel fez 20. É o que mostra se o Reel converte.</td></tr>
+        <tr><td>Comentários</td><td>Post</td><td>3 por Reel</td><td>Setembro tinha 3,75 por Reel. Hoje, 0,4.</td></tr>
+        <tr><td>Toques no link</td><td>Insights da conta</td><td>3 por semana</td><td>Hoje, 1. Mede a bio e os fixados.</td></tr>
+        <tr><td>Views</td><td>Post</td><td>Só referência</td><td>O replay infla vídeo curto.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="grid3">
+      <div class="box strong"><span class="tag">Mantém e ganha espaço</span><p>Modelo com mediana de pulo abaixo de 55% ou mais de 250 pessoas alcançadas, o nível de setembro.</p></div>
+      <div class="box strong"><span class="tag">Mantém e troca o gancho</span><p>Pulo entre 55% e 70%, mas com envios ou seguidores acima da meta.</p></div>
+      <div class="box strong"><span class="tag">Sai</span><p>Pulo acima de 70% e menos de 120 pessoas alcançadas em 3 peças seguidas do mesmo modelo.</p></div>
+    </div>
+    <p>Em 22/11, mande o print dos Insights dos 5 melhores e dos 5 piores Reels e o fechamento das duas semanas. Eu rodo a auditoria e atualizo os modelos.</p>
+  </div>
+</section>
+
+<!-- COMPLIANCE -->
+<section class="sec" id="compliance">
+  <div class="sec-head">
+    <span class="tag">07 · Compliance</span>
+    <h2>Uma tela, antes de publicar</h2>
+  </div>
+  <div class="grid2">
+    <div class="box"><span class="tag">Pode</span>
+      <ul class="analysis">
+        <li class="plus">Gancho provocativo e pergunta de decisão</li>
+        <li class="plus">Personagem com valor alto, marcado como simulação</li>
+        <li class="plus">Opinião sobre a decisão do Copom, sem previsão</li>
+        <li class="plus">Custo mensal de estilo de vida, sem marca</li>
+        <li class="plus">Chamada direta para o diagnóstico</li>
+      </ul>
+    </div>
+    <div class="box"><span class="tag">Nunca</span>
+      <ul class="analysis">
+        <li class="minus">Promessa ou insinuação de retorno, ou produto com taxa</li>
+        <li class="minus">Caso hipotético apresentado como cliente real</li>
+        <li class="minus">"Investidor profissional", "maior escritório" ou selo azul sem verificação</li>
+        <li class="minus">"Blindagem", nome de produto, emissor ou seguradora</li>
+        <li class="minus">Nome de candidato, partido ou autoridade</li>
+      </ul>
+    </div>
+  </div>
+  <p class="soft" style="margin-top:20px">Tema jurídico (herança, sócio, regime de bens) passa pelo parceiro jurídico. Tema tributário passa pelo contador. Estas regras são um filtro mínimo, não parecer jurídico. A palavra final é do compliance da InvestSmart e da XP.</p>
+</section>
+
+</main>
+
+<footer class="wrap">
+  <div class="stack">
+    <span class="tag">Fontes</span>
+    <p>Painel Redes Sociais @lucasmedeiros.ai (Windsor.ai e Insights, 18/10 a 03/11). Apify instagram-scraper, coleta de 08/11/2026: 90 posts seus e 88 Reels de @bernardocordeiroreal, @compedrocosta e @arturnegocios. Banco de ideias do painel (421 ideias). Brand kit Lucas Medeiros, estilo Swiss Noite e Limão. Calendário do Copom 2026 (B3 Bora Investir). Rentabilidade do aluguel FipeZAP, set/2026 (fonte secundária). Dólar médio de 2010 (numerando, dados do Banco Central). Confirme dados de mercado na fonte primária antes de gravar.</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" hidden role="status">Copiado</div>
+
+<script>
+(function(){
+  var KEY='playbook-lucas-checks';
+  var saved={};
+  try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){saved={};}
+  var boxes=[].slice.call(document.querySelectorAll('input[data-check]'));
+  var list=[].slice.call(document.querySelectorAll('#checks input[data-check]'));
+  function paint(){
+    boxes.forEach(function(b){var li=b.closest('li');if(li)li.classList.toggle('done',b.checked);});
+    var n=list.filter(function(b){return b.checked;}).length;
+    document.getElementById('prog-txt').textContent=n+' de '+list.length+' feitos';
+    document.getElementById('prog-fill').style.width=(list.length?n/list.length*100:0)+'%';
+  }
+  boxes.forEach(function(b){
+    if(saved[b.id])b.checked=true;
+    b.addEventListener('change',function(){
+      saved[b.id]=b.checked;
+      try{localStorage.setItem(KEY,JSON.stringify(saved));}catch(e){}
+      paint();
+    });
+  });
+  paint();
+
+  var toast=document.getElementById('toast'),tt;
+  function show(msg){toast.textContent=msg;toast.hidden=false;clearTimeout(tt);tt=setTimeout(function(){toast.hidden=true;},1600);}
+  function selectText(el){var r=document.createRange();r.selectNodeContents(el);var s=window.getSelection();s.removeAllRanges();s.addRange(r);}
+  document.addEventListener('click',function(ev){
+    var btn=ev.target.closest('[data-copy]');
+    if(!btn)return;
+    var el=document.getElementById(btn.getAttribute('data-copy'));
+    if(!el)return;
+    var txt=el.textContent;
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){show('Copiado');},function(){selectText(el);show('Texto selecionado, use copiar');});
+    }else{selectText(el);show('Texto selecionado, use copiar');}
+  });
+
+  var fbtns=[].slice.call(document.querySelectorAll('[data-filter]'));
+  var models=[].slice.call(document.querySelectorAll('#models .model'));
+  fbtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      var f=b.getAttribute('data-filter');
+      fbtns.forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+      models.forEach(function(m){m.hidden=!(f==='all'||m.getAttribute('data-kind')===f);});
+    });
+  });
+})();
+</script>
